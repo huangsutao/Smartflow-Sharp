@@ -114,6 +114,8 @@
     <Content Include="Content\design\design.js" />
     <Content Include="Content\design\images\decision.png" />
     <Content Include="Content\design\images\grid16.png" />
+    <Content Include="Content\design\images\grid_12.png" />
+    <Content Include="Content\design\images\grid_23.png" />
     <Content Include="Content\design\images\help.png" />
     <Content Include="Content\design\images\left.png" />
     <Content Include="Content\design\images\line.png" />
