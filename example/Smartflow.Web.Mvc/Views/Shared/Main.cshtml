@@ -10,7 +10,7 @@
     <link href="~/Content/main.css" rel="stylesheet" />
     <script src="~/Content/jquery.min.js"></script>
     <script src="~/Content/layui/layui.all.js"></script>
-
+    <script src="~/Content/main.js"></script>
     <style>
         .top-menu-container {
             margin-right: 40px;
@@ -74,43 +74,38 @@
         });
     </script>
 </head>
-<body class="mainFrame">
-    <div class="top">
-        <span class="top-header">Smartflow-Sharp 工作流管理平台</span>
-        <div class="top-menu-container">
-            <div class="top-menu">
-                <div class="top-menu-item" style="background:  url(../Content/images/user.png) no-repeat center center;">
-                    <span>@(ViewBag.EmployeeName)</span>
-                </div>
-                <div class="top-menu-item" style="background:  url(../Content/images/message.png) no-repeat center center;" id="message">
-                    <span>消息(<i style="color:red;padding-right:2px;" id="items">0</i>)</span>
-                </div>
-                <div class="top-menu-item" style="background:  url(../Content/images/off.png) no-repeat center center;" id="off">
-                    <span>注销</span>
-                </div>
-            </div>
-        </div>
+
+<body class="smartflow_main">
+    <div class="smartflow_head">
+        <span class="smartflow_title">Smartflow-Sharp 工作流管理平台</span>
     </div>
-    <div class="content">
-        <div class="left menu">
-            <div class="menu-item">
-                <ul class="menu-sub-items">
-                    <li>
-                        <a href="@Url.Action("FileApplyList", "FileApply")" target="frmContent">文件定密申请</a>
+    <div class="smartflow_content">
+        <div class="smartflow_left clearfix" id="menu">
+            <div class="menu_item">
+                <div class="menu_title">业务管理</div>
+                <ul class="menu_sub_items hide">
+                    <li class="menu_sub_item">
+                        <span url="../Default/List">流程定义</span>
                     </li>
-                    <li>
-                        <a href="@Url.Action("List", "Default")" target="frmContent">流程设计器</a>
+                    <li class="menu_sub_item">
+                        <span url="../FileApply/FileApplyList">文件定密申请</span>
                     </li>
                 </ul>
             </div>
         </div>
-        <div class="right">
-            <iframe style="width:100%;height:100%;"
-                    id="frmContent"
-                    name="frmContent"
-                    frameborder="0"
-                    src="@Url.Action("FileApplyList", "FileApply")"></iframe>
+        <div class="smartflow_right">
+            <iframe style="width:100%;height:100%;" id="ifrmContent" frameborder="0"></iframe>
+
         </div>
     </div>
+    <script type="text/html" id="common_template_tab_content">
+        <div class="smartflow_tab_content">
+            <iframe style="width:100%;height:100%;" frameborder="0"></iframe>
+        </div>
+    </script>
+    <script type="text/html" id="common_template_tab_head">
+        <li class="smartflow_tab_item smartflow_tab_select"></li>
+    </script>
 </body>
+
 </html>

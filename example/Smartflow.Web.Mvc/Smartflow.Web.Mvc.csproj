@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Content Include="Content\common.css" />
     <Content Include="Content\common.js" />
     <Content Include="Content\design\design.js" />
     <Content Include="Content\design\images\decision.png" />
@@ -337,6 +338,7 @@
     <Content Include="Content\layui\lay\modules\util.js" />
     <Content Include="Content\login.css" />
     <Content Include="Content\main.css" />
+    <Content Include="Content\main.js" />
     <Content Include="Global.asax" />
     <Content Include="test.html" />
     <Content Include="Web.config" />
