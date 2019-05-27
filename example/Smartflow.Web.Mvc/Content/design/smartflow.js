@@ -429,7 +429,7 @@
         this.disable = false;
         //背景颜色
         this.bgColor = '#f06';
-        this.bgCurrentColor = '#e84420';
+        this.bgCurrentColor = 'green';
         this.drawInstance = undefined;
     }
 

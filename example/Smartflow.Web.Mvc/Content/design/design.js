@@ -118,7 +118,7 @@
         var ht = $("#" + elementId).html();
         //自定页
         layer.open({
-            title: '注意事项',
+            title: '帮助',
             type: 1,
             closeBtn: 1,
             //skin: 'layui-layer-rim', //加上边框
