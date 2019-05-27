@@ -57,19 +57,18 @@
             switch (status) {
                 case "0":
                     $("#btnSubmit,#btnSave").show();
-                    $("#btnAudit,#btnUnAudit").hide();
+                    $("#btnAudit").hide();
                     break;
                 case "1":
                     $("#btnAudit").show();
                     $("#btnSubmit,#btnSave").hide();
-                    $("#btnUnAudit")['@ViewBag.UndoCheck' == 'False' ? 'show' : 'hide']();
                     break;
                 case "8":
                     $("#btnAudit").hide();
-                    $("#btnSubmit,#btnSave,#btnUnAudit").hide();
+                    $("#btnSubmit,#btnSave").hide();
                     break;
                 default:
-                    $("#btnAudit,#btnUnAudit").hide();
+                    $("#btnAudit").hide();
                     break;
             }
         }
@@ -79,21 +78,10 @@
             var instanceID = document.getElementById("INSTANCEID").value,
                 bussinessID = document.getElementById("IDENTIFICATION").value,
                 bllServiceClass = document.getElementById("BLLSERVICE").value;
-            openWin('@Url.Action("WorkflowCheck", "UserControl")' + "?instanceID=" + instanceID + "&bussinessID=" + bussinessID + "&bllService=" + bllServiceClass, 600, 300);
+            parent.createWin('@Url.Action("WorkflowCheck", "UserControl")' + "?instanceID=" + instanceID + "&bussinessID=" + bussinessID + "&bllService=" + bllServiceClass,'审批窗口', 600, 300);
         }
 
-        function undoCheck() {
-            var instanceID = document.getElementById("INSTANCEID").value;
-            var bussinessID = document.getElementById("IDENTIFICATION").value;
-            $.ajax({
-                url: '@Url.Action("UndoCheck", "UserControl")' + "?instanceID=" + instanceID + "&bussinessID=" + bussinessID,
-                dataType: 'json',
-                type: 'get',
-                success: function () {
-                    doRefresh();
-                }
-            });
-        }
+
 
         function doRefresh() {
             var url = window.location.href;
@@ -132,18 +120,14 @@
                 </tr>
                 <tr>
                     <td colspan="4" style="text-align:center;">
-                        <input type="button" id="btnUnAudit" class="layui-btn" @(ViewBag.UndoAuth == true ? "" : "disabled") value="@("撤销" + ViewBag.PreviousButtonName)" onclick="undoCheck()" />
                         <input type="button" id="btnAudit" class="layui-btn" @(ViewBag.JumpAuth == true ? "" : "disabled") value="@ViewBag.ButtonName" onclick="auditApply()" />
                         <input type="submit" id="btnSubmit" value="提交" class="layui-btn " onclick="return save('@Url.Action("Submit", "FileApply")')" />
-                        <input type="submit" id="btnSave" value="保存" class="layui-btn layui-btn-normal" onclick="return save('@Url.Action("Save", "FileApply")')" />
                         <input type="button" id="btnBack" value="返回" class="layui-btn layui-btn-warm" onclick="window.location.href = '@Url.Action("FileApplyList", "FileApply")'" />
                     </td>
                 </tr>
                 <tr style="display:@(ViewBag.UserList != null ? "table-row" : "none")">
                     <td colspan="4">
-                        1、谁审谁撤销；
-                        2、原路退回，谁审退给谁；
-                        3、本节点待审批账户：
+                        本节点待审批账户：
                         @{
                             if (ViewBag.UserList != null)
                             {

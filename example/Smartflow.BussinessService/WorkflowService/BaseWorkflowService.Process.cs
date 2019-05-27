@@ -144,7 +144,7 @@ namespace Smartflow.BussinessService.WorkflowService
                 ACTION = executeContext.Operation.ToString(),
                 INSTANCEID = executeContext.Instance.InstanceID,
                 NODEID = GetCurrentNode(executeContext.Instance.InstanceID).NID,
-                APPELLATION = string.Format("<a href=\"javascript:;\" onclick=\"parent.window.document.getElementById('frmContent').src='../FileApply/FileApply/{0}'\">你有待办任务。</a>", executeContext.Data.bussinessID)
+                APPELLATION = string.Format("<a href=\"javascript:;\" onclick=\"parent.window.document.getElementById('ifrmContent').src='../FileApply/FileApply/{0}'\">你有待办任务。</a>", executeContext.Data.bussinessID)
             });
         }
     }

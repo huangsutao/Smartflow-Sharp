@@ -48,32 +48,6 @@ namespace Smartflow.BussinessService.WorkflowService
             return WorkflowInstance.GetInstance(instanceID).Current;
         }
 
-        public void UndoSubmit(string instanceID, string actorID, string actorName, string bussinessID)
-        {
-            WorkflowInstance instance = WorkflowInstance.GetInstance(instanceID);
-            dynamic dynData = new ExpandoObject();
-            dynData.bussinessID = bussinessID;
-            dynData.Message = "撤销此节点";
-            context.Cancel(new WorkflowContext()
-            {
-                Instance = instance,
-                Data = dynData,
-                ActorID = actorID,
-                ActorName = actorName
-            });
-        }
-
-        public void Rollback(string instanceID, string actorID, string actorName, dynamic data)
-        {
-            WorkflowInstance instance = WorkflowInstance.GetInstance(instanceID);
-            context.Rollback(new WorkflowContext()
-            {
-                Instance = instance,
-                Data = data,
-                ActorID = actorID,
-                ActorName = actorName
-            });
-        }
 
         public string Start(string identification)
         {

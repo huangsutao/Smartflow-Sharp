@@ -15,17 +15,22 @@
     <script src="~/Content/design/smartflow.js"></script>
     <script type="text/javascript">
         $(function () {
-            var draw = window.SMF.init({container:'drawing'}),
-                    serverData=@Html.Raw(ViewBag.Result),
-                    processData=@(ViewBag.Record==null?"''":Html.Raw(ViewBag.Record));
+            $("#drawing").SMF({ container: 'drawing' });
+            var serverData =@Html.Raw(ViewBag.Result),
+                processData =@(ViewBag.Record==null?"''":Html.Raw(ViewBag.Record));
+
             if (serverData) {
-                SMF.revert(serverData.structure, true, serverData.id,processData);
+                var instance = $.SMF.get('drawing');
+                instance.import(serverData.structure,
+                    true,
+                    serverData.id,
+                    processData);
             }
         })
     </script>
 </head>
 <body>
-    <div class="container">
+    <div class="container-ctr">
         <div class="container-draw" id="drawing"></div>
     </div>
 </body>

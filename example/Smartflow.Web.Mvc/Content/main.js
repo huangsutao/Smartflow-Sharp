@@ -43,3 +43,34 @@
     });
 
 });
+
+
+var currentIndex;
+
+function createWin(url, title, width, height) {
+    //iframe窗
+    currentIndex=layer.open({
+        type: 2,
+        title: title,
+        closeBtn: 1,
+        shade: [0.5],
+        shadeClose: false,
+        area: [width + 'px', height + 'px'],
+        offset: 'auto',
+        content: url
+    });
+}
+
+
+function closeWin(callback) {
+    //iframe窗
+    if (currentIndex) {
+
+        callback && callback.call(window);
+
+        layer.close(currentIndex);
+    }
+}
+
+
+

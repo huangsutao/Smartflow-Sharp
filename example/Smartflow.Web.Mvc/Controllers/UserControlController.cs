@@ -63,20 +63,10 @@ namespace Smartflow.Web.Controllers
             ViewBag.bussinessID = bussinessID;
             ViewBag.bllService = bllService;
             WorkflowInstance instance = WorkflowInstance.GetInstance(instanceID);
-            ViewBag.CheckResult = CommonMethods.CheckUndoButton(instanceID);
             return View(instance.Current.GetTransitions());
         }
 
-        /// <summary>
-        /// 撤销操作
-        /// </summary>
-        /// <param name="instanceID">流程实例ID</param>
-        /// <returns></returns>
-        public JsonResult UndoCheck(string instanceID, string bussinessID)
-        {
-            bwkf.UndoSubmit(instanceID, UserInfo.IDENTIFICATION.ToString(), UserInfo.EMPLOYEENAME, bussinessID);
-            return Json(true, JsonRequestBehavior.AllowGet);
-        }
+    
 
         /// <summary>
         /// 流程跳转处理接口(请不要直接定义匿名类传递)
@@ -93,15 +83,8 @@ namespace Smartflow.Web.Controllers
             data.bussinessID = bussinessID;
             data.bllService = bllService;
             data.UserInfo = UserInfo;
-            switch (action.ToLower())
-            {
-                case "rollback":
-                    bwkf.Rollback(instanceID, UserInfo.IDENTIFICATION.ToString(), UserInfo.EMPLOYEENAME, data);
-                    break;
-                default:
-                    bwkf.Jump(instanceID, transitionID, UserInfo.IDENTIFICATION.ToString(), UserInfo.EMPLOYEENAME, data);
-                    break;
-            }
+
+            bwkf.Jump(instanceID, transitionID, UserInfo.IDENTIFICATION.ToString(), UserInfo.EMPLOYEENAME, data);
             return Json(true);
         }
     }

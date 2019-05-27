@@ -63,8 +63,10 @@
                             action: action
                         },
                         success: function () {
-                            window.opener.window.doRefresh();
-                            window.close();
+                            alert('操作成功');
+                            parent.closeWin(function () {
+                                this.document.getElementById('ifrmContent').contentWindow.doRefresh();
+                            });
                         }
                     });
 
@@ -86,10 +88,6 @@
                         {
                             <option to="@item.Destination" value="@item.NID" action="jump">@item.Name</option>
                         }
-                        @if (!ViewBag.CheckResult)
-                        {
-                            <option to="0" value="0" action="rollback">原路退回</option>
-                        }
                     </select>
                 </td>
             </tr>
@@ -102,7 +100,6 @@
             <tr>
                 <td colspan="2" style="text-align:center;">
                     <input type="button" id="btnOk" value="确定" class="layui-btn" />
-                    <input type="button" id="btnClose" value="关闭" onclick="window.close()" class="layui-btn layui-btn-normal" />
                 </td>
             </tr>
         </table>

@@ -12,7 +12,10 @@
         }
 
     function saveflow() {
-        var exportToObject = SMF.exportToJSON(),
+
+        var SMF = $.SMF.get(designConfig.container);
+
+        var exportToObject = SMF.export(),
             wfName;
 
         if (!exportToObject) return;
@@ -20,13 +23,14 @@
         if (flowName) {
             wfName = window.prompt(designConfig.message, flowName);
         } else {
-            wfName = window.prompt(designConfig.message,'');
+            wfName = window.prompt(designConfig.message, '');
         }
         if (wfName) {
-            var data = $.extend(exportToObject, {
+            var data = {
+                STRUCTUREXML: exportToObject,
                 APPELLATION: wfName,
                 IDENTIFICATION: designConfig.id
-            });
+            };
 
             var settings = {
                 url: designConfig.saveUrl,
@@ -36,7 +40,7 @@
                 }
             };
             ajaxService(settings);
-        } 
+        }
     }
 
     function openConfig(nx) {
@@ -68,7 +72,11 @@
 
     function initConfig(config) {
         designConfig = $.extend(designConfig, config);
-        SMF.init($.extend({ container: designConfig.container }, { dblClick: openConfig }));
+
+        $("#drawing").SMF({
+            container: designConfig.container,
+            dblClick: openConfig
+        });
 
         if (designConfig.id) {
             var settings = {
@@ -76,13 +84,18 @@
                 data: { WFID: designConfig.id },
                 success: function (serverData) {
                     flowName = serverData.appellation;
-                    SMF.revert(serverData.structure);
+
+                    $.SMF
+                        .get(designConfig.container).import(serverData.structure);
+                    //SMF.revert(serverData.structure);
                 }
             };
             ajaxService(settings);
         } else {
             $.each(['start', 'end'], function (i, value) {
-                SMF.create(value);
+                $.SMF
+                    .get(designConfig.container)
+                    .create(value, false);
             });
         }
     }
@@ -100,7 +113,6 @@
         var frameId = dom.find("iframe").attr('id');
         return (document.getElementById(frameId).contentWindow);
     }
-
 
     function openWin(elementId) {
         var ht = $("#" + elementId).html();

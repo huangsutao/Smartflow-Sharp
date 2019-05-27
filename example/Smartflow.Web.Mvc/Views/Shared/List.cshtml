@@ -34,7 +34,7 @@
     <br />
     <div class="layui-container">
         <div class="layui-btn-group">
-            <input type="button" value="增加" class="layui-btn  layui-btn-sm" onclick="openWin('@Url.Action("Design","WorkflowDesign")', 960, 560)" />
+            <input type="button" value="增加" class="layui-btn  layui-btn-sm" onclick="parent.createWin('@Url.Action("Design","WorkflowDesign")','工作流设计器',960, 560)" />
         </div>
         <table class="layui-table">
             <thead>
@@ -49,7 +49,7 @@
                     <tr>
                         <td>@wf.APPELLATION</td>
                         <td style="width:160px;text-align:center;">
-                            <a class="layui-btn layui-btn-xs" href="javascript:openWin('@Url.Action("Design","WorkflowDesign",new { id=wf.IDENTIFICATION})',960,560)">修改</a>
+                            <a class="layui-btn layui-btn-xs" href="javascript:parent.createWin('@Url.Action("Design","WorkflowDesign",new { id=wf.IDENTIFICATION})','工作流设计器',960,560)">修改</a>
                             <a class="layui-btn layui-btn-danger layui-btn-xs" href="javascript:delWf('@wf.IDENTIFICATION')">删除</a>
                         </td>
                     </tr>

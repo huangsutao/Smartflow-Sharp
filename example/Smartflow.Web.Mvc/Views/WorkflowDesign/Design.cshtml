@@ -14,7 +14,7 @@
     <script src="~/Content/design/smartflow.js"></script>
     <script src="~/Content/design/design.js"></script>
     <script type="text/javascript">
-        $(function () {
+      $(function () {
             design.init({
                 id: '@ViewBag.WFID',
                 container: 'drawing',
@@ -22,7 +22,32 @@
                 instanceUrl: '@Url.Action("GetWorkflowStructure", "WorkflowDesign")',
                 saveUrl: '@Url.Action("Save", "WorkflowDesign")'
             });
-
+            $("#menus li").click(function () {
+                var command = $(this).attr("command");
+                var instance = $.SMF.get('drawing');
+                switch (command) {
+                    case "select":
+                        instance.select();
+                        break;
+                    case "join":
+                        instance.join();
+                        break;
+                    case "save":
+                        design.save();
+                        break;
+                    case "node":
+                        instance.create(command);
+                        break;
+                    case "decision":
+                        instance.create(command);
+                        break;
+                    case "note":
+                        design.openWin('note');
+                        break;
+                    default:
+                        break;
+                }
+            });
             $(".tools-menu img").mousedown(function () {
                 $(this).css("border", "solid 1px #ad9d9d");
             });
@@ -30,39 +55,27 @@
                 $(this).css("border", "none");
             });
         });
-
     </script>
 </head>
 <body>
     <div class="tools">
-        <ul class="tools-menu">
-            <li>
-                <img src="~/Content/design/images/save.png" onclick="design.save()"
+        <ul class="tools-menu" id="menus">
+            <li command="save">
+                <img src="~/Content/design/images/save.png"
                      title="保存" />
             </li>
-            <li>
-                <img src="~/Content/design/images/select.png" onclick="SMF.select()"
+            <li command="select">
+                <img src="~/Content/design/images/select.png"
                      title="选择" />
             </li>
-            <li>
-                <img src="~/Content/design/images/line.png" onclick="SMF.connect()"
-                     title="连接" />
+            <li command="join">
+                <img src="~/Content/design/images/line.png" title="连接" />
             </li>
-            <li>
-                <img src="~/Content/design/images/node.png" onclick="SMF.create('node')"
-                     title="节点" />
+            <li command="node">
+                <img src="~/Content/design/images/node.png" title="节点" />
             </li>
-            <li>
-                <img src="~/Content/design/images/decision.png" onclick="SMF.create('decision')"
-                     title="决策" />
-            </li>
-            <li>
-                <img src="~/Content/design/images/left.png" onclick="SMF.alignment()"
-                     title="左对齐" />
-            </li>
-            <li>
-                <img src="~/Content/design/images/help.png" onclick="design.openWin('note')"
-                     title="帮助" />
+            <li command="decision">
+                <img src="~/Content/design/images/decision.png" title="决策" />
             </li>
         </ul>
     </div>
