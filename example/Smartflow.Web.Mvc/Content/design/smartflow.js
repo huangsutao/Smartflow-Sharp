@@ -489,6 +489,14 @@
         },
         move: function () {
             Line.move.call(this, this);
+        },
+        getTransitions: function () {
+            var elements = Draw.findById(this.id, config.from),
+                lineCollection = [];
+            $.each(elements, function () {
+                lineCollection.push(Draw._proto_LC[this.id]);
+            });
+            return lineCollection;
         }
     });
 
@@ -825,11 +833,7 @@
             });
             return lineCollection;
         },
-        setExpression: function (expressions) {
-            $.each(expressions, function () {
-                Draw._proto_LC[this.id].expression = this.expression;
-            });
-        },
+    
         draw: function (b) {
             var n = this,
                 color = (b == n.unique && b && n.unique) ? n.bgCurrentColor : n.bgColor,
@@ -914,19 +918,7 @@
     }
 
     Circle.extend(Shape, {
-        getTransitions: function () {
-            var elements = Draw.findById(this.id, config.from),
-                lineCollection = [];
-            $.each(elements, function () {
-                lineCollection.push(Draw._proto_LC[this.id]);
-            });
-            return lineCollection;
-        },
-        setExpression: function (expressions) {
-            $.each(expressions, function () {
-                Draw._proto_LC[this.id].expression = this.expression;
-            });
-        },
+    
         draw: function () {
             return Circle.base.Parent.prototype.draw.call(this);
         },
@@ -971,6 +963,11 @@
             this.id = el.id();
             Draw._proto_NC[this.id] = this;
             Decision.base.Parent.prototype.draw.call(this);
+        },
+        setExpression: function (expressions) {
+            $.each(expressions, function () {
+                Draw._proto_LC[this.id].expression = this.expression;
+            });
         },
         move: function (element, d) {
             var self = this;

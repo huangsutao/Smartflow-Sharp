@@ -189,7 +189,7 @@
             nx.group = roles;
         }
 
-        if (name) {
+        if (name && nx.brush) {
             nx.name = name;
             nx.brush.text(nx.name);
         }
