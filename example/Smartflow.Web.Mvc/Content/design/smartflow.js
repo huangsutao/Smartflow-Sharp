@@ -798,22 +798,6 @@
     }
 
     /**
-     * 转换路径
-     * @param {any} x1
-     * @param {any} y1
-     * @param {any} x2
-     * @param {any} y2
-     */
-    Line.convert = function (current) {
-        return ('M' + current.x1
-            + ' ' + current.y1
-            + ' '
-            + ' l' + current.x2
-            + ' '
-            + current.y2);
-    }
-
-    /**
      * 流程中节点类定义
      * 继承Shape形状
      * @param {any} name
