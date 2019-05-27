@@ -16,7 +16,7 @@ namespace Smartflow
     /**
      * 工作流引擎，由工作流引擎统一提供对外服务接口，以此来驱动流程跳转
      */
-    public abstract class WorkflowEngine
+    public  class WorkflowEngine
     {
         private IWorkflow workflowService = WorkflowServiceProvider.OfType<IWorkflow>();
 
