@@ -825,15 +825,6 @@
     }
 
     Node.extend(Shape, {
-        getTransitions: function () {
-            var elements = Draw.findById(this.id, config.from),
-                lineCollection = [];
-            $.each(elements, function () {
-                lineCollection.push(Draw._proto_LC[this.id]);
-            });
-            return lineCollection;
-        },
-    
         draw: function (b) {
             var n = this,
                 color = (b == n.unique && b && n.unique) ? n.bgCurrentColor : n.bgColor,
