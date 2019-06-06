@@ -167,6 +167,11 @@ path {
     border-radius: initial;
 }
 
+.smartflow-textarea {
+    height: 50px;
+    border-radius: initial;
+}
+
 .smartflow-tree {
     position: absolute;
     width: 180px;
@@ -244,4 +249,10 @@ path {
     -ms-user-select: none; /*IE10*/
     -khtml-user-select: none; /*早期浏览器*/
     user-select: none;
+}
+
+
+
+textarea {
+    resize: none;
 }
