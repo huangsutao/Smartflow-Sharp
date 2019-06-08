@@ -3,153 +3,66 @@
 @{
     Layout = null;
 }
-
 <!DOCTYPE html>
-
 <html>
 <head>
     <title>业务流程</title>
     <link href="~/Content/main.css" rel="stylesheet" />
     <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
-    <script src="~/Content/common.js"></script>
     <script src="~/Content/jquery.min.js"></script>
-    <style type="text/css">
-        .layui-input {
-            height: 30px;
-            min-height: 30px;
-            width: 100%;
-            border: none;
-        }
-
-        .layui-select {
-            width: 100%;
-            border: none;
-        }
-
-        .layui-textarea {
-            width: 100%;
-            border: none;
-            resize: none;
-        }
-
-        .layui-btn {
-            border-radius: initial;
-        }
-
-        input[disabled] {
-            border: 1px solid #e6e6e6;
-            background-color: #FBFBFB;
-            color: #C9C9C9;
-            cursor: not-allowed;
-        }
-    </style>
+    <script src="~/Content/common.js"></script>
     <script type="text/javascript">
-        function save(url) {
-            $("#formFileApply").attr("action", url);
+        /*******************
+         *保存实体入口
+         *******************/
+        function saveForm(instanceID,callback) {
+
+            var model = {};
+            model.INSTANCEID = instanceID;
+            model.FNAME = $("#FNAME").val();
+            model.SECRETGRADE = $("#SECRETGRADE").find("option:selected").text();
+            model.DESCRIPTION = $("#DESCRIPTION").val();
+            model.STRUCTUREID = $("#STRUCTUREID").val();
+            util.ajaxPost({
+                data: model,
+                url: '@Url.Action("save", "FileApply")',
+                success: function (result) {
+                    callback && callback.call(result);
+                }
+            })
+        }
+
+        function doValidation() {
             return true;
         }
-        $(function () {
-            loadBtnAuth();
-        });
 
-        function loadBtnAuth() {
-            var status = $("#STATUS").val();
-            switch (status) {
-                case "0":
-                    $("#btnSubmit,#btnSave").show();
-                    $("#btnAudit").hide();
-                    break;
-                case "1":
-                    $("#btnAudit").show();
-                    $("#btnSubmit,#btnSave").hide();
-                    break;
-                case "8":
-                    $("#btnAudit").hide();
-                    $("#btnSubmit,#btnSave").hide();
-                    break;
-                default:
-                    $("#btnAudit").hide();
-                    break;
-            }
-        }
-
-
-        function auditApply() {
-            var instanceID = document.getElementById("INSTANCEID").value,
-                bussinessID = document.getElementById("IDENTIFICATION").value,
-                bllServiceClass = document.getElementById("BLLSERVICE").value;
-            parent.createWin('@Url.Action("WorkflowCheck", "UserControl")' + "?instanceID=" + instanceID + "&bussinessID=" + bussinessID + "&bllService=" + bllServiceClass,'审批窗口', 600, 300);
-        }
-
-
-
-        function doRefresh() {
-            var url = window.location.href;
-            if (url.indexOf("?") > -1) {
-                url = url.substring(0, url.lastIndexOf("?"));
-            }
-            window.location.href = url + '?t=' + new Date().getTime();
+        function getWorkflowId() {
+            return $("#STRUCTUREID").val();
         }
     </script>
 </head>
 <body>
     <div class="layui-container">
-        <form id="formFileApply">
-            @Html.HiddenFor(m => m.IDENTIFICATION)
-            @Html.HiddenFor(m => m.INSTANCEID)
-            @Html.HiddenFor(m => m.STATUS)
-            @Html.HiddenFor(m => m.BLLSERVICE)
-            <table class="layui-table">
-                <tr>
-                    <td style="width:100px;text-align:right;">文件名称</td>
-                    <td>@Html.TextBoxFor(m => m.FNAME, new { @class = "layui-input" })</td>
-                    <td style="width:100px;text-align:right;">申请密级</td>
-                    <td>@Html.DropDownListFor(m => m.SECRETGRADE, (ViewData["SECRET"] as IEnumerable<SelectListItem>), new { @class = "layui-select" })</td>
-                </tr>
-                <tr>
-                    <td style="width:100px;text-align:right;">审批流程</td>
-                    <td colspan="3">
-                        @Html.DropDownListFor(m => m.STRUCTUREID, (ViewData["WFiles"] as IEnumerable<SelectListItem>), new { @class = "layui-select" })
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width:100px;text-align:right;">备注</td>
-                    <td colspan="3">
-                        @Html.TextAreaFor(m => m.DESCRIPTION, new { @class = "layui-textarea" })
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4" style="text-align:center;">
-                        <input type="button" id="btnAudit" class="layui-btn" @(ViewBag.JumpAuth == true ? "" : "disabled") value="@ViewBag.ButtonName" onclick="auditApply()" />
-                        <input type="submit" id="btnSubmit" value="提交" class="layui-btn " onclick="return save('@Url.Action("Submit", "FileApply")')" />
-                        <input type="button" id="btnBack" value="返回" class="layui-btn layui-btn-warm" onclick="window.location.href = '@Url.Action("FileApplyList", "FileApply")'" />
-                    </td>
-                </tr>
-                <tr style="display:@(ViewBag.UserList != null ? "table-row" : "none")">
-                    <td colspan="4">
-                        本节点待审批账户：
-                        @{
-                            if (ViewBag.UserList != null)
-                            {
-                                foreach (User userInfo in ViewBag.UserList)
-                                {
-                                    <span style="color:red;">
-                                        @(string.Format("{0}({1})", userInfo.USERNAME, userInfo.EMPLOYEENAME))
-                                    </span>
-                                }
-                            }
-                        }
-                    </td>
-
-                </tr>
-            </table>
-        </form>
-        @{
-            if (Model != null && !String.IsNullOrEmpty(Model.INSTANCEID))
-            {
-                Html.RenderAction("Record", "UserControl", new { instanceID = Model.INSTANCEID });
-            }
-        }
+        <table class="layui-table">
+            <tr>
+                <td style="width:100px;text-align:right;">文件名称</td>
+                <td>@Html.TextBoxFor(m => m.FNAME, new { @class = "layui-input" })</td>
+                <td style="width:100px;text-align:right;">申请密级</td>
+                <td>@Html.DropDownListFor(m => m.SECRETGRADE, (ViewData["SECRET"] as IEnumerable<SelectListItem>), new { @class = "layui-select" })</td>
+            </tr>
+            <tr>
+                <td style="width:100px;text-align:right;">审批流程</td>
+                <td colspan="3">
+                    @Html.DropDownListFor(m => m.STRUCTUREID, (ViewData["WFiles"] as IEnumerable<SelectListItem>), new { @class = "layui-select" })
+                </td>
+            </tr>
+            <tr>
+                <td style="width:100px;text-align:right;">备注</td>
+                <td colspan="3">
+                    @Html.TextAreaFor(m => m.DESCRIPTION, new { @class = "layui-textarea" })
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>

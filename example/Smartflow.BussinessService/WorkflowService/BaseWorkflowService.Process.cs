@@ -32,21 +32,6 @@ namespace Smartflow.BussinessService.WorkflowService
             return new UserService().GetUserList(string.Join(",", gList));
         }
 
-        public void OnCompleted(ExecutingContext executeContext)
-        {
-            //以下代码仅用于演示
-            //流程结束（在完成事件中可以做业务操作）
-            string bllServiceClass=executeContext.Data.bllService;
-            object service = Activator.CreateInstance(Type.GetType(bllServiceClass));
-            MethodInfo[] methods = service.GetType().GetMethods();
-            MethodInfo methodGet=methods.FirstOrDefault(m => m.Name == "Get");
-            IMdl mdl = methodGet.Invoke(service, new object[] { Convert.ToInt64(executeContext.Data.bussinessID) }) as IMdl;
-            mdl.STATUS = 8;
-            MethodInfo methodUpdate = methods.FirstOrDefault(m => m.Name == "Update");
-            methodUpdate.Invoke(service, new object[] { mdl });
-            pendingService.Delete(p => p.INSTANCEID == executeContext.Instance.InstanceID);
-        }
-
         public void OnProcess(ExecutingContext executeContext)
         {
             if (executeContext.Instance.Current.NodeType == Enums.WorkflowNodeCategory.Decision)
@@ -65,26 +50,19 @@ namespace Smartflow.BussinessService.WorkflowService
                 }
                 else
                 {
-                    if (executeContext.Operation == Enums.WorkflowAction.Rollback)
+
+                    //流程跳转|流程撤销(重新指派人审批) 仅限演示
+                    List<Group> items = (executeContext.Operation == Enums.WorkflowAction.Jump) ? current.Groups :
+                        executeContext.Instance.Current.GetFromNode().Groups;
+                    List<User> userList = GetUsersByGroup(items);
+                    foreach (User user in userList)
                     {
-                        //流程回退(谁审就退给谁) 仅限演示
-                        var item = executeContext.Instance.Current.GetFromNode().GetActors().FirstOrDefault();
-                        WritePending(item.ID, executeContext);
-                    }
-                    else
-                    {
-                        //流程跳转|流程撤销(重新指派人审批) 仅限演示
-                        List<Group> items = (executeContext.Operation == Enums.WorkflowAction.Jump) ? current.Groups :
-                            executeContext.Instance.Current.GetFromNode().Groups;
-                        List<User> userList = GetUsersByGroup(items);
-                        foreach (User user in userList)
-                        {
-                            WritePending(user.IDENTIFICATION.ToString(), executeContext);
-                        }
+                        WritePending(user.IDENTIFICATION.ToString(), executeContext);
                     }
 
+
                     string NID = executeContext.Instance.Current.NID;
-                    pendingService.Delete(pending =>pending.NODEID == NID &&pending.INSTANCEID == instanceID);
+                    pendingService.Delete(pending => pending.NODEID == NID && pending.INSTANCEID == instanceID);
                 }
             }
         }
@@ -144,7 +122,7 @@ namespace Smartflow.BussinessService.WorkflowService
                 ACTION = executeContext.Operation.ToString(),
                 INSTANCEID = executeContext.Instance.InstanceID,
                 NODEID = GetCurrentNode(executeContext.Instance.InstanceID).NID,
-                APPELLATION = string.Format("<a href=\"javascript:;\" onclick=\"parent.window.document.getElementById('ifrmContent').src='../FileApply/FileApply/{0}'\">你有待办任务。</a>", executeContext.Data.bussinessID)
+                APPELLATION = executeContext.Data.Url
             });
         }
     }

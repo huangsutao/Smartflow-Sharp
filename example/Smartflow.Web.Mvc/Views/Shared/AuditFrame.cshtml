@@ -1,0 +1,119 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>公共审核框架页面</title>
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/Content/audit.css" rel="stylesheet" />
+    <script src="~/Content/jquery.min.js"></script>
+    <script src="~/Content/layui/layui.all.js"></script>
+    <script src="~/Content/common.js"></script>
+    <script src="~/Content/audit.js"></script>
+    <script type="text/javascript">
+
+        $(function () {
+
+            var auditTempate = $("#common_audit_operate").html(),
+                recordTemplate = $("#common_audit_record").html(),
+                dropTemplate = $("#common_audit_select").html();
+
+            var iframeContent = document.getElementById("iframeContent").contentWindow;
+
+            $.Audit({
+                instanceID: '@ViewBag.instanceID',
+                url: '@Url.Action("Start", "Audit")',
+                template: auditTempate,
+                iframeContent: iframeContent,
+                auditUser: '@Url.Action("GetAuditUser", "Audit")',
+                auditID:'#common_current_audit_user',
+                record: {
+                    url: '@Url.Action("GetRecords", "Audit")',
+                    template: recordTemplate,
+                    id:'#audit'
+                },
+                jump: {
+                    url:'@Url.Action("Jump", "Audit")',
+                    pageUrl: '@ViewBag.url'
+                },
+                select: {
+                    template: dropTemplate,
+                    url: '@Url.Action("GetTransitions", "Audit")',
+                    id:'#ddlOperate'
+                },
+                node: {
+                    name: '开始',
+                    url: '@Url.Action("GetCurrent", "Audit")',
+                    id: '#btnAudit',
+                    container: '.button-container',
+                    NID: '0'
+                }
+            });
+        });
+
+    </script>
+</head>
+<body>
+    <div class="smartflow_tab" id="tabs">
+        <ul class="smartflow_tab_header_items clearfix" id="tabs">
+            <li class="smartflow_tab_header_item fl" relationship="info">基本信息</li>
+            <li class="smartflow_tab_header_item fl" relationship="audit">审批信息</li>
+        </ul>
+        <div class="smartflow_tab_content" relationship="info">
+            <iframe id="iframeContent" frameborder="0" style="width:100%;height:100%;" src="@ViewBag.renderUrl"></iframe>
+        </div>
+        <div class="smartflow_tab_content hide" relationship="audit">
+            <div class="layui-container">
+                <table class="layui-table" id="audit"></table>
+            </div>
+        </div>
+    </div>
+
+    <div id="common_current_audit_user"  style="position: absolute;bottom: 60px;left: 20px;">
+    </div>
+
+    <div class="button-container clearfix">
+        <div class="button-group fr">
+            <input type="button" id="btnAudit" value="开始" class="layui-btn layui-btn-sm" />
+        </div>
+    </div>
+    
+    <script type="text/html" id="common_audit_record">
+        <tr>
+            <td class="flow-node">{{NODENAME}}</td>
+            <td class="flow-message">{{MESSAGE}}</td>
+        </tr>
+    </script>
+    <script type="text/html" id="common_audit_operate">
+        <div class="smartflow-table" style="padding:0 10px;">
+            <table class="layui-table">
+                <tr>
+                    <td class="table-cm">下一步操作</td>
+                    <td>
+                        <select id="ddlOperate" class="layui-select"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-cm">审批意见</td>
+                    <td>
+                        <textarea class="layui-textarea" id="txtMessage"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="button-container ">
+            <div class="button-group ac ">
+                <input type="button"
+                       id="btnOk"
+                       value="确定"
+                       class="layui-btn layui-btn-sm" />
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="common_audit_select">
+        <option to="{{Destination}}" value="{{NID}}" action="jump">{{Name}}</option>
+    </script>
+</body>
+</html>

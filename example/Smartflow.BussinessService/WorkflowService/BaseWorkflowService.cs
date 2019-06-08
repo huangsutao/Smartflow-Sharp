@@ -24,7 +24,6 @@ namespace Smartflow.BussinessService.WorkflowService
         private BaseWorkflowService()
         {
             WorkflowEngine.OnProcess += new DelegatingProcessHandle(OnProcess);
-            WorkflowEngine.OnCompleted += new DelegatingCompletedHandle(OnCompleted);
         }
 
         public static BaseWorkflowService Instance

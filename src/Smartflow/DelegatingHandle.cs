@@ -13,10 +13,4 @@ namespace Smartflow
     /// </summary>
     /// <param name="executeContext"></param>
     public delegate void DelegatingProcessHandle(ExecutingContext executeContext);
-
-    /// <summary>
-    /// 订阅审批完成事件
-    /// </summary>
-    /// <param name="executeContext"></param>
-    public delegate void DelegatingCompletedHandle(ExecutingContext executeContext);
 }

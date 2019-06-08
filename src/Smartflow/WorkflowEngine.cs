@@ -22,8 +22,6 @@ namespace Smartflow
 
         public static event DelegatingProcessHandle OnProcess;
 
-        public static event DelegatingCompletedHandle OnCompleted;
-
         /// <summary>
         /// 触发流程跳转事件
         /// </summary>
@@ -32,10 +30,6 @@ namespace Smartflow
         {
             Processing(executeContext);
             OnProcess(executeContext);
-            if (OnCompleted != null && executeContext.To.NodeType == WorkflowNodeCategory.End)
-            {
-                OnCompleted(executeContext);
-            }
         }
 
         /// <summary>

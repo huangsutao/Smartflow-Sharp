@@ -16,10 +16,10 @@ namespace Smartflow.Web.Controllers
     {
         private WorkflowDesignService workflowStructureService = new WorkflowDesignService();
         private PendingService pendingService = new PendingService();
+        
 
         public ActionResult Main()
         {
-            ViewBag.EmployeeName = UserInfo.EMPLOYEENAME;
             return View();
         }
 
@@ -34,10 +34,10 @@ namespace Smartflow.Web.Controllers
             return Json(true);
         }
 
-
-        public ActionResult Pending()
+        [HttpPost]
+        public JsonResult GetPendingList()
         {
-            return View(pendingService.Query(mdl => mdl.ACTORID == UserInfo.IDENTIFICATION.ToString()));
+            return Json(pendingService.Query(mdl => mdl.ACTORID == UserInfo.IDENTIFICATION.ToString()));
         }
 
         public JsonResult GetPendingCount()
