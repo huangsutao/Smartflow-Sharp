@@ -27,7 +27,7 @@ textarea {
     resize: none;
 }
 
-html, body, .container, .container-ctr {
+html, body, .container, .container-ctr, .container-process {
     height: 100%;
     overflow: hidden;
 }
@@ -38,9 +38,12 @@ html, body, .container, .container-ctr {
     background: url(./images/grid_15.png) repeat;
 }
 
-.container-draw {
+.container-process {
+    box-sizing: border-box;
     background: url(./images/grid_15.png) repeat;
 }
+
+
 
 .tools {
     width: 30px;
