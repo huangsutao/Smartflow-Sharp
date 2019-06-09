@@ -356,7 +356,7 @@
 
         build.append(config.rootEnd);
 
-        return  escape(build.toString());
+        return encodeURI(build.toString());
     }
 
     /**

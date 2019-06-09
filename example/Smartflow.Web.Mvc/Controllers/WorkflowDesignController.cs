@@ -41,7 +41,7 @@ namespace Smartflow.Web.Mvc.Controllers
 
         public JsonResult Save(WorkflowStructure model)
         {
-            model.STRUCTUREXML = System.Web.HttpContext.Current.Server.UrlDecode(model.STRUCTUREXML);
+            model.STRUCTUREXML =Uri.UnescapeDataString(model.STRUCTUREXML);
             if (String.IsNullOrEmpty(model.IDENTIFICATION))
             {
                 model.IDENTIFICATION = Guid.NewGuid().ToString();
