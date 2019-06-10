@@ -23,7 +23,9 @@
                 audit: '@Url.Action("AuditFrame", "Audit")',
                 selector: '#pendingTable tbody',
                 id: '#pendingTable',
-                iframeContent: '#ifrmContent'
+                iframeContent: '#ifrmContent',
+                off: '@Url.Action("Off","Default")',
+                login: '@Url.Action("Login", "Default")'
             });
         });
     </script>
@@ -31,6 +33,21 @@
 <body class="smartflow_main">
     <div class="smartflow_head">
         <span class="smartflow_title">Smartflow-Sharp 工作流管理平台</span>
+        <div class="smartflow_menu fr">
+            <ul class="smartflow_menu_items clearfix">
+                <li class="smartflow_menu_item fr">
+                    <div class="smartflow_more">
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                    </div>
+                    <ul class="smartflow_drop hide" id="smartflow_drop_items">
+                        <li class="smartflow_drop_item" command="message">消息</li>
+                        <li class="smartflow_drop_item" command="exit">退出</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
     <div class="smartflow_content">
         <div class="smartflow_left clearfix" id="menu">

@@ -48,6 +48,14 @@ namespace Smartflow.Web.Controllers
             return Json(pendingList.Count);
         }
 
+
+        [UnAuthorizationMethodFilter]
+        public JsonResult Off()
+        {
+            return Json(true);
+        }
+
+
         [UnAuthorizationMethodFilter]
         public ActionResult Login()
         {

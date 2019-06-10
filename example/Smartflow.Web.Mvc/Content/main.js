@@ -1,4 +1,4 @@
-﻿;(function () {
+﻿; (function () {
 
     function Main(option) {
 
@@ -9,14 +9,14 @@
         this.show();
     }
 
-    Main.prototype.show= function () {
+    Main.prototype.show = function () {
 
         var $this = this,
             settings = $this.settings;
 
         //iframe窗
         util.create({
-            id:'common_pending_list',
+            id: 'common_pending',
             type: 1,
             title: "待办事项",
             width: 400,
@@ -26,7 +26,7 @@
             content: settings.tableTemplate,
             shade: false,
             success: function () {
-                $.each(['_render','_on'], function (i, propertyName) {
+                $.each(['_render', '_on'], function (i, propertyName) {
                     $this[propertyName]();
                 });
             }
@@ -104,6 +104,21 @@
                 text = $(this).text();
 
             $($this.settings.iframeContent).attr("src", url);
+        });
+
+        //下拉框
+        $("#smartflow_drop_items li").click(function () {
+            var command = $(this).attr("command");
+            switch (command) {
+                case "exit":
+                    window.top.location.href = $this.settings.login;
+                    break;
+                case "message":
+                    $this.show();
+                    break;
+                default:
+                    break;
+            }
         });
     }
 
