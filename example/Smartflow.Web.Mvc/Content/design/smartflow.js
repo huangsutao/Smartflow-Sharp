@@ -198,8 +198,8 @@
         }
     }
     Draw.prototype._end = function (node,check) {
-        var self = this;
-        nodeName = node.nodeName,
+        var self = this,
+            nodeName = node.nodeName,
             nodeId = node.id;
         var toRect = SVG.get(nodeId),
             fromRect = SVG.get(self.source.id),
