@@ -243,7 +243,7 @@
                 checkResult = (node);
 
             if (checkResult) {
-                nodeName = node.nodeName,
+                var nodeName = node.nodeName,
                     nodeId = node.id;
                 checkResult = ((nodeName == 'rect' || nodeName == 'use') && self.source);
 
