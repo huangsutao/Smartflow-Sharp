@@ -116,6 +116,24 @@
         return instance.attr('y1') < instance.attr('y2') ? 'down' : 'up';
     }
 
+    Draw.create = function (category) {
+        var strategy = {
+            node: function () {
+                return new Node();
+            },
+            start: function () {
+                return new Start();
+            },
+            end: function () {
+                return new End();
+            },
+            decision: function () {
+                return new Decision();
+            }
+        };
+        return strategy[category]();
+    }
+
     Draw.prototype._init = function () {
         var self = this,
             dw = self.draw;
@@ -197,7 +215,7 @@
             this._shared.move();
         }
     }
-    Draw.prototype._end = function (node,check) {
+    Draw.prototype._end = function (node, check) {
         var self = this,
             nodeName = node.nodeName,
             nodeId = node.id;
@@ -270,7 +288,6 @@
             self.source = undefined;
         });
     }
-
     Draw.prototype.select = function () {
         //选择元素
         this._initEvent();
@@ -291,30 +308,14 @@
         });
     }
     Draw.prototype.create = function (category, after) {
-        var convertType;
-        switch (category) {
-            case "node":
-                convertType = new Node();
-                break;
-            case "start":
-                convertType = new Start();
-                break;
-            case "end":
-                convertType = new End();
-                break;
-            case "decision":
-                convertType = new Decision();
-                break;
-            default:
-                break;
-        }
-        convertType.drawInstance = this;
-        convertType.x = Math.floor(Math.random() * 200 + 1);
-        convertType.y = Math.floor(Math.random() * 200 + 1);
+        var instance = Draw.create(category);
+        instance.drawInstance = this;
+        instance.x = Math.floor(Math.random() * 200 + 1);
+        instance.y = Math.floor(Math.random() * 200 + 1);
         if (!after) {
-            convertType.draw();
+            instance.draw();
         }
-        return convertType;
+        return instance;
     }
 
     /**
@@ -909,7 +910,7 @@
     }
 
     Circle.extend(Shape, {
-    
+
         draw: function () {
             return Circle.base.Parent.prototype.draw.call(this);
         },
