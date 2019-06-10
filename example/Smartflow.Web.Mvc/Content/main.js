@@ -16,6 +16,7 @@
 
         //iframe窗
         util.create({
+            id:'common_pending_list',
             type: 1,
             title: "待办事项",
             width: 400,
