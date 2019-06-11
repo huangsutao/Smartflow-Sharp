@@ -134,6 +134,7 @@
         return strategy[category]();
     }
 
+
     Draw.prototype._init = function () {
         var self = this,
             dw = self.draw;
@@ -224,7 +225,7 @@
             nt = Draw._proto_NC[nodeId],
             nf = Draw._proto_NC[self.source.id],
             instance = self._shared,
-            l = SVG.get(instance.id),
+            l = SVG.get(instance.$id),
             r = SVG.get(self.source.id);
 
         this.source.to = nodeId;
@@ -232,7 +233,7 @@
 
         if (check) {
             Draw._proto_RC.push({
-                id: instance.id,
+                id: instance.$id,
                 from: this.source.id,
                 to: nodeId,
                 ox2: l.attr("x2") - toRect.x(),
@@ -288,6 +289,7 @@
             self.source = undefined;
         });
     }
+
     Draw.prototype.select = function () {
         //选择元素
         this._initEvent();
@@ -307,6 +309,7 @@
             }
         });
     }
+
     Draw.prototype.create = function (category, after) {
         var instance = Draw.create(category);
         instance.drawInstance = this;
@@ -346,7 +349,7 @@
         }
 
         for (var propertyName in Draw._proto_NC) {
-            Draw._proto_NC[propertyName].unique = generatorId();
+            Draw._proto_NC[propertyName].id = generatorId();
         }
 
         build.append(config.rootStart);
@@ -363,16 +366,17 @@
     /**
      * 数据导入
      * */
-    Draw.prototype.import = function (data, disable, currentNodeId, process) {
-        var dwInstance = this;
+    Draw.prototype.import = function (structure, disable, executeNodeID, process) {
+        var dwInstance = this,
+            data = Draw.parse(structure).workflow;
 
         var record = process || [],
             findUID = function (destination) {
                 var id;
                 for (var i = 0, len = data.length; i < len; i++) {
                     var node = data[i];
-                    if (destination == node.unique) {
-                        id = node.id;
+                    if (destination == node.id) {
+                        id = node.$id;
                         break;
                     }
                 }
@@ -380,17 +384,20 @@
             };
         $.each(data, function () {
             var node = this;
-            node.category = (node.category.toLowerCase() == 'normal' ? 'node' : node.category.toLowerCase());
+            node.category = node.category.toLowerCase();
+
             var instance = dwInstance.create(node.category, true);
             $.extend(instance, node, util.parseNode(node.layout));
             instance.disable = (disable || false);
-            instance.draw(currentNodeId);
-            node.id = instance.id;
+            instance.draw(executeNodeID);
+            node.$id = instance.$id;
         });
 
         $.each(data, function () {
             var self = this;
-            $.each(self.transitions, function () {
+
+            self.transition = (self.transition || []);
+            $.each(self.transition, function () {
                 var transition = new Line();
                 transition.drawInstance = dwInstance;
 
@@ -400,12 +407,12 @@
 
                 var destinationId = findUID(transition.destination),
                     destination = SVG.get(destinationId),
-                    from = SVG.get(self.id),
-                    line = SVG.get(transition.id);
+                    from = SVG.get(self.$id),
+                    line = SVG.get(transition.$id);
 
                 Draw._proto_RC.push({
-                    id: transition.id,
-                    from: self.id,
+                    id: transition.$id,
+                    from: self.$id,
                     to: destinationId,
                     ox2: line.attr("x2") - destination.x(),
                     oy2: line.attr("y2") - destination.y(),
@@ -418,14 +425,18 @@
 
     function Element(name, category) {
         //节点ID
+        this.$id = undefined;
+
+        //标识ID
         this.id = undefined;
+
         //文本画笔
         this.brush = undefined;
         //节点中文名称
         this.name = name;
         //节点类别（LINE、NODE、START、END,DECISION）
         this.category = category;
-        this.unique = undefined;
+        //this.unique = undefined;
         //禁用事件
         this.disable = false;
         //背景颜色
@@ -438,7 +449,7 @@
         constructor: Element,
         draw: function () {
             if (!this.disable) {
-                this.bindEvent.apply(SVG.get(this.id), [this]);
+                this.bindEvent.apply(SVG.get(this.$id), [this]);
             }
         },
         bindEvent: function (el) {
@@ -492,7 +503,7 @@
             Line.move.call(this, this);
         },
         getTransitions: function () {
-            var elements = Draw.findById(this.id, config.from),
+            var elements = Draw.findById(this.$id, config.from),
                 lineCollection = [];
             $.each(elements, function () {
                 lineCollection.push(Draw._proto_LC[this.id]);
@@ -512,7 +523,7 @@
             .append("id")
             .append(config.equal)
             .append(config.lQuotation)
-            .append(self['unique'])
+            .append(self[config.id])
             .append(config.rQuotation)
             .append(config.space)
             .append(config.name)
@@ -521,10 +532,18 @@
             .append(self[config.name])
             .append(config.rQuotation)
             .append(config.space)
+
+
             .append('layout')
             .append(config.equal)
             .append(config.lQuotation)
             .append(self.x + ' ' + self.disX + ' ' + self.y + ' ' + self.disY)
+            .append(config.rQuotation)
+            .append(config.space)
+            .append('category')
+            .append(config.equal)
+            .append(config.lQuotation)
+            .append(self.category)
             .append(config.rQuotation)
             .append(config.end);
 
@@ -558,9 +577,9 @@
             self.exportDecision(build);
         }
 
-        var elements = Draw.findById(self.id, config.from);
+        var elements = Draw.findById(self.$id, config.from);
         $.each(elements, function () {
-            if (this.from === self.id) {
+            if (this.from === self.$id) {
                 var
                     L = Draw._proto_LC[this.id],
                     N = Draw._proto_NC[this.to];
@@ -577,7 +596,7 @@
                     .append(config.to)
                     .append(config.equal)
                     .append(config.lQuotation)
-                    .append(N.unique)
+                    .append(N.id)
                     .append(config.rQuotation)
                     .append(config.space)
                     .append('layout')
@@ -656,8 +675,8 @@
                 x: (self.x2 - self.x1) / 2 + self.x1,
                 y: (self.y2 - self.y1) / 2 + self.y1
             });
-            self.id = l.id();
-            Draw._proto_LC[self.id] = this;
+            self.$id = l.id();
+            Draw._proto_LC[self.$id] = this;
             return Line.base.Parent.prototype.draw.call(self);
         },
         bindEvent: function (l) {
@@ -665,7 +684,7 @@
                 evt.preventDefault();
                 var instance = Draw._proto_LC[this.id()];
                 if (evt.ctrlKey && evt.altKey) {
-                    Draw.removeById(instance.id);
+                    Draw.removeById(instance.$id);
 
                     this.off('dblclick');
                     instance.remove();
@@ -683,7 +702,7 @@
 
             var self = this,
                 dw = self.drawInstance,
-                instance = SVG.get(self.id),
+                instance = SVG.get(self.$id),
                 orientation = Draw.checkOrientation(instance),
                 position;
 
@@ -739,25 +758,25 @@
         },
         remove: function () {
             var self = this,
-                line = SVG.get(self.id),
-                instance = Draw._proto_LC[self.id],
+                line = SVG.get(self.$id),
+                instance = Draw._proto_LC[self.$id],
                 marker = line.attr('marker-end'),
                 arrow = /#[a-zA-Z0-9]+/.exec(marker)[0];
 
-            $.each([arrow, self.id, instance.brush.id()], function (index, propertyName) {
+            $.each([arrow, self.$id, instance.brush.id()], function (index, propertyName) {
                 if (propertyName) {
                     SVG.get(propertyName).remove();
                 }
             });
 
-            delete Draw._proto_LC[self.id];
+            delete Draw._proto_LC[self.$id];
         }
     });
 
     Line.move = function (current) {
 
-        var toElements = Draw.findById(current.id, "to"),
-            fromElements = Draw.findById(current.id, "from");
+        var toElements = Draw.findById(current.$id, "to"),
+            fromElements = Draw.findById(current.$id, "from");
         $.each(toElements, function () {
             var lineElement = SVG.get(this.id),
                 instance = Draw._proto_LC[this.id];
@@ -796,13 +815,13 @@
         if (util.ie) {
             var draw = document.getElementById(current.drawInstance.drawOption.container),
                 svg = draw.firstElementChild,
-                el = document.getElementById(current.id);
+                el = document.getElementById(current.$id);
             svg.removeChild(el);
             var cloneNode = el.cloneNode();
             svg.appendChild(cloneNode);
 
-            var instance = Draw._proto_LC[current.id];
-            instance.bindEvent.call(SVG.get(current.id), this);
+            var instance = Draw._proto_LC[current.$id];
+            instance.bindEvent.call(SVG.get(current.$id), this);
         }
     }
 
@@ -836,8 +855,8 @@
                 n.brush.attr({ x: n.x + rect.width() / 2, y: n.y + rect.height() / 2 + n.vertical() });
             }
 
-            n.id = rect.id();
-            Draw._proto_NC[n.id] = n;
+            n.$id = rect.id();
+            Draw._proto_NC[n.$id] = n;
             return Node.base.Parent.prototype.draw.call(this);
         },
         move: function (element, d) {
@@ -855,35 +874,35 @@
             Node.base.Parent.prototype.move.call(this);
         },
         validate: function () {
-            return (Draw.findById(this.id, 'to').length > 0
-                && Draw.findById(this.id, 'from').length > 0);
+            return (Draw.findById(this.$id, 'to').length > 0
+                && Draw.findById(this.$id, 'from').length > 0);
         },
         vertical: function () {
             return util.ie ? 6 : 0;
         },
         down: function () {
-            var n = SVG.get(this.id);
+            var n = SVG.get(this.$id);
             return {
                 y: n.height() + n.y(),
                 x: n.width() / 2 + n.x()
             };
         },
         endDown: function () {
-            var n = SVG.get(this.id);
+            var n = SVG.get(this.$id);
             return {
                 y: n.y(),
                 x: n.width() / 2 + n.x()
             };
         },
         endUp: function () {
-            var n = SVG.get(this.id);
+            var n = SVG.get(this.$id);
             return {
                 y: n.y() + n.height(),
                 x: n.width() / 2 + n.x() + 20
             };
         },
         up: function () {
-            var n = SVG.get(this.id);
+            var n = SVG.get(this.$id);
             return {
                 y: n.y(),
                 x: n.width() / 2 + n.x() + 20
@@ -928,8 +947,8 @@
             Circle.base.Parent.prototype.move.call(self);
         },
         validate: function () {
-            return (Draw.findById(this.id, 'to').length > 0
-                && Draw.findById(this.id, 'from').length > 0);
+            return (Draw.findById(this.$id, 'to').length > 0
+                && Draw.findById(this.$id, 'from').length > 0);
         }
     });
 
@@ -952,8 +971,8 @@
             var el = dw.use(this.drawInstance._decision)
                 .move(this.x, this.y);
 
-            this.id = el.id();
-            Draw._proto_NC[this.id] = this;
+            this.$id = el.id();
+            Draw._proto_NC[this.$id] = this;
             Decision.base.Parent.prototype.draw.call(this);
         },
         setExpression: function (expressions) {
@@ -969,32 +988,32 @@
             Decision.base.Parent.prototype.move.call(this);
         },
         validate: function () {
-            return (Draw.findById(this.id, 'from').length > 1
-                && Draw.findById(this.id, 'to').length > 0);
+            return (Draw.findById(this.$id, 'from').length > 1
+                && Draw.findById(this.$id, 'to').length > 0);
         },
         down: function () {
-            var n = SVG.get(this.id);
+            var n = SVG.get(this.$id);
             return {
                 x: 10 + n.x(),
                 y: n.y() + 90
             };
         },
         up: function () {
-            var n = SVG.get(this.id);
+            var n = SVG.get(this.$id);
             return {
                 x: 10 + n.x(),
                 y: n.y()
             };
         },
         endDown: function () {
-            var n = SVG.get(this.id);
+            var n = SVG.get(this.$id);
             return {
                 y: n.y(),
                 x: 10 + n.x()
             };
         },
         endUp: function () {
-            var n = SVG.get(this.id);
+            var n = SVG.get(this.$id);
             return {
                 y: n.y() + 90,
                 x: 10 + n.x()
@@ -1052,8 +1071,8 @@
                 .move(this.x, this.y);
 
 
-            this.id = start.id();
-            Draw._proto_NC[this.id] = this;
+            this.$id = start.id();
+            Draw._proto_NC[this.$id] = this;
             Start.base.Parent.prototype.draw.call(this);
         },
         bindEvent: function (n) {
@@ -1061,11 +1080,11 @@
             this.off('dblclick');
         },
         validate: function () {
-            return (Draw.findById(this.id, 'from').length > 0
-                && Draw.findById(this.id, 'to').length == 0);
+            return (Draw.findById(this.$id, 'from').length > 0
+                && Draw.findById(this.$id, 'to').length == 0);
         },
         down: function () {
-            var n = SVG.get(this.id);
+            var n = SVG.get(this.$id);
             return {
                 x: n.x() + 30,
                 y: n.y() + 30
@@ -1095,8 +1114,8 @@
             dw.defs().add(group);
             var end = dw.use(group).move(this.x, this.y);
 
-            this.id = end.id();
-            Draw._proto_NC[this.id] = this;
+            this.$id = end.id();
+            Draw._proto_NC[this.$id] = this;
             End.base.Parent.prototype.draw.call(this);
         },
         bindEvent: function (n) {
@@ -1104,17 +1123,140 @@
             this.off('dblclick');
         },
         validate: function () {
-            return (Draw.findById(this.id, 'from').length == 0
-                && Draw.findById(this.id, 'to').length > 0);
+            return (Draw.findById(this.$id, 'from').length == 0
+                && Draw.findById(this.$id, 'to').length > 0);
         },
         endDown: function () {
-            var n = SVG.get(this.id);
+            var n = SVG.get(this.$id);
             return {
                 x: n.x() + 30,
                 y: n.y() - 30
             };
         }
     });
+
+    function XML(xml) {
+        this.xml = xml;
+        this.support = (window.ActiveXObject);
+        this.docXml = undefined;
+        this.root = {};
+        this.init();
+    }
+
+    XML.config = {
+        group: [],
+        transition: []
+    }
+
+    XML.contains = function (name) {
+        var result = false;
+        $.each(['command'], function (i, value) {
+            if (value == name) {
+                result = true;
+            }
+        });
+        return result;
+    }
+    XML.getAttributes = function (attrs) {
+        if (!attrs) return {};
+        var O = {};
+        var len = attrs.length;
+        for (var i = 0; i < len; i++) {
+            var attr = attrs[i];
+            O[attr.name] = attr.value;
+        }
+        return O;
+    }
+    XML.convert = function (nodes) {
+
+        var O = {};
+        $.each(nodes, function () {
+            O[this.nodeName] = XML.getValue(this);
+        });
+        return O;
+    }
+    XML.getValue = function (node) {
+        return (node.textContent || node.text || node.value);
+    }
+    XML.single = function (process, node, contains) {
+        var attr = XML.getAttributes(node.attributes),
+            name = node.nodeName;
+
+        if (XML.config[name]) {
+            process[name] = [$.extend(attr, (contains) ? XML.convert(node.childNodes) : { name: XML.getValue(node) })];
+        } else {
+            process[name] =
+                $.extend(attr, (contains) ? XML.convert(node.childNodes) : { name: XML.getValue(node) });
+        }
+    }
+    XML.multiple = function (process, node, contains) {
+
+        var attr = XML.getAttributes(node.attributes),
+            name = node.nodeName,
+            innerArray = [];
+
+        var newObject = contains ?
+            $.extend(attr, XML.convert(node.childNodes)) :
+            $.extend(attr, { name: XML.getValue(node) });
+
+        if ($.isArray(process[name])) {
+            process[name].push(newObject);
+        } else {
+            $.each([newObject, process[name]], function () {
+                innerArray.push(this);
+            });
+            process[name] = innerArray;
+        }
+    }
+
+
+    XML.prototype.init = function () {
+
+        if (this.support) {
+            this.docXml = new ActiveXObject("Microsoft.XMLDOM");
+            this.docXml.async = false;
+            this.docXml.loadXML(this.xml);
+        } else {
+            this.docXml = new DOMParser()
+                .parseFromString(this.xml, "text/xml");
+        }
+        var el = this.docXml.firstChild;
+        this.root[el.nodeName] = el.childNodes.length > 0 ? [] : {};
+        this.parse(this.root[el.nodeName], el.childNodes);
+    }
+
+
+    XML.prototype.parse = function (process, nodes) {
+        var $this = this;
+        $.each(nodes, function () {
+            var node = this,
+                attr = XML.getAttributes(node.attributes),
+                name = node.nodeName;
+
+            if ($.isArray(process)) {
+                var result = XML.getAttributes(node.attributes);
+                process.push(result);
+
+                var elementCount = (node.childElementCount || node.childNodes.length);
+
+                if (elementCount > 0) {
+                    $this.parse(result, node.childNodes);
+                }
+            } else {
+
+                XML[
+                    process[name] ?
+                        "multiple" :
+                        "single"
+                ](process, node, XML.contains(name));
+            }
+        });
+    }
+
+    Draw.parse = function (xml) {
+        return new XML(xml).root;
+    }
+
 
     $.fn.SMF = function (option) {
         var id = $(this).attr("id");

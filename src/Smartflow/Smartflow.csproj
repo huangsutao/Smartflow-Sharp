@@ -50,7 +50,6 @@
     <Compile Include="Elements\Element.cs" />
     <Compile Include="Elements\ElementAttribute.cs" />
     <Compile Include="Elements\End.cs" />
-    <Compile Include="EnumConverter.cs" />
     <Compile Include="Enums\WorkflowAction.cs" />
     <Compile Include="IDbFieldFilter.cs" />
     <Compile Include="IMailService.cs" />

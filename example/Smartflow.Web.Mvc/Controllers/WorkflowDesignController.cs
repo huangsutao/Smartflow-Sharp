@@ -35,13 +35,15 @@ namespace Smartflow.Web.Mvc.Controllers
             return JsonToLowerWrapper(new
             {
                 appellation = workflowStructure.APPELLATION,
-                structure = GetNodeList(workflowStructure.STRUCTUREXML)
+                structure = workflowStructure.STRUCTUREXML
             });
         }
 
+
+        [HttpPost]
         public JsonResult Save(WorkflowStructure model)
         {
-            model.STRUCTUREXML =Uri.UnescapeDataString(model.STRUCTUREXML);
+            model.STRUCTUREXML = Uri.UnescapeDataString(model.STRUCTUREXML);
             if (String.IsNullOrEmpty(model.IDENTIFICATION))
             {
                 model.IDENTIFICATION = Guid.NewGuid().ToString();
@@ -56,22 +58,21 @@ namespace Smartflow.Web.Mvc.Controllers
 
         public ActionResult WorkflowImage(string instanceID)
         {
-            WorkflowInstance instance = WorkflowInstance.GetInstance(instanceID);
-            string data = Newtonsoft.Json.JsonConvert.SerializeObject(new
-            {
-                structure = GetImageList(instance.Resource),
-                id = instance.Current.ID
-            }, new Newtonsoft.Json.JsonSerializerSettings()
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                ContractResolver = new LowerCaseContractResolver()
-            });
-
-            ViewBag.Result = data;
-            DataTable dt = WorkflowNode.GetRecord(instanceID);
-            ViewBag.Record = Newtonsoft.Json.JsonConvert.SerializeObject(dt);
+            ViewBag.instanceID = instanceID;
             return View();
         }
+
+        [HttpPost]
+        public JsonResult GetProcess(string instanceID)
+        {
+            WorkflowInstance instance = WorkflowInstance.GetInstance(instanceID);
+            return Json(new
+            {
+                structure = instance.Resource,
+                id = instance.Current.ID
+            });
+        }
+
 
         public ActionResult WorkflowDesignSettings()
         {
@@ -86,23 +87,6 @@ namespace Smartflow.Web.Mvc.Controllers
         public JsonResult GetConfigs()
         {
             return JsonWrapper(WorkflowConfig.GetSettings());
-        }
-
-        private List<Node> GetNodeList(string resource)
-        {
-            Workflow workflow = XmlConfiguration.ParseflowXml<Workflow>(resource);
-            List<Node> elements = new List<Node>();
-            elements.Add(workflow.StartNode);
-            elements.AddRange(workflow.ChildNode);
-            elements.AddRange(workflow.ChildDecisionNode);
-            elements.Add(workflow.EndNode);
-            return elements;
-        }
-
-        private List<Node> GetImageList(string resource)
-        {
-            List<Node> elements = this.GetNodeList(resource);
-            return elements;
         }
     }
 }

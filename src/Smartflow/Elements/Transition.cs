@@ -11,14 +11,14 @@ using System.Xml.Serialization;
 
 using Smartflow.Dapper;
 using Smartflow.Enums;
-using Newtonsoft.Json;
+
 
 namespace Smartflow.Elements
 {
     [XmlInclude(typeof(Node))]
     public class Transition : Element, IRelationship
     {
-        [JsonProperty("name")]
+     
         [XmlAttribute("name")]
         public virtual string Name
         {
@@ -26,7 +26,7 @@ namespace Smartflow.Elements
             set;
         }
 
-        [JsonProperty("layout")]
+     
         [XmlAttribute("layout")]
         public virtual string Layout
         {
@@ -34,21 +34,21 @@ namespace Smartflow.Elements
             set;
         }
 
-        [JsonIgnore]
+      
         public string RelationshipID
         {
             get;
             set;
         }
 
-        [JsonIgnore]
+       
         public string Origin
         {
             get;
             set;
         }
 
-        [JsonProperty("destination")]
+       
         [XmlAttribute("destination")]
         public string Destination
         {
@@ -56,7 +56,7 @@ namespace Smartflow.Elements
             set;
         }
 
-        [JsonProperty("expression")]
+       
         [XmlText(typeof(string))]
         public string Expression
         {

@@ -17,28 +17,28 @@
         decision: ['#tab li[category=role]', '#tab li[category=form]'],
         start: ['#tab li[category=rule]', '#tab li[category=role]', '#tab li[category=info]']
     },
-    config = {
-        //开始
-        start: '<',
-        //结束
-        end: '>',
-        //左引号
-        lQuotation: '"',
-        //右引号
-        rQuotation: '"',
-        //闭合
-        beforeClose: '</',
-        //闭合
-        afterClose: '/>',
-        //等于
-        equal: '=',
-        //本身引用
-        //空隙
-        space: ' ',
-    };
+        config = {
+            //开始
+            start: '<',
+            //结束
+            end: '>',
+            //左引号
+            lQuotation: '"',
+            //右引号
+            rQuotation: '"',
+            //闭合
+            beforeClose: '</',
+            //闭合
+            afterClose: '/>',
+            //等于
+            equal: '=',
+            //本身引用
+            //空隙
+            space: ' ',
+        };
 
 
-    var CONST_ROLE_FIELD_MAP= {
+    var CONST_ROLE_FIELD_MAP = {
         ID: 'IDENTIFICATION',
         NAME: 'APPELLATION'
     };
@@ -48,7 +48,7 @@
         CONNECTIONSTRING: 'CONNECTIONSTRING',
         PROVIDERNAME: 'PROVIDERNAME'
     };
- 
+
 
     $.extend(String.prototype, {
         format: function () {
@@ -166,8 +166,14 @@
                 expressions.push({ id: input.attr("id"), expression: input.val() });
             });
 
-            var cmdText = $(cmdTextSelector).val(),
-                sourceID = $(optionSelector).val();
+
+
+            var cmdText = $(cmdTextSelector).val()
+                .replace(/\r\n/g, ' ')
+                .replace(/\n/g, ' ')
+                .replace(/\s/g, ' ');
+
+            var sourceID = $(optionSelector).val();
             if (cmdText != '' && cmdText) {
                 nx.command = {
                     id: sourceID,
@@ -203,7 +209,7 @@
                 var unqiueId = 'lineTo',
                     build = util.builder();
                 $.each(lineCollection, function (i) {
-                    build.append(lineTemplate.format(this.name, this.expression, this.id));
+                    build.append(lineTemplate.format(this.name, this.expression, this.$id));
                 });
                 $("#transitions>tbody").html(build.toString());
             }
@@ -229,31 +235,31 @@
             url: config.configUrl
         };
         settings.success = function (serverData) {
-            var build =util.builder();
+            var build = util.builder();
             $.each(serverData, function () {
                 var data = JSON.stringify(this);
 
                 build.append(config.start)
-                     .append('option')
-                     .append(config.space)
-                     .append('data')
-                     .append(config.equal)
-                     .append(config.lQuotation)
-                     .append(escape(data))
-                     .append(config.rQuotation)
-                     .append(config.space)
-                     .append('value')
-                     .append(config.equal)
-                     .append(config.lQuotation)
-                     .append(this[CONST_CONFIG_FIELD_MAP.ID])
-                     .append(config.rQuotation)
-                     .append(config.end)
+                    .append('option')
+                    .append(config.space)
+                    .append('data')
+                    .append(config.equal)
+                    .append(config.lQuotation)
+                    .append(escape(data))
+                    .append(config.rQuotation)
+                    .append(config.space)
+                    .append('value')
+                    .append(config.equal)
+                    .append(config.lQuotation)
+                    .append(this[CONST_CONFIG_FIELD_MAP.ID])
+                    .append(config.rQuotation)
+                    .append(config.end)
 
-                     .append(this[CONST_CONFIG_FIELD_MAP.NAME])
+                    .append(this[CONST_CONFIG_FIELD_MAP.NAME])
 
-                     .append(config.beforeClose)
-                     .append('option')
-                     .append(config.afterClose);
+                    .append(config.beforeClose)
+                    .append('option')
+                    .append(config.afterClose);
             });
             $(ruleSelector).html(build.toString());
 

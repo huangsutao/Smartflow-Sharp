@@ -10,13 +10,13 @@ using System.Text;
 using Smartflow.Dapper;
 using Smartflow.Enums;
 using System.Xml.Serialization;
-using Newtonsoft.Json;
+
 
 namespace Smartflow.Elements
 {
     public class Group : ElementAttribute, IRelationship
     {
-        [JsonIgnore]
+      
         public string RelationshipID
         {
             get;

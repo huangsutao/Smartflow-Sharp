@@ -11,7 +11,7 @@ using System.Text;
 using System.Xml.Serialization;
 
 using Smartflow.Enums;
-using Newtonsoft.Json;
+
 namespace Smartflow.Elements
 {
     /// <summary>
@@ -23,7 +23,6 @@ namespace Smartflow.Elements
         /// <summary>
         /// 唯一标识
         /// </summary>
-        [JsonIgnore]
         [XmlIgnore]
         public string NID
         {
@@ -32,7 +31,6 @@ namespace Smartflow.Elements
         }
 
 
-        [JsonIgnore]
         [XmlIgnore]
         public virtual string InstanceID
         {

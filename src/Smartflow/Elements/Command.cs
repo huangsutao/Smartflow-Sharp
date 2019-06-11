@@ -12,7 +12,7 @@ using System.Xml.Serialization;
 
 using Smartflow.Dapper;
 using Smartflow.Enums;
-using Newtonsoft.Json;
+
 
 namespace Smartflow.Elements
 {
@@ -22,7 +22,6 @@ namespace Smartflow.Elements
         /// <summary>
         /// 数据源ID
         /// </summary>
-        [JsonProperty("id")]
         [XmlElement("id")]
         public string ID
         {
@@ -33,7 +32,6 @@ namespace Smartflow.Elements
         /// <summary>
         /// 执行SQL语句
         /// </summary>
-        [JsonProperty("text")]
         [XmlElement("text")]
         public string Text
         {
@@ -41,8 +39,6 @@ namespace Smartflow.Elements
             set;
         }
 
-
-        [JsonIgnore]
         [XmlIgnore]
         public string RelationshipID
         {

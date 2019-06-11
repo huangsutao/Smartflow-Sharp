@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +8,7 @@ namespace Smartflow.Elements
 {
     public abstract class ElementAttribute : Element
     {
-        [JsonProperty("name")]
+      
         [XmlAttribute("name")]
         public string Name
         {
@@ -17,7 +16,7 @@ namespace Smartflow.Elements
             set;
         }
 
-        [JsonProperty("id")]
+     
         [XmlAttribute("id")]
         public string ID
         {

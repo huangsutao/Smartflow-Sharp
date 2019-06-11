@@ -12,14 +12,12 @@ using System.Data;
 
 using Smartflow.Dapper;
 using Smartflow.Enums;
-using Newtonsoft.Json;
 
 
 namespace Smartflow.Elements
 {
     public class ASTNode : Element
     {
-        [JsonProperty("name")]
         [XmlAttribute("name")]
         public virtual string Name
         {
@@ -30,7 +28,6 @@ namespace Smartflow.Elements
         /// <summary>
         /// 节点标识ID
         /// </summary>
-        [JsonProperty("unique")]
         [XmlAttribute("id")]
         public  string ID
         {
@@ -38,7 +35,6 @@ namespace Smartflow.Elements
             set;
         }
 
-        [JsonProperty("transitions")]
         [XmlElement(ElementName = "transition")]
         public virtual List<Transition> Transitions
         {
