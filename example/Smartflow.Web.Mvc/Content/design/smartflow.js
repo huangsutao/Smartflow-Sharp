@@ -608,9 +608,11 @@
 
                 if (self.category === 'decision') {
 
-                    build.append("<![CDATA[")
-                        .append(L.expression)
-                        .append("]]>");
+                    build.append('<expression>')
+                         .append("<![CDATA[")
+                         .append(L.expression)
+                         .append("]]>")
+                         .append('</expression>');
                 }
 
                 build.append(config.beforeClose)
@@ -1150,7 +1152,7 @@
 
     XML.contains = function (name) {
         var result = false;
-        $.each(['command'], function (i, value) {
+        $.each(['command','transition'], function (i, value) {
             if (value == name) {
                 result = true;
             }

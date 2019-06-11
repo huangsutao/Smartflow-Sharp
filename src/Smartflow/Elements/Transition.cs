@@ -57,7 +57,7 @@ namespace Smartflow.Elements
         }
 
        
-        [XmlText(typeof(string))]
+        [XmlElement("expression")]
         public string Expression
         {
             get;
