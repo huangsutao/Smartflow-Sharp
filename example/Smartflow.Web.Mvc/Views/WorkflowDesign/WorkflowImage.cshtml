@@ -14,7 +14,9 @@
     <script src="~/Content/design/utils.js"></script>
     <script src="~/Content/design/smartflow.js"></script>
     <script type="text/javascript">
-          $("#drawing").SMF({ container: 'drawing' });
+        $(function () {
+
+             $("#drawing").SMF({ container: 'drawing' });
             $.ajax({
                 url: '@Url.Action("GetProcess", "WorkflowDesign")',
                 type:'post',
@@ -26,6 +28,8 @@
                         serverData.id);
                 }
             });
+
+        });
     </script>
 </head>
 <body>

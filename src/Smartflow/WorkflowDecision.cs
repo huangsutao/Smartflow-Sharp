@@ -48,7 +48,7 @@ namespace Smartflow
             try
             {
                 DataTable resultSet = new DataTable(Guid.NewGuid().ToString());
-                using (IDataReader reader = connection.ExecuteReader(command.Text, new { InstanceID = InstanceID }))
+                using (IDataReader reader = connection.ExecuteReader(command.Text.Replace("\n","").Replace("\r\n",""), new { InstanceID = InstanceID }))
                 {
                     resultSet.Load(reader);
                     reader.Close();

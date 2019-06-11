@@ -847,7 +847,7 @@
     Node.extend(Shape, {
         draw: function (b) {
             var n = this,
-                color = (b == n.unique && b && n.unique) ? n.bgCurrentColor : n.bgColor,
+                color = (b == n.id && b && n.id) ? n.bgCurrentColor : n.bgColor,
                 rect = n.drawInstance.draw.rect(n.w, n.h).attr({ fill: color, x: n.x, y: n.y });
 
             if (this.category === 'node') {
