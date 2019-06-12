@@ -13,6 +13,7 @@ using System.Text;
 using Smartflow.Dapper;
 using Smartflow.Elements;
 using Smartflow.Enums;
+using Smartflow.Internals;
 
 namespace Smartflow
 {
@@ -20,7 +21,8 @@ namespace Smartflow
     {
         public string Start(string resourceXml)
         {
-            Workflow workflow = XmlConfiguration.ParseflowXml<Workflow>(resourceXml);
+            ResolutionContext context = new ResolutionContext(new AutomaticResolution());
+            Workflow workflow = context.Parse(resourceXml);
             List<Element> elements = new List<Element>();
             elements.Add(workflow.StartNode);
             elements.AddRange(workflow.ChildNode);
@@ -34,36 +36,6 @@ namespace Smartflow
                 element.Persistent();
             }
             return instaceID;
-        }
-
-
-
-
-        public void Kill(WorkflowInstance instance)
-        {
-            if (instance.State == WorkflowInstanceState.Running)
-            {
-                instance.State = WorkflowInstanceState.Kill;
-                instance.Transfer();
-            }
-        }
-
-        public void Terminate(WorkflowInstance instance)
-        {
-            if (instance.State == WorkflowInstanceState.Running)
-            {
-                instance.State = WorkflowInstanceState.Termination;
-                instance.Transfer();
-            }
-        }
-
-        public void Revert(WorkflowInstance instance)
-        {
-            if (instance.State == WorkflowInstanceState.Termination)
-            {
-                instance.State = WorkflowInstanceState.Running;
-                instance.Transfer();
-            }
         }
 
         protected string CreateWorkflowInstance(string NID, string resource)

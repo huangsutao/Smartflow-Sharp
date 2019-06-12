@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 
 using Smartflow;
+using Smartflow.Enums;
 
 namespace Smartflow
 {
@@ -24,24 +25,7 @@ namespace Smartflow
         /// <param name="resourceXml">流程结构</param>
         /// <returns></returns>
         string Start(string resourceXml);
-
-        /// <summary>
-        /// 终结流程
-        /// </summary>
-        /// <param name="instance">流程实例</param>
-        void Kill(WorkflowInstance instance);
-
-        /// <summary>
-        /// 中断流程
-        /// </summary>
-        /// <param name="instance">流程实例</param>
-        void Terminate(WorkflowInstance instance);
-
-        /// <summary>
-        /// 恢复流程
-        /// </summary>
-        /// <param name="instance">流程实例</param>
-        void Revert(WorkflowInstance instance);
+    
 
         /// <summary>
         /// 监控跳转过程

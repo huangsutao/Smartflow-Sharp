@@ -89,7 +89,7 @@ namespace Smartflow
         /// <summary>
         /// 状态转换
         /// </summary>
-        internal void Transfer()
+        private void Transfer()
         {
             string update = " UPDATE T_INSTANCE SET State=@State WHERE InstanceID=@InstanceID ";
             Connection.Execute(update, new
@@ -113,6 +113,12 @@ namespace Smartflow
                 Resource = resource
             });
             return instanceID;
+        }
+
+        public void Transfer(WorkflowInstanceState state)
+        {
+            this.State = state;
+            this.Transfer();
         }
     }
 }

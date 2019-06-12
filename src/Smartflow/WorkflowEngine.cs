@@ -13,9 +13,6 @@ using Smartflow.Enums;
 
 namespace Smartflow
 {
-    /**
-     * 工作流引擎，由工作流引擎统一提供对外服务接口，以此来驱动流程跳转
-     */
     public  class WorkflowEngine
     {
         private IWorkflow workflowService = WorkflowServiceProvider.OfType<IWorkflow>();
@@ -40,33 +37,6 @@ namespace Smartflow
         public string Start(string resourceXml)
         {
             return workflowService.Start(resourceXml);
-        }
-
-        /// <summary>
-        /// 终止流程
-        /// </summary>
-        /// <param name="instance">工作流实例</param>
-        public void Kill(WorkflowInstance instance)
-        {
-            workflowService.Kill(instance);
-        }
-
-        /// <summary>
-        /// 中断流程
-        /// </summary>
-        /// <param name="instance">工作流实例</param>
-        public void Terminate(WorkflowInstance instance)
-        {
-            workflowService.Terminate(instance);
-        }
-
-        /// <summary>
-        /// 恢复流程
-        /// </summary>
-        /// <param name="instance">工作流实例</param>
-        public void Revert(WorkflowInstance instance)
-        {
-            workflowService.Revert(instance);
         }
 
         /// <summary>
@@ -104,8 +74,7 @@ namespace Smartflow
 
                 if (to.NodeType == WorkflowNodeCategory.End)
                 {
-                    instance.State = WorkflowInstanceState.End;
-                    instance.Transfer();
+                    instance.Transfer(WorkflowInstanceState.End);
                 }
                 else if (to.NodeType == WorkflowNodeCategory.Decision)
                 {
