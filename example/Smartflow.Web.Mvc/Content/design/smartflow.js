@@ -24,7 +24,8 @@
         br: 'br',
         id: 'id',
         name: 'name',
-        to: 'destination'
+        to: 'destination',
+        expression:'expression'
     };
 
     function Draw(option) {
@@ -608,11 +609,15 @@
 
                 if (self.category === 'decision') {
 
-                    build.append('<expression>')
-                         .append("<![CDATA[")
-                         .append(L.expression)
-                         .append("]]>")
-                         .append('</expression>');
+                    build.append(config.start)
+                        .append(config.expression)
+                        .append(config.end)
+                        .append("<![CDATA[")
+                        .append(L.expression)
+                        .append("]]>")
+                        .append(config.beforeClose)
+                        .append(config.expression)
+                        .append(config.end);
                 }
 
                 build.append(config.beforeClose)
@@ -1182,14 +1187,13 @@
     }
     XML.single = function (process, node, contains) {
         var attr = XML.getAttributes(node.attributes),
-            name = node.nodeName;
+            name = node.nodeName,
+            innerObject = $.extend(attr,
+                (contains) ?XML.convert(node.childNodes) : {
+                    name: XML.getValue(node)
+                });
 
-        if (XML.config[name]) {
-            process[name] = [$.extend(attr, (contains) ? XML.convert(node.childNodes) : { name: XML.getValue(node) })];
-        } else {
-            process[name] =
-                $.extend(attr, (contains) ? XML.convert(node.childNodes) : { name: XML.getValue(node) });
-        }
+        process[name] = XML.config[name] ? [innerObject] : innerObject;
     }
     XML.multiple = function (process, node, contains) {
 
