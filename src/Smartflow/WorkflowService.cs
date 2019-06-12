@@ -21,7 +21,7 @@ namespace Smartflow
     {
         public string Start(string resourceXml)
         {
-            ResolutionContext context = new ResolutionContext(new AutomaticResolution());
+            ResolutionContext context = new ResolutionContext(new Automatic());
             Workflow workflow = context.Parse(resourceXml);
             List<Element> elements = new List<Element>();
             elements.Add(workflow.StartNode);

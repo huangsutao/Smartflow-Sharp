@@ -52,7 +52,7 @@
     <Compile Include="Enums\WorkflowAction.cs" />
     <Compile Include="IDbFieldFilter.cs" />
     <Compile Include="IMailService.cs" />
-    <Compile Include="Internals\AutomaticResolution.cs" />
+    <Compile Include="Internals\Automatic.cs" />
     <Compile Include="Internals\IResolution.cs" />
     <Compile Include="Internals\ResolutionContext.cs" />
     <Compile Include="IRelationship.cs" />

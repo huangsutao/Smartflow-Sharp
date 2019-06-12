@@ -9,7 +9,7 @@ using Smartflow.Elements;
 
 namespace Smartflow.Internals
 {
-    internal class AutomaticResolution : IResolution
+    internal class Automatic : IResolution
     {
         public Workflow Parse(string resourceXml)
         {
