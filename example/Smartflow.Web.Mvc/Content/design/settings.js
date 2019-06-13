@@ -11,7 +11,7 @@
         optionSelector = '#ddlRuleConfig option:selected',
         ruleSelector = '#ddlRuleConfig',
         itemTemplate = "<li id=%{0}%>%{1}%</li>",
-        lineTemplate = "<tr><td class='layui-text smartflow-header'>%{0}%</td><td><input type='text' value=\"%{1}%\" id=%{2}% class='layui-input smartflow-input' /></td></tr>";
+        lineTemplate = "<tr><td class='layui-text smartflow-header'>%{0}%</td><td><textarea  id=%{2}% class='layui-textarea smartflow-textarea smartflow-expression'>%{1}%</textarea></td></tr>";
     tabConfig = {
         node: ['#tab li[category=rule]', '#tab li[category=form]'],
         decision: ['#tab li[category=role]', '#tab li[category=form]'],
@@ -161,12 +161,16 @@
             expressions = [],
             name = $("#txtNodeName").val();
         if (nx.category.toLowerCase() === 'decision') {
-            $("#transitions tbody input").each(function () {
+            $("#transitions tbody textarea").each(function () {
                 var input = $(this);
-                expressions.push({ id: input.attr("id"), expression: input.val() });
+                expressions.push({
+                    id: input.attr("id"),
+                    expression: input.val()
+                        .replace(/\r\n/g, ' ')
+                        .replace(/\n/g, ' ')
+                        .replace(/\s/g, ' ')
+                });
             });
-
-
 
             var cmdText = $(cmdTextSelector).val()
                 .replace(/\r\n/g, ' ')
@@ -206,8 +210,7 @@
         if (nx.category.toLowerCase() === 'decision') {
             var lineCollection = nx.getTransitions();
             if (lineCollection.length > 0) {
-                var unqiueId = 'lineTo',
-                    build = util.builder();
+                var build = util.builder();
                 $.each(lineCollection, function (i) {
                     build.append(lineTemplate.format(this.name, this.expression, this.$id));
                 });
