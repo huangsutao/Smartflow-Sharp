@@ -39,11 +39,5 @@ namespace Smartflow.BussinessService.Models
             get;
             set;
         }
-
-        public string ACTION
-        {
-            get;
-            set;
-        }
     }
 }
