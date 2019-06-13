@@ -50,13 +50,11 @@ namespace Smartflow
             {
                 WorkflowNode current = instance.Current;
 
-                context.SetOperation(WorkflowAction.Jump);
-
 
                 string transitionTo = current.Transitions
                                   .FirstOrDefault(e => e.NID == context.TransitionID).Destination;
 
-                current.SetActor(context.ActorID, context.ActorName, WorkflowAction.Jump);
+                
                 instance.Jump(transitionTo);
 
                 ASTNode to = current.GetNode(transitionTo);
@@ -67,7 +65,6 @@ namespace Smartflow
                     TransitionID = context.TransitionID,
                     Instance = instance,
                     Data = context.Data,
-                    Operation = context.Operation,
                     ActorID = context.ActorID,
                     ActorName = context.ActorName
                 });
@@ -105,8 +102,7 @@ namespace Smartflow
                 Destination = executeContext.To.ID,
                 TransitionID = executeContext.TransitionID,
                 InstanceID = executeContext.Instance.InstanceID,
-                NodeType = executeContext.From.NodeType,
-                Operation = executeContext.Operation
+                NodeType = executeContext.From.NodeType
             });
         }
     }

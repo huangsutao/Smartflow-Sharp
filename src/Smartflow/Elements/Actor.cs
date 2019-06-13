@@ -22,23 +22,17 @@ namespace Smartflow.Elements
             set;
         }
 
-        public WorkflowAction Operation
-        {
-            get;
-            set;
-        }
 
         internal override void Persistent()
         {
-            string sql = "INSERT INTO T_ACTOR(NID,ID,RelationshipID,Name,InstanceID,Operation) VALUES(@NID,@ID,@RelationshipID,@Name,@InstanceID,@Operation)";
+            string sql = "INSERT INTO T_ACTOR(NID,ID,RelationshipID,Name,InstanceID) VALUES(@NID,@ID,@RelationshipID,@Name,@InstanceID)";
             DapperFactory.CreateWorkflowConnection().Execute(sql, new
             {
                 NID = Guid.NewGuid().ToString(),
                 ID = ID,
                 RelationshipID = RelationshipID,
                 Name = Name,
-                InstanceID = InstanceID,
-                Operation = Operation
+                InstanceID = InstanceID
             });
         }
     }

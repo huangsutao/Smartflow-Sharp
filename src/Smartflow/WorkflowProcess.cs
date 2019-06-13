@@ -87,21 +87,13 @@ namespace Smartflow
             set;
         }
 
-        /// <summary>
-        /// 退回、撤销、跳转
-        /// </summary>
-        public WorkflowAction Operation
-        {
-            get;
-            set;
-        }
 
         /// <summary>
         /// 将数据持久到数据库
         /// </summary>
         public void Persistent()
         {
-            string sql = "INSERT INTO T_PROCESS(NID,Origin,Destination,TransitionID,InstanceID,NodeType,RelationshipID,Operation) VALUES(@NID,@Origin,@Destination,@TransitionID,@InstanceID,@NodeType,@RelationshipID,@Operation)";
+            string sql = "INSERT INTO T_PROCESS(NID,Origin,Destination,TransitionID,InstanceID,NodeType,RelationshipID) VALUES(@NID,@Origin,@Destination,@TransitionID,@InstanceID,@NodeType,@RelationshipID)";
             Connection.Execute(sql, new
             {
                 NID = Guid.NewGuid().ToString(),
@@ -110,8 +102,7 @@ namespace Smartflow
                 TransitionID = TransitionID,
                 InstanceID = InstanceID,
                 NodeType = NodeType.ToString(),
-                RelationshipID = RelationshipID,
-                Operation = Operation
+                RelationshipID = RelationshipID
             });
         }
 
@@ -122,8 +113,7 @@ namespace Smartflow
             instance = instance.Connection.Query<WorkflowProcess>(query, new
             {
                 InstanceID = instanceID,
-                NID = NID,
-                Operation = WorkflowAction.Jump
+                NID = NID
 
             }).OrderByDescending(order => order.CreateDateTime).FirstOrDefault();
 

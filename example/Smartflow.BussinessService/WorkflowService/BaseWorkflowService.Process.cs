@@ -52,8 +52,7 @@ namespace Smartflow.BussinessService.WorkflowService
                 {
 
                     //流程跳转|流程撤销(重新指派人审批) 仅限演示
-                    List<Group> items = (executeContext.Operation == Enums.WorkflowAction.Jump) ? current.Groups :
-                        executeContext.Instance.Current.GetFromNode().Groups;
+                    List<Group> items =   current.Groups;
                     List<User> userList = GetUsersByGroup(items);
                     foreach (User user in userList)
                     {
@@ -80,7 +79,7 @@ namespace Smartflow.BussinessService.WorkflowService
                 pending.INSTANCEID == instanceID);
 
             var current = GetCurrentNode(executeContext.Instance.InstanceID);
-            if (executeContext.Operation == Enums.WorkflowAction.Jump && current.NodeType != Enums.WorkflowNodeCategory.Decision)
+            if (current.NodeType != Enums.WorkflowNodeCategory.Decision)
             {
                 List<User> userList = GetUsersByGroup(current.Groups);
                 foreach (var user in userList)
@@ -119,7 +118,6 @@ namespace Smartflow.BussinessService.WorkflowService
             pendingService.Insert(new Pending()
             {
                 ACTORID = actorID,
-                ACTION = executeContext.Operation.ToString(),
                 INSTANCEID = executeContext.Instance.InstanceID,
                 NODEID = GetCurrentNode(executeContext.Instance.InstanceID).NID,
                 APPELLATION = executeContext.Data.Url

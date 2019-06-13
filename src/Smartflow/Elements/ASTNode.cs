@@ -68,25 +68,5 @@ namespace Smartflow.Elements
             string query = "SELECT * FROM T_TRANSITION WHERE RelationshipID=@RelationshipID";
             return Connection.Query<Transition>(query, new { RelationshipID = relationshipID }).ToList();
         }
-
-        /// <summary>
-        /// 记录已经参与过审核人员的信息
-        /// </summary>
-        /// <param name="actorID"></param>
-        /// <param name="actorName"></param>
-        /// <param name="action"></param>
-        internal virtual void SetActor(string actorID, string actorName, WorkflowAction action)
-        {
-            if (this.NodeType != WorkflowNodeCategory.Decision)
-            {
-                Actor actor = new Actor();
-                actor.ID= actorID;
-                actor.Name= actorName;
-                actor.RelationshipID = NID;
-                actor.Operation = action;
-                actor.InstanceID = InstanceID;
-                actor.Persistent();
-            }
-        }
     }
 }
