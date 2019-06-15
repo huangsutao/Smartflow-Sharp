@@ -16,7 +16,7 @@ namespace Smartflow.BussinessService.WorkflowService
 {
     public class ActorService
     {
-        private IDbConnection Connection = DblHelper.CreateConnection();
+        private IDbConnection Connection = DbHelper.CreateConnection();
 
         public DataTable GetRole(string roleIds, string searchKey)
         {

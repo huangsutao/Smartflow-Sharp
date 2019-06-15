@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Smartflow.BussinessService
 {
-    public class DblHelper
+    public class DbHelper
     {
         public static IDbConnection CreateConnection()
         {
