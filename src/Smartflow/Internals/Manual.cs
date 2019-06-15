@@ -28,24 +28,28 @@ namespace Smartflow.Internals
         {
             String root = Manual.WORKFLOW_XML_ROOT_NODE;
             XDocument doc = XDocument.Parse(resourceXml);
-            List<XElement> elements = doc.Element(root)
-                .Elements().ToList();
-
             List<ASTNode> nodes = new List<ASTNode>();
-            foreach (XElement element in elements)
-            {
-                string nodeName = element.Name.LocalName;
-                if (ElementCollection.Contains(nodeName))
-                {
-                    Element typeMapper = ElementCollection.Resolve(nodeName);
-                    nodes.Add(typeMapper.Parse(element) as ASTNode);
-                }
-            }
+
+            doc.Element(root)
+                .Elements()
+                .ToList()
+                .ForEach(element => {
+                    string nodeName = element.Name.LocalName;
+                    if (ElementCollection.Contains(nodeName)){
+                        nodes.Add(ElementCollection.Resolve(nodeName)
+                            as ASTNode);
+                    }
+                });
 
             Workflow instance = new Workflow();
-            instance.Start = (nodes.Where(e => e.NodeType == WorkflowNodeCategory.Start).FirstOrDefault() as Start);
-            instance.End= (nodes.Where(e => e.NodeType == WorkflowNodeCategory.End).FirstOrDefault() as End);
 
+            instance.Start = nodes
+                .Where(e =>e.NodeType == WorkflowNodeCategory.Start)
+                .FirstOrDefault() as Start;
+
+            instance.End= nodes
+                .Where(e => e.NodeType == WorkflowNodeCategory.End)
+                .FirstOrDefault() as End;
 
             nodes.Where(e => e.NodeType == WorkflowNodeCategory.Decision)
                 .ToList()
