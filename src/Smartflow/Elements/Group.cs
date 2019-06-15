@@ -8,15 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Smartflow.Dapper;
-using Smartflow.Enums;
 using System.Xml.Serialization;
-
+using System.Xml.Linq;
 
 namespace Smartflow.Elements
 {
-    public class Group : ElementAttribute, IRelationship
+    public class Group : Element, IRelationship
     {
-      
         public string RelationshipID
         {
             get;
@@ -34,6 +32,13 @@ namespace Smartflow.Elements
                 Name = Name,
                 InstanceID = InstanceID
             });
+        }
+
+        internal override Element Parse(XElement element)
+        {
+            this.name = element.Attribute("name").Value;
+            this.id = element.Attribute("id").Value;
+            return this;
         }
     }
 }

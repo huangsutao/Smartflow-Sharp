@@ -9,12 +9,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Smartflow;
 using Smartflow.Elements;
 
 namespace Smartflow.Internals
 {
-    public interface IResolution
+    internal class Utils
     {
-        Workflow Parse(string resourceXml);
+        public static WorkflowNodeCategory Convert(string category)
+        {
+            return (WorkflowNodeCategory)Enum.Parse(typeof(WorkflowNodeCategory), category, true);
+        }
+
+        public static Object CreateInstance(Type createType)
+        {
+            return System.Activator.CreateInstance(createType);
+        }
     }
 }

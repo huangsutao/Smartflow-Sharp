@@ -8,30 +8,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Smartflow.Enums;
+using Smartflow;
 using System.Xml.Serialization;
 using System.Data;
 using Smartflow.Dapper;
+using System.Xml.Linq;
+using Smartflow.Internals;
+
 namespace Smartflow.Elements
 {
-    [XmlInclude(typeof(Command))]
-    [XmlInclude(typeof(List<Transition>))]
-    public class Decision : Node
+    public class Decision : ASTNode
     {
-   
-        public override WorkflowNodeCategory NodeType
-        {
-            get { return WorkflowNodeCategory.Decision; }
-        }
+        protected Command command;
 
-   
-        [XmlElement("command")]
         public Command Command
         {
-            get;
-            set;
+            get { return command; }
+            set { command = value; }
         }
-  
 
         internal override void Persistent()
         {
@@ -43,6 +37,39 @@ namespace Smartflow.Elements
                 Command.RelationshipID = NID;
                 Command.Persistent();
             }
+        }
+
+        internal override Element Parse(XElement element)
+        {
+            base.ParseXml(element);
+
+            if (element.HasElements)
+            {
+                List<Element> nodes = new List<Element>();
+
+                element.Elements().ToList().ForEach(entry =>
+                {
+                    string nodeName = entry.Name.LocalName;
+                    if (ElementCollection.Contains(nodeName))
+                    {
+                        nodes.Add(ElementCollection
+                            .Resolve(nodeName)
+                            .Parse(entry));
+                    }
+                });
+
+                Element cmd = nodes.Where(entry => (entry is Command)).FirstOrDefault();
+                this.command = cmd == null ? null : (cmd as Command);
+
+                nodes
+                   .Where(transition => (transition is Transition))
+                   .ToList()
+                   .ForEach(g =>
+                   {
+                       this.Transitions.Add(g as Transition);
+                   });
+            }
+            return this;
         }
     }
 }

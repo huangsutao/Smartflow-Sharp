@@ -10,7 +10,7 @@ using System.Text;
 using Smartflow.Elements;
 using Smartflow.Dapper;
 using System.Data;
-using Smartflow.Enums;
+
 
 namespace Smartflow
 {
@@ -57,7 +57,7 @@ namespace Smartflow
             string sql = ResourceManage.GetString(ResourceManage.SQL_WORKFLOW_INSTANCE);
             try
             {
-                workflowInstance = workflowInstance.Connection.Query<WorkflowInstance, ASTNode, WorkflowInstance>(sql, (instance, node) =>
+                workflowInstance = workflowInstance.Connection.Query<WorkflowInstance, Node, WorkflowInstance>(sql, (instance, node) =>
                 {
                     instance.Current = WorkflowNode.ConvertToReallyType(node);
                     return instance;

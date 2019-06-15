@@ -11,42 +11,34 @@ using System.Xml.Serialization;
 using System.Data;
 
 using Smartflow.Dapper;
-using Smartflow.Enums;
-
+using Smartflow;
+using System.Xml.Linq;
+using Smartflow.Internals;
 
 namespace Smartflow.Elements
 {
-    public class ASTNode : Element
+    public abstract class ASTNode : Element
     {
-        [XmlAttribute("name")]
-        public virtual string Name
+        protected List<Transition> transitions = new List<Transition>();
+        protected WorkflowNodeCategory category = WorkflowNodeCategory.Node;
+        protected string layout = string.Empty;
+
+        public string Layout
         {
-            get;
-            set;
+            get { return layout; }
+            set { layout = value; }
         }
 
-        /// <summary>
-        /// 节点标识ID
-        /// </summary>
-        [XmlAttribute("id")]
-        public  string ID
+        public List<Transition> Transitions
         {
-            get;
-            set;
+            get { return transitions; }
+            set { transitions = value; }
         }
 
-        [XmlElement(ElementName = "transition")]
-        public virtual List<Transition> Transitions
+        public WorkflowNodeCategory NodeType
         {
-            get;
-            set;
-        }
-
-        [XmlIgnore]
-        public virtual WorkflowNodeCategory NodeType
-        {
-            get;
-            set;
+            get { return category; }
+            set { category = value; }
         }
 
         internal override void Persistent()
@@ -61,12 +53,43 @@ namespace Smartflow.Elements
                 NodeType = NodeType.ToString(),
                 InstanceID = InstanceID
             });
+
+            if (Transitions != null)
+            {
+                foreach (Transition transition in Transitions)
+                {
+                    transition.RelationshipID = this.NID;
+                    transition.Origin = this.ID;
+                    transition.InstanceID = InstanceID;
+                    transition.Persistent();
+                }
+            }
         }
 
         internal virtual List<Transition> QueryWorkflowNode(string relationshipID)
         {
             string query = "SELECT * FROM T_TRANSITION WHERE RelationshipID=@RelationshipID";
             return Connection.Query<Transition>(query, new { RelationshipID = relationshipID }).ToList();
+        }
+
+
+        public ASTNode GetNode(string ID)
+        {
+            string query = "SELECT * FROM T_NODE WHERE ID=@ID AND InstanceID=@InstanceID";
+            return Connection.Query<Node>(query, new
+            {
+                ID = ID,
+                InstanceID = InstanceID
+            }).FirstOrDefault();
+        }
+
+        internal void ParseXml(XElement element)
+        {
+            this.name = element.Attribute("name").Value;
+            this.layout = element.Attribute("layout").Value;
+            this.id = element.Attribute("id").Value;
+            string category = element.Attribute("category").Value;
+            this.category = Utils.Convert(category);
         }
     }
 }

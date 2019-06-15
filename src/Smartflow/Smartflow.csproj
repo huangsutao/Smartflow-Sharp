@@ -47,20 +47,23 @@
     <Compile Include="Elements\Command.cs" />
     <Compile Include="Elements\Decision.cs" />
     <Compile Include="Elements\Element.cs" />
-    <Compile Include="Elements\ElementAttribute.cs" />
     <Compile Include="Elements\End.cs" />
     <Compile Include="IMailService.cs" />
     <Compile Include="Internals\Automatic.cs" />
+    <Compile Include="Internals\ElementCollection.cs" />
     <Compile Include="Internals\IResolution.cs" />
+    <Compile Include="Internals\Manual.cs" />
     <Compile Include="Internals\ResolutionContext.cs" />
+    <Compile Include="Internals\Utils.cs" />
+    <Compile Include="Internals\XMLServiceFactory.cs" />
     <Compile Include="IRelationship.cs" />
     <Compile Include="Elements\Node.cs" />
     <Compile Include="Elements\Group.cs" />
     <Compile Include="Elements\Start.cs" />
     <Compile Include="Elements\Transition.cs" />
     <Compile Include="Elements\Workflow.cs" />
-    <Compile Include="Enums\WorkflowInstanceState.cs" />
-    <Compile Include="Enums\WorkflowNodeCategory.cs" />
+    <Compile Include="WorkflowInstanceState.cs" />
+    <Compile Include="WorkflowNodeCategory.cs" />
     <Compile Include="ExecutingContext.cs" />
     <Compile Include="ITransition.cs" />
     <Compile Include="IPersistent.cs" />
@@ -82,7 +85,6 @@
     <Compile Include="WorkflowNode.cs" />
     <Compile Include="WorkflowProcess.cs" />
     <Compile Include="WorkflowService.cs" />
-    <Compile Include="WorkflowService.Process.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SmartflowResource.resx">

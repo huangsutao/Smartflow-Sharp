@@ -11,56 +11,33 @@ using System.Text;
 using System.Xml.Serialization;
 
 using Smartflow.Dapper;
-using Smartflow.Enums;
-
+using Smartflow;
+using System.Xml.Linq;
+using Smartflow.Internals;
 
 namespace Smartflow.Elements
 {
-    [XmlInclude(typeof(List<Transition>))]
-    [XmlInclude(typeof(List<Group>))]
     public class Node : ASTNode
     {
-        private WorkflowNodeCategory _nodeType = WorkflowNodeCategory.Normal;
+        protected List<Actor> actors = new List<Actor>();
+        protected List<Group> groups = new List<Group>();
 
-       
-        public override WorkflowNodeCategory NodeType
+        public List<Group> Groups
         {
-            get { return _nodeType; }
-            set { _nodeType = value; }
+            get { return groups; }
+            set { groups = value; }
         }
 
-      
-        [XmlAttribute("layout")]
-        public virtual string Layout
+        public List<Actor> Actors
         {
-            get;
-            set;
-        }
-
-       
-        [XmlElement(ElementName = "group")]
-        public virtual List<Group> Groups
-        {
-            get;
-            set;
+            get { return actors; }
+            set { actors = value; }
         }
 
 
-       
         internal override void Persistent()
         {
             base.Persistent();
-
-            if (Transitions != null)
-            {
-                foreach (Transition transition in Transitions)
-                {
-                    transition.RelationshipID = this.NID;
-                    transition.Origin = this.ID;
-                    transition.InstanceID = InstanceID;
-                    transition.Persistent();
-                }
-            }
 
             if (Groups != null)
             {
@@ -72,17 +49,63 @@ namespace Smartflow.Elements
                 }
             }
 
-        
+           
+            if (Actors != null)
+            {
+                foreach (Actor a in Actors)
+                {
+                    a.RelationshipID = this.NID;
+                    a.InstanceID = InstanceID;
+                    a.Persistent();
+                }
+            }
         }
 
-        public ASTNode GetNode(string ID)
+
+        internal override Element Parse(XElement element)
         {
-            string query = "SELECT * FROM T_NODE WHERE ID=@ID AND InstanceID=@InstanceID";
-            return Connection.Query<ASTNode>(query, new
+            base.ParseXml(element);
+
+            if (element.HasElements)
             {
-                ID = ID,
-                InstanceID = InstanceID
-            }).FirstOrDefault();
+                List<Element> nodes = new List<Element>();
+                element.Elements().ToList().ForEach(entry =>
+                {
+                    string nodeName = entry.Name.LocalName;
+                    if (ElementCollection.Contains(nodeName))
+                    {
+                        nodes.Add(ElementCollection
+                            .Resolve(nodeName)
+                            .Parse(entry));
+                    }
+                });
+
+                nodes
+                    .Where(group => (group is Group))
+                    .ToList()
+                    .ForEach(g =>
+                    {
+                        this.Groups.Add(g as Group);
+                    });
+
+
+                nodes
+                   .Where(transition => (transition is Transition))
+                   .ToList()
+                   .ForEach(g =>
+                   {
+                       this.Transitions.Add(g as Transition);
+                   });
+
+                nodes
+                 .Where(actor => (actor is Actor))
+                 .ToList()
+                 .ForEach(actor =>
+                 {
+                     this.actors.Add(actor as Actor);
+                 });
+            }
+            return this;
         }
     }
 }

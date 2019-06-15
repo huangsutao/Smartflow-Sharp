@@ -12,24 +12,17 @@ using System.Text;
 
 using Smartflow.Dapper;
 using Smartflow.Elements;
-using Smartflow.Enums;
 using Smartflow.Internals;
 
 namespace Smartflow
 {
-    public partial class WorkflowService :WorkflowInfrastructure, IWorkflow
+    public  class WorkflowService :WorkflowInfrastructure, IWorkflow
     {
         public string Start(string resourceXml)
         {
-            ResolutionContext context = new ResolutionContext(new Automatic());
-            Workflow workflow = context.Parse(resourceXml);
-            List<Element> elements = new List<Element>();
-            elements.Add(workflow.StartNode);
-            elements.AddRange(workflow.ChildNode);
-            elements.AddRange(workflow.ChildDecisionNode);
-            elements.Add(workflow.EndNode);
-
-            string instaceID = CreateWorkflowInstance(workflow.StartNode.ID,resourceXml);
+            Workflow workflow = XMLServiceFactory.Create(resourceXml);
+            IList<Element> elements = workflow.GetElements();
+            string instaceID = CreateWorkflowInstance(workflow.Start.ID,resourceXml);
             foreach (Element element in elements)
             {
                 element.InstanceID = instaceID;
@@ -41,6 +34,11 @@ namespace Smartflow
         protected string CreateWorkflowInstance(string NID, string resource)
         {
             return WorkflowInstance.CreateWorkflowInstance(NID, resource);
+        }
+
+        public void Processing(IPersistent persistent)
+        {
+            persistent.Persistent();
         }
     }
 }

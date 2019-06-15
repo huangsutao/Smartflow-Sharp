@@ -8,38 +8,24 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 using Smartflow.Dapper;
-using Smartflow.Enums;
-
+using Smartflow;
 
 namespace Smartflow.Elements
 {
     public class Command : Element, IRelationship
     {
+        private string text = string.Empty;
 
-        /// <summary>
-        /// 数据源ID
-        /// </summary>
-        [XmlElement("id")]
-        public string ID
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 执行SQL语句
-        /// </summary>
-        [XmlElement("text")]
         public string Text
         {
-            get;
-            set;
+            get { return text; }
+            set { text = value; }
         }
-
-        [XmlIgnore]
+    
         public string RelationshipID
         {
             get;
@@ -57,6 +43,22 @@ namespace Smartflow.Elements
                 Text = Text,
                 InstanceID = InstanceID
             });
+        }
+
+        internal override Element Parse(XElement element)
+        {
+            if (element.HasElements)
+            {
+                this.id = element
+                    .Elements("id")
+                    .FirstOrDefault().Value;
+
+                this.text = element
+                   .Elements("text")
+                   .FirstOrDefault().Value;
+            }
+
+            return this;
         }
     }
 }

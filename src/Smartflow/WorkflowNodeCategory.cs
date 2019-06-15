@@ -1,6 +1,7 @@
 ﻿/********************************************************************
  License: https://github.com/chengderen/Smartflow/blob/master/LICENSE 
  Home page: https://www.smartflow-sharp.com
+ Github : https://github.com/chengderen/Smartflow-Sharp
  ********************************************************************
  */
 using System;
@@ -8,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Smartflow.Enums
+namespace Smartflow
 {
     /// <summary>
     /// 工作流节点类型
@@ -23,7 +24,7 @@ namespace Smartflow.Enums
         /// <summary>
         /// 普通节点
         /// </summary>
-        Normal,
+        Node,
 
         /// <summary>
         /// 决策节点

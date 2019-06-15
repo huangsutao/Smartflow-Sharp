@@ -9,7 +9,7 @@ using System.Data;
 using System.Linq;
 
 using Smartflow.Dapper;
-using Smartflow.Enums;
+using Smartflow;
 using System.Configuration;
 
 namespace Smartflow.BussinessService.WorkflowService

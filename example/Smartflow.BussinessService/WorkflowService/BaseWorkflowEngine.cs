@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 
 using Smartflow.Elements;
-using Smartflow.Enums;
+using Smartflow;
 
 namespace Smartflow.BussinessService.WorkflowService
 {

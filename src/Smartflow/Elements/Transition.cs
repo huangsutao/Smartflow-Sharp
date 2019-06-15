@@ -7,61 +7,51 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 using Smartflow.Dapper;
-using Smartflow.Enums;
+using Smartflow;
 
 
 namespace Smartflow.Elements
 {
-    [XmlInclude(typeof(Node))]
     public class Transition : Element, IRelationship
     {
-     
-        [XmlAttribute("name")]
-        public virtual string Name
-        {
-            get;
-            set;
-        }
+        private string layout = string.Empty;
+        private string destination = string.Empty;
+        private string expression = string.Empty;
 
-     
-        [XmlAttribute("layout")]
-        public virtual string Layout
+        public  string Layout
         {
-            get;
-            set;
+            get { return layout; }
+            set { layout = value; }
         }
-
-      
+       
         public string RelationshipID
         {
             get;
             set;
         }
 
-       
         public string Origin
         {
             get;
             set;
         }
-
-       
-        [XmlAttribute("destination")]
+     
+     
         public string Destination
         {
-            get;
-            set;
+            get { return destination; }
+            set { destination = value; }
         }
 
-       
-        [XmlElement("expression")]
+     
         public string Expression
         {
-            get;
-            set;
+            get { return expression; }
+            set { expression = value; }
         }
 
         internal override void Persistent()
@@ -77,6 +67,22 @@ namespace Smartflow.Elements
                 InstanceID = InstanceID,
                 Expression = Expression
             });
+        }
+
+        internal override Element Parse(XElement element)
+        {
+            this.name = element.Attribute("name").Value;
+            this.layout = element.Attribute("layout").Value;
+            this.destination = element.Attribute("destination").Value;
+
+            if (element.HasElements)
+            {
+                this.expression = element
+                    .Elements("expression")
+                    .FirstOrDefault().Value;
+            }
+
+            return this;
         }
     }
 }

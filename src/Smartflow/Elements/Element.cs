@@ -8,36 +8,50 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using System.Xml.Serialization;
-
-using Smartflow.Enums;
+using Smartflow;
 
 namespace Smartflow.Elements
 {
-    /// <summary>
-    /// 为兼容其他数据库，对ID、NAME 名称进行调整，与数据库保留关键字进行区分
-    /// </summary>
     [Serializable]
     public abstract class Element : WorkflowInfrastructure
     {
+        protected string name = string.Empty;
+        protected string id = string.Empty;
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        /// <summary>
+        /// 节点标识ID
+        /// </summary>
+        public string ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
         /// <summary>
         /// 唯一标识
         /// </summary>
-        [XmlIgnore]
         public string NID
         {
             get;
             set;
         }
 
-
-        [XmlIgnore]
-        public virtual string InstanceID
+        public string InstanceID
         {
             get;
             set;
         }
 
         internal abstract void Persistent();
+
+        internal abstract Element Parse(XElement element);
     }
 }

@@ -9,19 +9,19 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using Smartflow.Dapper;
-using Smartflow.Enums;
+using Smartflow;
 using System.Xml.Serialization;
+using System.Xml.Linq;
 
 namespace Smartflow.Elements
 {
-    public class Actor : ElementAttribute, IRelationship
+    public class Actor : Element, IRelationship
     {
         public string RelationshipID
         {
             get;
             set;
         }
-
 
         internal override void Persistent()
         {
@@ -34,6 +34,13 @@ namespace Smartflow.Elements
                 Name = Name,
                 InstanceID = InstanceID
             });
+        }
+
+        internal override Element Parse(XElement element)
+        {
+            this.name = element.Attribute("name").Value;
+            this.id = element.Attribute("id").Value;
+            return this;
         }
     }
 }

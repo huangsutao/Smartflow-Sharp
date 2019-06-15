@@ -1,6 +1,7 @@
 ﻿/********************************************************************
  License: https://github.com/chengderen/Smartflow/blob/master/LICENSE 
  Home page: https://www.smartflow-sharp.com
+ Github : https://github.com/chengderen/Smartflow-Sharp
  ********************************************************************
  */
 using System;
@@ -11,7 +12,7 @@ using System.Text;
 
 using Smartflow.Dapper;
 using Smartflow.Elements;
-using Smartflow.Enums;
+
 
 namespace Smartflow
 {
@@ -28,7 +29,7 @@ namespace Smartflow
             {
                 ASTNode an = this.GetNode(transition.Destination);
                 Transition decisionTransition = transition;
-                while (an.NodeType == Enums.WorkflowNodeCategory.Decision)
+                while (an.NodeType == WorkflowNodeCategory.Decision)
                 {
                     WorkflowDecision decision = WorkflowDecision.ConvertToReallyType(an);
                     decisionTransition = decision.GetTransition();
@@ -158,7 +159,7 @@ namespace Smartflow
 
             ASTNode an = this.GetNode(executeTransition.Destination);
             Transition returnTransition = executeTransition;
-            while (an.NodeType == Enums.WorkflowNodeCategory.Decision)
+            while (an.NodeType == WorkflowNodeCategory.Decision)
             {
                 WorkflowDecision decision = WorkflowDecision.ConvertToReallyType(an);
                 returnTransition = decision.GetTransition();

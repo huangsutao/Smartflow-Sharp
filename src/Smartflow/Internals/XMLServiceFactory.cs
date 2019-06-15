@@ -1,20 +1,20 @@
 ﻿/********************************************************************
  License: https://github.com/chengderen/Smartflow/blob/master/LICENSE 
  Home page: https://www.smartflow-sharp.com
+ Github : https://github.com/chengderen/Smartflow-Sharp
  ********************************************************************
  */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Smartflow.Elements;
 
-namespace Smartflow
+namespace Smartflow.Internals
 {
-    public partial class WorkflowService
+    internal class XMLServiceFactory
     {
-        public void Processing(IPersistent persistent)
+        public static Workflow Create(string resouceXml)
         {
-            persistent.Persistent();
+            return new ResolutionContext(new Manual())
+                .Parse(resouceXml);
         }
     }
 }
