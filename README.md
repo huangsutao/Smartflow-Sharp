@@ -1,5 +1,5 @@
 ﻿## [Smartflow-Sharp](https://www.smartflow-sharp.com)  
-这是一款基于.NET平台，研发Smartflow-Sharp工作流组件，该工作流组件目前包含工作流引擎、工作流流程设计器，支持流程在线设计。工作流引擎负责提供对流程的解析，并驱动流程的流转，是工作流平台核心部件。流程设计器是基于SVG研发，支持所有主流浏览器，IE浏览器只支持IE9以上的版本。通过选用Smartflow-Sharp工作流组件，快速构建企业系统信息流程管理系统，是一个不错的选择。 主要适用于传统行业文件流转、送审等审批使用场景。具体的介绍以及使用情况请参见[https://www.smartflow-sharp.com](https://www.smartflow-sharp.com)  
+这是一款基于.NET平台，研发Smartflow-Sharp工作流组件，该工作流组件目前包含工作流引擎、工作流流程设计器，支持流程在线设计。工作流引擎负责提供对流程的解析，并驱动流程的流转，是工作流组件中核心部件。流程设计器是基于SVG研发，支持所有主流浏览器，IE浏览器只支持IE9以上的版本。通过选用Smartflow-Sharp工作流组件，快速构建企业系统信息流程管理系统，是一个不错的选择。 主要适用于传统行业文件流转、送审等审批使用场景。具体的介绍以及使用情况请参见[https://www.smartflow-sharp.com](https://www.smartflow-sharp.com)  
 
 
 ### Smartflow-Sharp 未来
