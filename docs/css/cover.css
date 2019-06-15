@@ -9,6 +9,7 @@ a:hover {
   color: #fff;
 }
 
+
 /* Custom default button */
 .btn-default {
     color: #fff;
@@ -65,13 +66,17 @@ body {
   padding: 30px;
 }
 
+.cover-heading, .lead-home {
+    color: #555;
+}
+
 
 /*
  * Header
  */
 .masthead-brand {
-  margin-top: 10px;
-  margin-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .masthead-nav > li {
