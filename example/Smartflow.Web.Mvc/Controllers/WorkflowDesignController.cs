@@ -32,7 +32,7 @@ namespace Smartflow.Web.Mvc.Controllers
         public JsonResult GetWorkflowStructure(string WFID)
         {
             WorkflowStructure workflowStructure = designService.GetWorkflowStructure(WFID);
-            return JsonToLowerWrapper(new
+            return Json(new
             {
                 appellation = workflowStructure.APPELLATION,
                 structure = workflowStructure.STRUCTUREXML

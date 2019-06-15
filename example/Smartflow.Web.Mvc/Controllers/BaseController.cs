@@ -28,16 +28,6 @@ namespace Smartflow.Web.Mvc.Controllers
                 ContentType = "application/json"
             };
         }
-
-        public JsonResult JsonToLowerWrapper(Object data)
-        {
-            return new JsonResultWrapper()
-            {
-                ContractResolver = new LowerCaseContractResolver(),
-                Data = data,
-                ContentType = "application/json"
-            };
-        }
     }
 
     public class JsonResultWrapper : JsonResult
