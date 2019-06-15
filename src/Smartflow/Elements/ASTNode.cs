@@ -83,7 +83,7 @@ namespace Smartflow.Elements
             }).FirstOrDefault();
         }
 
-        internal void ParseXml(XElement element)
+        protected void ParseXml(XElement element)
         {
             this.name = element.Attribute("name").Value;
             this.layout = element.Attribute("layout").Value;
