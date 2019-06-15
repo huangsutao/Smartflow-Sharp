@@ -10,13 +10,16 @@ a:hover {
 }
 
 /* Custom default button */
-.btn-default,
+.btn-default {
+    color: #fff;
+    text-shadow: none;
+}
 .btn-default:hover,
 .btn-default:focus {
-  color: #333;
-  text-shadow: none; /* Prevent inheritance from `body` */
-  background-color: #fff;
-  border: 1px solid #fff;
+ /* Prevent inheritance from `body` */
+    background-color: #3db142;
+    border: 1px solid #42bd48;
+    color:#FFF;
 }
 
 
@@ -26,13 +29,17 @@ a:hover {
 
 html,
 body {
-  height: 100%;
-  background-color: #333;
+  /*height: 100%;*/
+  background-color: #ffffff;
 }
+
+
+
 body {
-  color: #fff;
-  text-align: center;
-  text-shadow: 0 1px 3px rgba(0,0,0,.5);
+    color: #868686;
+    text-align: center;
+    padding-bottom: 100px;
+    /*text-shadow: 0 1px 3px rgba(0,0,0,.5);*/
 }
 
 /* Extra markup and styles for table-esque vertical and horizontal centering */
@@ -41,8 +48,8 @@ body {
   width: 100%;
   height: 100%; /* For at least Firefox */
   min-height: 100%;
-  -webkit-box-shadow: inset 0 0 100px rgba(0,0,0,.5);
-          box-shadow: inset 0 0 100px rgba(0,0,0,.5);
+  /*-webkit-box-shadow: inset 0 0 100px rgba(0,0,0,.5);
+          box-shadow: inset 0 0 100px rgba(0,0,0,.5);*/
 }
 .site-wrapper-inner {
   display: table-cell;
@@ -114,17 +121,19 @@ body {
 }
 .cover .btn-lg {
   padding: 10px 20px;
-  font-weight: bold;
+  /*font-weight: bold;*/
+  border-radius:25px;
+  /*color:#42bd48;*/
 }
 
 
 /*
  * Footer
  */
-
 .mastfoot {
-  color: #999; /* IE8 proofing */
-  color: rgba(255,255,255,.5);
+    /*color: #999; 
+  color: rgba(255,255,255,.5);*/
+    background-color: #FFFFFF;
 }
 
 
@@ -160,4 +169,40 @@ body {
   .cover-container {
     width: 700px;
   }
+}
+
+
+.navbar-cover {
+    background-color: #ffffff;
+    border-color:#eee;
+}
+
+.btn-select {
+    background-color: #42bd48;
+    color: #FFF;
+}
+
+
+.btn-view {
+    color: #42bd48;
+    margin-left:20px;
+}
+
+.border-top{
+    border-top:solid 1px #eee;
+}
+.navbar-brand-icon {
+    background: url(./smartflow-sharp.png) no-repeat center;
+    width: 260px;
+}
+
+.article-container{
+    margin-top:80px;
+}
+
+.page-content {
+    font-size: 16px;
+    color: #304455;
+    line-height: 28px;
+    text-align: justify;
 }
