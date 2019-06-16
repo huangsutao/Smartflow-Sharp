@@ -43,19 +43,13 @@
                 启动
             </h1>
             <p class="page-content text-left">
-               下载Smartflow-Sharp压缩包，然后解压打开项目文件夹，在SQLServer2008中按顺序执行SQL文件夹下SQL脚本，执行完成后会创建flow、bussiness两个数据库。然后，在VS中打开项目解决方案，找到example\Smartflow.Web.Mvc\Web.config 配置文件，修改其访问数据库连接字符串，然后，将这两个项目发布到本地IIS虚拟目录里。部署完成后，直接浏览项目，如果能浏览到登录界面表示部署成功。
+               下载工作流组件源码压缩包，然后解压打开项目文件夹，在SQLServer2008中按顺序执行SQL文件夹下SQL脚本，执行完成后会创建flow、bussiness两个数据库。在VS中打开项目解决方案，找到example\Smartflow.Web.Mvc\Web.config 配置文件，修改其访问数据库连接字符串，然后在VS开发工具中启动项目，启动完成后，若能浏览到登录界面表示启动成功。
             </p>
             <h2 class="page-header text-left">
                 集成
             </h2>
             <p class="page-content text-left">
-                参照提供的示例，将工作流组件集成到业务系统中，由于Smartflow-Sharp工作流组件的高度可定制化特点，既是优点也是缺点，优点就是可以很方便的根据用户的需求做定制化研发，缺点是太过灵活，有些功能需要用户自已开发。集成步骤如下：
-                <br />
-                1、flow是工作流基础库，直接整体拷贝到业务系统；<br />
-                2、在flow数据库中打开t_config表，在表中增加业务库的连接字符串；<br />
-                3、业务库中需要提供用户、角色、关联配置、流程定义、审批记录、待办事项等几张表，请参照bussiness库；<br />
-                4、工作流节点需与角色关联,工作流是依据角色筛选审批人员，请调整Content/design/settings.js下面CONST_ROLE_FIELD_MAP字段关系映射；<br />
-                5、调整业务系统中Web.config配置文件，请参照示例中Web.config配置信息；<br />
+                参照提供的示例，将工作流组件集成到业务系统中，由于Smartflow-Sharp工作流组件的高度可定制化特点，既是优点也是缺点，优点就是可以很方便的根据用户的需求做定制化研发，缺点是太过灵活，有些功能需要用户自已开发。具体的集成可以参照示例提供的方式，按需集成，在这里不在单独赘述。
             </p>
             <h2 class="page-header text-left">
                 结语
