@@ -9,3 +9,6 @@
 1、对工作流某些地方不太如意，计划对工作流平台进行重构，并增强该代码的健壮性（已完成）；<br/>
 2、推出Asp.net core 工作流版本；<br/>
 3、结合现有工作流，推出以业务为主导的快速开发平台（若时间充足，会在2019年推出）
+
+### FQA
+若使用VS2017 打开解决方案有问题，请在NuGet的控制台里执行update-package -project Smartflow.Web.Mvc -reinstall 命令。
