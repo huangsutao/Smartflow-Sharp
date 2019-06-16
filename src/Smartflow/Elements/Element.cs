@@ -14,7 +14,6 @@ using Smartflow;
 
 namespace Smartflow.Elements
 {
-    [Serializable]
     public abstract class Element : WorkflowInfrastructure
     {
         protected string name = string.Empty;
