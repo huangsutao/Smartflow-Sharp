@@ -11,4 +11,5 @@
 3、结合现有工作流，推出以业务为主导的快速开发平台（若时间充足，会在2019年推出）
 
 ### FQA
-若使用VS2017 打开解决方案有问题，请在NuGet的控制台里执行update-package -project Smartflow.Web.Mvc -reinstall 命令。
+若使用VS2017 打开解决方案有问题，请在NuGet的控制台里执行如下命令：<br/>
+update-package -project Smartflow.Web.Mvc -reinstall 
