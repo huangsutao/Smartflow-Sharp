@@ -6,7 +6,7 @@
 a,
 a:focus,
 a:hover {
-  color: #fff;
+  /*color: #fff;*/
 }
 
 
@@ -210,4 +210,17 @@ body {
     color: #304455;
     line-height: 28px;
     text-align: justify;
+}
+
+.list-group-item{
+    font-size:18px;
+}
+.list-group-item:last-child, .list-group-item:first-child {
+    border-radius: initial;
+}
+.list-group-item {
+    border: none;
+}
+.list-group-item+li{
+    border-top:solid 1px #ddd;
 }

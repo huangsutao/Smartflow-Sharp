@@ -228,6 +228,7 @@
     <Content Include="Content\design\layui\lay\modules\upload.js" />
     <Content Include="Content\design\layui\lay\modules\util.js" />
     <Content Include="Content\design\settings.js" />
+    <Content Include="Content\design\smartflow.dev.js" />
     <Content Include="Content\design\smartflow.css" />
     <Content Include="Content\design\smartflow.js" />
     <Content Include="Content\design\svg.js" />
@@ -343,6 +344,7 @@
     <Content Include="Content\main.css" />
     <Content Include="Content\main.js" />
     <Content Include="Global.asax" />
+    <Content Include="test.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

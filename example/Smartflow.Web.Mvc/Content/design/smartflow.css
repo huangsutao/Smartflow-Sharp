@@ -88,10 +88,6 @@ path {
     user-select: none;
 }
 
-.rect:hover, .line:hover, .circle:hover {
-    fill: #f8e233;
-    stroke: #f8e233;
-}
 
 .smartflow-table {
     margin: 0;
