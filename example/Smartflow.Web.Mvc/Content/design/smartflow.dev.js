@@ -451,10 +451,6 @@
         },
         bindEvent: function (el) {
             //绑定事件
-            //this.mousedown(function (evt) {
-            //    el.drawInstance._drag.call(this, evt, el.drawInstance);
-            //});
-
             this.dblclick(function (evt) {
                 evt.preventDefault();
                 var node = Draw._proto_NC[this.id()];
@@ -515,19 +511,6 @@
             return lineCollection;
         },
         bindEvent: function ($this) {
-
-            this.on('mouseenter', function (evt) {
-                $this.enterX = evt.clientX-30;
-                $this.enterY = evt.clientY;
-                //console.log('enter' + "x:" + evt.clientX + "y:" + evt.clientY);
-            });
-
-            this.on("mouseleave", function (evt) {
-                $this.leaveX = evt.clientX - 30;
-                $this.leaveY = evt.clientY;
-                //console.log('mouseleave' + "x:" + evt.clientX + "y:" + evt.clientY);
-            });
-
             Shape.base.Parent.prototype.bindEvent.call(this, $this);
         }
     });
