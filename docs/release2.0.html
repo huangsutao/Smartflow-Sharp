@@ -1,0 +1,78 @@
+﻿
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="baidu-site-verification" content="SBg5l6RhNK" />
+    <meta name="keywords" content="C#工作流,C#工作流引擎,C#工作流平台" />
+    <meta name="description" content="通过Smartflow-Sharp 工作流组件，快速构建的企业信息管理系统，是一个不错选择。Smartflow-Sharp工作流组件是一款更加倾向于程序员的快速开发组件，适用于传统行业文件流转、送审等审批场景。" />
+    <meta name="author" content="chengderen">
+    <title>Smartflow-Sharp 工作流组件版本升级2.0介绍</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+    <!-- Custom styles for this template -->
+    <link href="./css/cover.css" rel="stylesheet" />
+    <link href="./css/article.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://hm.baidu.com/hm.js?1d12f66f2f6f25504daa528cd96ea7e8"></script>
+</head>
+<body>
+
+    <nav class="navbar  navbar-default navbar-cover navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <div class="navbar-brand  navbar-brand-icon"></div>
+            </div>
+            <div id="navbar" class="collapse pull-right navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="./index.html">首页</a></li>
+                    <li><a href="./list.html">文档</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+    <div class="cover-container">
+        <div class="inner cover article-container">
+            <h1 class="page-header text-left">
+                回顾
+            </h1>
+            <p class="page-content text-left">
+                Smartflow-Sharp工作流组件从去年6月起开源,截止到今天已经一年有余。在这期间我已经将组件从1.0版本升级到2.0版本，现将工作流组件2.0版本与工作流组件1.0进行对比，调整与完善哪些功能稍作说明。
+            </p>
+
+            <h2 class="page-header text-left">
+                功能调整说明
+            </h2>
+            <p class="page-content text-left">
+
+                相比1.0版本，2.0这个版本对性能以及流程设计器上，有较大的调整与完善。去掉1.0中一些定制化的功能，使其更加注重业务流程，以业务流程为核心。对流程设计器和工作流引擎的核心代码进行梳理和重写，使其更具有可读性和维护性。从现在看1.0的代码有点惨不忍睹，刚开始考虑的是如何更加快速完成功能开发。这点可能跟平时工作习惯有点关系，造成这种情况。
+            </p>
+            <p class="page-content text-left">
+                在使用的过程中也有网友向我反眏，流程初始化的很影响性能，其实我以前发现过这个问题，这是微软在将XML序列化为对象的时候，会动态创建程序集和对象所致，动态创建的方式导致性能方面有所下降，XML的文件越大，所耗时间就会越长。为解决这个问题，我决定放弃使用XmlSerializer方式解析流程文件， 其实有网友也提出使用的缓存的方式，避免动态重复创建对象，将创建的对象放进缓存，可以解决此问题。但是由于个人对代码有点洁癖，并不太喜欢加特性方式来解析XML文件，所以我重新设计XML 的解析接口，经过测试，我已经彻底解决业务流程初始化的问题，且代码更加干净整洁。在此，感谢各位的网友参与和反馈。
+            </p>
+            <p class="page-content text-left">
+                工作流组件技术含量并高，但是，要想做得非常好还是很有难度。在这个过程中开发流程设计器是最让我头疼的事情，刚开始也考虑过用canvas，但是在使用开发过程中明显没有SVG编码方便，而且各种元素事件绑定方式有点不习惯，所以最终选择SVG画图技术。目前感觉流程设计器细节没有处理到位，后续还有待继续完善。
+            </p>
+            <h2 class="page-header text-left">
+                结语
+            </h2>
+            <p class="page-content text-left">
+                未来计划推出以业务流程为核心，将表单与业务流程结合起来，形成整体解决方案。在这个过程中，工作流组件将逐渐与BPM标准进行对接，使其更加标准化。后续也会推出.net core版本的工作流组件，为大家多提供一种选择，敬请关注。
+            </p>
+        </div>
+        <div class="mastfoot">
+            <div class="inner border-top">
+                <p>©2018-2019&nbsp;Smartflow-Sharp Inc. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="./css/bootstrap.min.js"></script>
+</body>
+</html>
