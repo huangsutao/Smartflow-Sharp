@@ -12,11 +12,11 @@ using System.Text;
 using Smartflow.Elements;
 namespace Smartflow.Internals
 {
-    internal class ElementCollection
+    internal class ElementContainer
     {
         private static Dictionary<string, Type> innerTypeMapper = new Dictionary<string, Type>();
 
-        static ElementCollection()
+        static ElementContainer()
         {
             innerTypeMapper.Add("start", typeof(Start));
             innerTypeMapper.Add("end", typeof(End));

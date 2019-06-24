@@ -50,7 +50,7 @@
     <Compile Include="Elements\End.cs" />
     <Compile Include="IMailService.cs" />
     <Compile Include="Internals\Automatic.cs" />
-    <Compile Include="Internals\ElementCollection.cs" />
+    <Compile Include="Internals\ElementContainer.cs" />
     <Compile Include="Internals\IResolution.cs" />
     <Compile Include="Internals\Manual.cs" />
     <Compile Include="Internals\ResolutionContext.cs" />

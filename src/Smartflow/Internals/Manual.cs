@@ -35,8 +35,8 @@ namespace Smartflow.Internals
                 .ToList()
                 .ForEach(element => {
                     string nodeName = element.Name.LocalName;
-                    if (ElementCollection.Contains(nodeName)){
-                        Element typeMapper = ElementCollection.Resolve(nodeName);
+                    if (ElementContainer.Contains(nodeName)){
+                        Element typeMapper = ElementContainer.Resolve(nodeName);
                         nodes.Add(typeMapper.Parse(element) as ASTNode);
                     }
                 });

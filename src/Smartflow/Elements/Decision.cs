@@ -50,9 +50,9 @@ namespace Smartflow.Elements
                 element.Elements().ToList().ForEach(entry =>
                 {
                     string nodeName = entry.Name.LocalName;
-                    if (ElementCollection.Contains(nodeName))
+                    if (ElementContainer.Contains(nodeName))
                     {
-                        nodes.Add(ElementCollection
+                        nodes.Add(ElementContainer
                             .Resolve(nodeName)
                             .Parse(entry));
                     }
