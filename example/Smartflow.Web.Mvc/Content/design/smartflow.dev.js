@@ -1,6 +1,7 @@
 ﻿/********************************************************************
- *License: https://github.com/chengderen/Smartflow/blob/master/LICENSE 
+ *License:   https://github.com/chengderen/Smartflow/blob/master/LICENSE 
  *Home page: https://www.smartflow-sharp.com
+ *version:   2.0
  ********************************************************************
  */
 (function ($) {
@@ -25,7 +26,7 @@
         id: 'id',
         name: 'name',
         to: 'destination',
-        expression:'expression'
+        expression: 'expression'
     };
 
     function Draw(option) {
@@ -112,9 +113,8 @@
             return (evt.target.correspondingUseElement || evt.target);
         }
     }
-
-    Draw.checkOrientation = function (instance) {
-        return instance.attr('y1') < instance.attr('y2') ? 'down' : 'up';
+    Draw.parse = function (xml) {
+        return new XML(xml).root;
     }
 
     Draw.create = function (category) {
@@ -138,11 +138,16 @@
         var self = this,
             dw = self.draw;
 
+        self.draw.mouseup(function (e) {
+            self.draw.off('mousemove');
+        });
+
         self._initEvent();
         self._decision = dw.group()
             .add(dw.path("M0 0,l20 0,v0 100,l-10 -15,l-10 15z").fill("#f06"));
 
         dw.defs().add(self._decision);
+
     }
     Draw.prototype._initEvent = function () {
         var self = this;
@@ -156,6 +161,15 @@
                     break;
             }
         });
+    }
+
+
+    /**
+     * 获取标准clientX轴
+     * @param {any} evt
+     */
+    Draw.getClientX = function (evt) {
+        return evt.clientX - 30;
     }
 
     /**
@@ -173,11 +187,9 @@
             d.preventDefault();
             nx.move(self, d);
         });
-        o.draw.on("mouseup", function () {
-            o.draw.off('mousemove');
-        })
     }
-    Draw.prototype._start = function (node, evt,x,y) {
+
+    Draw.prototype._start = function (node, evt) {
 
         var nodeName = node.nodeName,
             nodeId = node.id;
@@ -187,98 +199,102 @@
             //var y = evt.clientY - instance.cy,
             //    x = evt.clientX - instance.cx;
 
-            this._shared = new Line();
-            this._shared.drawInstance = this;
+            var result = instance.bound(Draw.getClientX(evt), evt.clientY);
+            if (result) {
 
-            this._shared.x1 = x;
-            this._shared.y1 = y;
-            this._shared.x2 = x;
-            this._shared.y2 = y;
-            this._shared.draw();
-            this.source = {
-                id: nodeId,
-                x: x,
-                y: y
-            };
+                this._shared = new Line();
+                this._shared.drawInstance = this;
+                var x = result.x;
+                var y = result.y;
+                this._shared.x1 = x;
+                this._shared.y1 = y;
+                this._shared.x2 = x;
+                this._shared.y2 = y;
+                this._shared.draw();
+                this.source = {
+                    id: nodeId
+                };
+
+                return true;
+            }
         }
+
+        return false;
     }
 
     Draw.prototype._join = function (evt) {
         if (this._shared) {
-            //连线
-            this._shared.x2 = evt.clientX - 40;
-            this._shared.y2 = (this._shared.y1 > evt.clientY) ? evt.clientY + 15 : evt.clientY - 15;
+            this._shared.x2 = Draw.getClientX(evt);
+            this._shared.y2 = (this._shared.y1 > evt.clientY) ? evt.clientY + 5 : evt.clientY - 5;
             this._shared.move();
         }
     }
-    Draw.prototype._end = function (node, check) {
+    Draw.prototype._end = function (node, evt) {
         var self = this,
-            nodeName = node.nodeName,
             nodeId = node.id;
-        var toRect = SVG.get(nodeId),
-            fromRect = SVG.get(self.source.id),
-            nt = Draw._proto_NC[nodeId],
-            nf = Draw._proto_NC[self.source.id],
+        var to = SVG.get(nodeId),
+            from = SVG.get(self.source.id),
             instance = self._shared,
-            l = SVG.get(instance.$id),
-            r = SVG.get(self.source.id);
+            l = SVG.get(instance.$id);
 
-        this.source.to = nodeId;
-        instance.move();
-
-        if (check) {
-            Draw._proto_RC.push({
-                id: instance.$id,
-                from: this.source.id,
-                to: nodeId,
-                ox2: l.attr("x2") - toRect.x(),
-                oy2: l.attr("y2") - toRect.y(),
-                ox1: l.attr("x1") - fromRect.x(),
-                oy1: l.attr("y1") - fromRect.y()
-            });
-        }
+        self.source.to = nodeId;
+        instance.move(evt);
+        Draw._proto_RC.push({
+            id: instance.$id,
+            from: self.source.id,
+            to: nodeId,
+            ox2: l.attr("x2") - to.x(),
+            oy2: l.attr("y2") - to.y(),
+            ox1: l.attr("x1") - from.x(),
+            oy1: l.attr("y1") - from.y()
+        });
     }
 
     Draw.prototype.join = function () {
         //线连接
         var self = this;
         this._initEvent();
-        this.draw.on('mousedown', function (evt) {
+        this.draw.off('mousedown').on('mousedown', function (evt) {
             var node = Draw.getEvent(evt);
-            if (node) {
-                var n = Draw._proto_NC[node.id];
-                self._start.call(self, node, evt, n.leaveX, n.leaveY);
-                self.draw.on('mousemove', function (e) {
-                   self._join.call(self, e);
-                });
+            if (node != null) {
+                if (self._start.call(self, node, evt)) {
+                    self.draw.on('mousemove', function (e) {
+                        self._join.call(self, e);
+                    });
+                }
             }
         });
+
         this.draw.on('mouseup', function (evt) {
             var node = Draw.getEvent(evt),
-                checkResult = (node);
+                check = (node != null);
+            if (check) {
 
-
-            self.draw.off('mousemove'); 
-
-            if (checkResult) {
                 var nodeName = node.nodeName,
                     nodeId = node.id;
-                checkResult = ((nodeName == 'rect' || nodeName == 'use') && self.source);
 
-                if (checkResult) {
+
+                if ((nodeName == 'rect' || nodeName == 'use') && self.source) {
+
                     var nt = Draw._proto_NC[nodeId],
                         nf = Draw._proto_NC[self.source.id];
 
-                    checkResult = (
+                    var x = Draw.getClientX(evt),
+                        y = evt.clientY;
+
+                    check = (
                         nodeId !== self.source.id
                         && !nt.check(nf)
-                        && !Draw.duplicateCheck(self.source.id, nodeId));
-
-                    self._end.call(self, node, checkResult);
+                        && !Draw.duplicateCheck(self.source.id, nodeId)
+                        && nt.bound(x, y)
+                    );
+                    if (check) {
+                        self._end.call(self, node, evt);
+                    }
                 }
             }
 
-            if (!checkResult) {
+            if (!check) {
                 if (self._shared) {
                     self._shared.remove();
                 }
@@ -288,9 +304,11 @@
             self.source = undefined;
         });
     }
+
     Draw.prototype.select = function () {
         //选择元素
         this._initEvent();
+        this.draw.off('mousedown');
         var self = this;
         self.draw.each(function () {
             var el = this;
@@ -423,17 +441,14 @@
     function Element(name, category) {
         //节点ID
         this.$id = undefined;
-
         //标识ID
         this.id = undefined;
-
         //文本画笔
         this.brush = undefined;
         //节点中文名称
         this.name = name;
         //节点类别（LINE、NODE、START、END,DECISION）
         this.category = category;
-        //this.unique = undefined;
         //禁用事件
         this.disable = false;
         //背景颜色
@@ -446,11 +461,11 @@
         constructor: Element,
         draw: function () {
             if (!this.disable) {
-                this.bindEvent.apply(SVG.get(this.$id), [this]);
+                var el = SVG.get(this.$id);
+                this.bindEvent.call(el, this);
             }
         },
         bindEvent: function (el) {
-            //绑定事件
             this.dblclick(function (evt) {
                 evt.preventDefault();
                 var node = Draw._proto_NC[this.id()];
@@ -465,13 +480,8 @@
         this.form = undefined;
         this.group = [];
         this.actors = [];
-
-        this.enterX= undefined;
-        this.enterY= undefined;
-
-        this.leaveX = undefined;
-        this.leaveY= undefined;
-
+        /*边界高度*/
+        this.tickness = 20;
     }
 
     Shape.extend(Element, {
@@ -509,9 +519,6 @@
                 lineCollection.push(Draw._proto_LC[this.id]);
             });
             return lineCollection;
-        },
-        bindEvent: function ($this) {
-            Shape.base.Parent.prototype.bindEvent.call(this, $this);
         }
     });
 
@@ -535,8 +542,6 @@
             .append(self[config.name])
             .append(config.rQuotation)
             .append(config.space)
-
-
             .append('layout')
             .append(config.equal)
             .append(config.lQuotation)
@@ -707,62 +712,29 @@
                 return false;
             });
         },
-        move: function () {
-
+        move: function (evt) {
             var self = this,
                 dw = self.drawInstance,
-                instance = SVG.get(self.$id),
-                orientation = Draw.checkOrientation(instance),
-                position;
+                instance = SVG.get(self.$id);
 
-            if (orientation == 'down') {
-                if (!dw.source.to) {
-                    var nl = Draw._proto_NC[dw.source.id];
-                    if (nl.down) {
-                        position = nl.down();
-                     //   this.x1 = position.x;
-                       // this.y1 = position.y;
-                    }
-                }
-                else {
-                    var nl = Draw._proto_NC[dw.source.to];
-                    if (nl.endDown) {
-                        position = nl.endDown();
-                        this.x2 = position.x;
-                        this.y2 = position.y;
-                    }
-                }
-            } else {
-                if (!dw.source.to) {
-                    var nl = Draw._proto_NC[dw.source.id];
-                    if (nl.up) {
-                        position = nl.up();
-                      //  this.x1 = position.x;
-                      //  this.y1 = position.y;
-                    }
-                }
-                else {
-                    var nl = Draw._proto_NC[dw.source.to];
-                    if (nl.endUp) {
-                        position = nl.endUp();
-                        this.x2 = position.x;
-                        this.y2 = position.y;
-                    }
+            if (dw.source.to && evt) {
+                var nl = Draw._proto_NC[dw.source.to];
+                var position = nl.bound(Draw.getClientX(evt), evt.clientY);
+                if (position) {
+                    this.x2 = position.x;
+                    this.y2 = position.y;
                 }
             }
-
             instance.attr({
                 x1: this.x1,
                 y1: this.y1,
                 x2: this.x2,
                 y2: this.y2
             });
-
             this.brush.attr({
                 x: (this.x2 - this.x1) / 2 + this.x1,
                 y: (this.y2 - this.y1) / 2 + this.y1
             });
-
             Line.update(this);
         },
         remove: function () {
@@ -777,7 +749,6 @@
                     SVG.get(propertyName).remove();
                 }
             });
-
             delete Draw._proto_LC[self.$id];
         }
     });
@@ -856,36 +827,101 @@
     Node.extend(Shape, {
         draw: function (b) {
             var n = this,
-                color = (b == n.id && b && n.id) ? n.bgCurrentColor : n.bgColor,
-                rect = n.drawInstance.draw.rect(n.w, n.h).attr({ fill: color, x: n.x, y: n.y });
+                dw = n.drawInstance,
+                color = (b == n.id && b && n.id) ?
+                    n.bgCurrentColor : n.bgColor,
 
-            if (this.category === 'node') {
-                n.brush = n.drawInstance.draw.text(n.name);
-                n.brush.attr({ x: n.x + rect.width() / 2, y: n.y + rect.height() / 2 + n.vertical() });
-            }
+                rect = dw.draw.rect(n.w, n.h)
+                    .attr({ fill: color, x: n.x, y: n.y });
 
+            n.brush = dw.draw.text(n.name);
+            n.brush.attr({
+                x: n.x + rect.width() / 2,
+                y: n.y + rect.height() / 2 + n.vertical()
+            });
             n.$id = rect.id();
             Draw._proto_NC[n.$id] = n;
             return Node.base.Parent.prototype.draw.call(this);
         },
-        bound: function (moveX,moveY) {
+        bound: function (moveX, moveY) {
             var x = this.x,
-                y = this.y;
-            var xt = this.x + this.w,
-                yt = this.y + this.h;
+                y = this.y,
+                w = this.w,
+                h = this.h,
+                tickness = this.tickness,
+                xt = x + w,
+                yt = y + h;
 
-            var top = (x <= moveX && xt >= moveX && moveY == y);
-            var bottom = (x <= moveX && xt >= moveX && moveY == yt);
-            var left = (x == moveX && moveY >= y && moveY <= yt);
-            var right = (xt == moveX && moveY >= y && moveY <= yt);
+            var direction = {
+                bottom: function (moveX, moveY) {
+                    var center = {
+                        x: x + w / 2,
+                        y: yt
+                    };
+                    return (x + tickness <= moveX
+                        && xt - tickness >= moveX
+                        && moveY >= yt - tickness
+                        && moveY <= yt) ? center : false;
+                },
+                top: function (moveX, moveY) {
 
-            return (top || bottom || left || right);
+                    var center = {
+                        x: x + w / 2,
+                        y: y
+                    };
+                    return (x + tickness <= moveX && xt - tickness >= moveX
+                        && moveY >= y
+                        && moveY <= y + tickness) ? center : false;
+
+                },
+                left: function (moveX, moveY) {
+                    var center = {
+                        x: x,
+                        y: y + h / 2
+                    };
+
+                    return (
+                        x <= moveX
+                        && x + tickness >= moveX
+                        && moveY >= y
+                        && moveY <= yt
+                    ) ? center : false;
+
+                },
+                right: function (moveX, moveY) {
+
+                    var center = {
+                        x: xt,
+                        y: y + h / 2
+                    };
+
+                    return (
+                        xt - tickness <= moveX
+                        && xt >= moveX
+                        && moveY >= y
+                        && moveY <= yt
+                    ) ? center : false;
+                }
+            }
+
+            for (var propertName in direction) {
+                var _check = direction[propertName](moveX, moveY);
+                if (_check) {
+                    return _check;
+                }
+            }
+
+            return false;
         },
         move: function (element, d) {
             var self = this;
             self.x = d.clientX - self.disX - self.cx;
             self.y = d.clientY - self.disY - self.cy;
-            element.attr({ x: self.x, y: self.y });
+
+            element.attr({
+                x: self.x,
+                y: self.y
+            });
 
             if (self.brush && this.category === 'node') {
                 self.brush.attr({
@@ -893,6 +929,7 @@
                     y: element.y() + (element.height() / 2) + self.vertical()
                 });
             }
+
             Node.base.Parent.prototype.move.call(this);
         },
         validate: function () {
@@ -901,34 +938,6 @@
         },
         vertical: function () {
             return util.ie ? 6 : 0;
-        },
-        down: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.height() + n.y(),
-                x: n.width() / 2 + n.x()
-            };
-        },
-        endDown: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.y(),
-                x: n.width() / 2 + n.x()
-            };
-        },
-        endUp: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.y() + n.height(),
-                x: n.width() / 2 + n.x() + 20
-            };
-        },
-        up: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.y(),
-                x: n.width() / 2 + n.x() + 20
-            };
         }
     });
 
@@ -939,8 +948,6 @@
      * @param {any} category
      */
     function Circle(name, category) {
-        //this.w = 180;
-        //this.h = 40;
         this.x = 10;
         this.y = 10;
         this.cx = 40;
@@ -951,7 +958,6 @@
     }
 
     Circle.extend(Shape, {
-
         draw: function () {
             return Circle.base.Parent.prototype.draw.call(this);
         },
@@ -971,6 +977,123 @@
         validate: function () {
             return (Draw.findById(this.$id, 'to').length > 0
                 && Draw.findById(this.$id, 'from').length > 0);
+        },
+        bound(mX, mY) {
+
+            var r = 30,
+                cx = this.x + r,
+                cy = this.y,
+                z = r * 2;
+            var tickness = this.tickness;
+
+            var direction = {
+                bottom: {
+                    x1: cx - r,
+                    y1: cy + r,
+                    x2: cx - r,
+                    y2: cy + r - tickness,
+                    x3: cx + z - r,
+                    y3: cy + r - tickness,
+                    x4: cx - r + z,
+                    y4: cy + r,
+                    check: function (moveX, moveY) {
+
+                        /*检测边界*/
+                        var center = {
+                            x: cx,
+                            y: cy + r
+                        };
+
+                        return (this.x1 <= moveX &&
+                            this.x3 >= moveX &&
+                            this.y1 >= moveY &&
+                            this.y2 <= moveY) ? center : false;
+                    }
+
+                },
+                top: {
+                    x1: cx - r,
+                    y1: cy - r,
+                    x2: cx - r,
+                    y2: cy - r + tickness,
+                    x3: cx + z - r,
+                    y3: cy - r,
+                    x4: cx + z - r,
+                    y4: cy - r + tickness,
+                    check: function (moveX, moveY) {
+
+                        /*检测边界*/
+                        var center = {
+                            x: cx,
+                            y: cy - r
+                        };
+
+                        /*检测边界*/
+                        return (this.x1 <= moveX &&
+                            this.x3 >= moveX &&
+                            this.y1 <= moveY &&
+                            this.y2 >= moveY) ? center : false;
+                    }
+                },
+                left: {
+                    x1: cx - r,
+                    y1: cy - r + tickness,
+                    x2: cx - r,
+                    y2: cy + r - tickness,
+                    x3: cx - r + tickness,
+                    y3: cy - r + tickness,
+                    x4: cx - r + tickness,
+                    y4: cy + r - tickness,
+                    check: function (moveX, moveY) {
+
+                        /*检测边界*/
+                        var center = {
+                            x: cx - r,
+                            y: cy
+                        };
+
+                        /*检测边界*/
+                        return (this.x1 <= moveX &&
+                            this.x3 >= moveX &&
+                            this.y1 <= moveY &&
+                            this.y2 >= moveY) ? center : false;
+
+                        //上下上下
+                    }
+                },
+                right: {
+                    x1: cx + r,
+                    y1: cy - r + tickness,
+                    x2: cx + r,
+                    y2: cy + r - tickness,
+                    x3: cx + r - tickness,
+                    y3: cy - r + tickness,
+                    x4: cx + r - tickness,
+                    y4: cy + r - tickness,
+                    check: function (moveX, moveY) {
+
+                        /*检测边界*/
+                        var center = {
+                            x: cx + r,
+                            y: cy
+                        };
+
+                        /*检测边界*/
+                        return (this.x1 >= moveX &&
+                            this.x3 <= moveX &&
+                            this.y1 <= moveY &&
+                            this.y2 >= moveY) ? center : false;
+                    }
+                }
+            }
+            for (var propertName in direction) {
+                var _o = direction[propertName],
+                    check = _o.check(mX, mY);
+                if (check) {
+                    return check;
+                }
+            }
+            return false;
         }
     });
 
@@ -985,6 +1108,9 @@
         this.cy = 10;
         this.disX = 0;
         this.disY = 0;
+        this.w = 20;
+        this.h = 100;
+
     }
 
     Decision.extend(Shape, {
@@ -1013,33 +1139,54 @@
             return (Draw.findById(this.$id, 'from').length > 1
                 && Draw.findById(this.$id, 'to').length > 0);
         },
-        down: function () {
+        bound: function (mX, mY) {
+
             var n = SVG.get(this.$id);
-            return {
-                x: 10 + n.x(),
-                y: n.y() + 90
-            };
-        },
-        up: function () {
-            var n = SVG.get(this.$id);
-            return {
-                x: 10 + n.x(),
-                y: n.y()
-            };
-        },
-        endDown: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.y(),
-                x: 10 + n.x()
-            };
-        },
-        endUp: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.y() + 90,
-                x: 10 + n.x()
-            };
+
+            var x = n.x(),
+                y = n.y(),
+                w = this.w,
+                h = this.h,
+                tickness = this.tickness,
+                xt = x + w,
+                yt = y + h;
+
+            var direction = {
+                bottom: function (moveX, moveY) {
+                    var center = {
+                        x: 10 + n.x(),
+                        y: n.y() + 90
+                    };
+                    return (x <= moveX && xt >= moveX
+                        && moveY >= yt - tickness
+                        && moveY <= yt) ? center : false;
+                },
+                top: function (moveX, moveY) {
+
+                    var center = {
+                        y: n.y(),
+                        x: 10 + n.x()
+                    };
+
+                    return (x <= moveX && xt >= moveX
+                        && moveY >= y
+                        && moveY <= y + tickness) ? center : false;
+                },
+                left: function (moveX, moveY) {
+                    return false;
+                },
+                right: function (moveX, moveY) {
+                    return false;
+                }
+            }
+
+            for (var propertName in direction) {
+                var _check = direction[propertName](mX, mY);
+                if (_check) {
+                    return _check;
+                }
+            }
+            return false;
         },
         exportDecision: function (build) {
             var self = this;
@@ -1104,14 +1251,7 @@
         validate: function () {
             return (Draw.findById(this.$id, 'from').length > 0
                 && Draw.findById(this.$id, 'to').length == 0);
-        },
-        down: function () {
-            var n = SVG.get(this.$id);
-            return {
-                x: n.x() + 30,
-                y: n.y() + 30
-            };
-        }
+        } 
     });
 
     function End() {
@@ -1147,13 +1287,6 @@
         validate: function () {
             return (Draw.findById(this.$id, 'from').length == 0
                 && Draw.findById(this.$id, 'to').length > 0);
-        },
-        endDown: function () {
-            var n = SVG.get(this.$id);
-            return {
-                x: n.x() + 30,
-                y: n.y() - 30
-            };
         }
     });
 
@@ -1172,7 +1305,7 @@
 
     XML.contains = function (name) {
         var result = false;
-        $.each(['command','transition'], function (i, value) {
+        $.each(['command', 'transition'], function (i, value) {
             if (value == name) {
                 result = true;
             }
@@ -1204,7 +1337,7 @@
         var attr = XML.getAttributes(node.attributes),
             name = node.nodeName,
             innerObject = $.extend(attr,
-                (contains) ?XML.convert(node.childNodes) : {
+                (contains) ? XML.convert(node.childNodes) : {
                     name: XML.getValue(node)
                 });
 
@@ -1272,10 +1405,6 @@
                 ](process, node, XML.contains(name));
             }
         });
-    }
-
-    Draw.parse = function (xml) {
-        return new XML(xml).root;
     }
 
 

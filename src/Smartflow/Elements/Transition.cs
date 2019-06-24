@@ -18,15 +18,8 @@ namespace Smartflow.Elements
 {
     public class Transition : Element, IRelationship
     {
-        private string layout = string.Empty;
         private string destination = string.Empty;
         private string expression = string.Empty;
-
-        public  string Layout
-        {
-            get { return layout; }
-            set { layout = value; }
-        }
        
         public string RelationshipID
         {
@@ -72,7 +65,6 @@ namespace Smartflow.Elements
         internal override Element Parse(XElement element)
         {
             this.name = element.Attribute("name").Value;
-            this.layout = element.Attribute("layout").Value;
             this.destination = element.Attribute("destination").Value;
 
             if (element.HasElements)

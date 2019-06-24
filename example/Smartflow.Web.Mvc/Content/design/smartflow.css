@@ -257,3 +257,7 @@ path {
 textarea {
     resize: none;
 }
+
+.text-path{
+    pointer-events:none;
+}

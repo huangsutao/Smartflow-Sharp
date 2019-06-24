@@ -21,13 +21,6 @@ namespace Smartflow.Elements
     {
         protected List<Transition> transitions = new List<Transition>();
         protected WorkflowNodeCategory category = WorkflowNodeCategory.Node;
-        protected string layout = string.Empty;
-
-        public string Layout
-        {
-            get { return layout; }
-            set { layout = value; }
-        }
 
         public List<Transition> Transitions
         {
@@ -86,7 +79,6 @@ namespace Smartflow.Elements
         protected void ParseXml(XElement element)
         {
             this.name = element.Attribute("name").Value;
-            this.layout = element.Attribute("layout").Value;
             this.id = element.Attribute("id").Value;
             string category = element.Attribute("category").Value;
             this.category = Utils.Convert(category);
