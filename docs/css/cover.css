@@ -214,6 +214,7 @@ body {
 
 .list-group-item{
     font-size:18px;
+    padding-left:0;
 }
 .list-group-item:last-child, .list-group-item:first-child {
     border-radius: initial;
@@ -222,5 +223,11 @@ body {
     border: none;
 }
 .list-group-item+li{
-    border-top:solid 1px #ddd;
+    border-top:1px dashed #d6d0d0;
+}
+
+.badge {
+    margin-right: 10px;
+    line-height: initial;
+    margin-top: -2px;
 }
