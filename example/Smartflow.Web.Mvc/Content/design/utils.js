@@ -99,15 +99,6 @@
                 disY: Number(pos[3])
             };
         },
-        parseLine: function (layout) {
-            var pos = layout.split(' ');
-            return {
-                x1: Number(pos[0]),
-                y1: Number(pos[1]),
-                x2: Number(pos[2]),
-                y2: Number(pos[3])
-            };
-        },
         builder: function () {
             return new StringBuilder();
         }

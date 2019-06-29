@@ -1,6 +1,7 @@
 ﻿/********************************************************************
- *License: https://github.com/chengderen/Smartflow/blob/master/LICENSE 
+ *License:   https://github.com/chengderen/Smartflow/blob/master/LICENSE 
  *Home page: https://www.smartflow-sharp.com
+ *Version:   3.0
  ********************************************************************
  */
 (function ($) {
@@ -25,7 +26,9 @@
         id: 'id',
         name: 'name',
         to: 'destination',
-        expression:'expression'
+        expression: 'expression',
+        marker: 'marker',
+        layout: 'layout'
     };
 
     function Draw(option) {
@@ -112,9 +115,8 @@
             return (evt.target.correspondingUseElement || evt.target);
         }
     }
-
-    Draw.checkOrientation = function (instance) {
-        return instance.attr('y1') < instance.attr('y2') ? 'down' : 'up';
+    Draw.parse = function (xml) {
+        return new XML(xml).root;
     }
 
     Draw.create = function (category) {
@@ -134,8 +136,6 @@
         };
         return strategy[category]();
     }
-
-
     Draw.prototype._init = function () {
         var self = this,
             dw = self.draw;
@@ -151,19 +151,28 @@
         dw.defs().add(self._decision);
 
     }
-
     Draw.prototype._initEvent = function () {
         var self = this;
         self.draw.each(function () {
             switch (this.type) {
                 case "rect":
                 case "use":
+                case "circle":
                     this.off('mousedown');
                     break;
                 default:
                     break;
             }
         });
+    }
+
+
+    /**
+     * 获取标准clientX轴
+     * @param {any} evt
+     */
+    Draw.getClientX = function (evt) {
+        return evt.clientX - 30;
     }
 
     /**
@@ -190,59 +199,59 @@
 
         if (nodeName == 'rect' || nodeName == 'use') {
             var instance = Draw._proto_NC[nodeId];
-            var y = evt.clientY - instance.cy,
-                x = evt.clientX - instance.cx;
+            var result = instance.bound(Draw.getClientX(evt), evt.clientY);
+            if (result) {
 
-            this._shared = new Line();
-            this._shared.drawInstance = this;
+                this._shared = new Line();
+                this._shared.drawInstance = this;
+                var x = result.x;
+                var y = result.y;
+                this._shared.x1 = x;
+                this._shared.y1 = y;
+                this._shared.x2 = x;
+                this._shared.y2 = y;
+                this._shared.draw();
+                this.source = {
+                    id: nodeId
+                };
 
-            this._shared.x1 = x;
-            this._shared.y1 = y;
-            this._shared.x2 = x;
-            this._shared.y2 = y;
-            this._shared.draw();
-            this.source = {
-                id: nodeId,
-                x: x,
-                y: y
-            };
+                return true;
+            }
         }
+
+        return false;
     }
 
     Draw.prototype._join = function (evt) {
         if (this._shared) {
-            //连线
-            this._shared.x2 = evt.clientX - 40;
-            this._shared.y2 = (this._shared.y1 > evt.clientY) ? evt.clientY + 15 : evt.clientY - 15;
+            this._shared.x2 = Draw.getClientX(evt);
+            this._shared.y2 = (this._shared.y1 > evt.clientY) ? evt.clientY + 5 : evt.clientY - 5;
             this._shared.move();
         }
     }
-    Draw.prototype._end = function (node, check) {
+    Draw.prototype._end = function (node, evt) {
         var self = this,
-            nodeName = node.nodeName,
             nodeId = node.id;
-        var toRect = SVG.get(nodeId),
-            fromRect = SVG.get(self.source.id),
-            nt = Draw._proto_NC[nodeId],
-            nf = Draw._proto_NC[self.source.id],
+        var to = SVG.get(nodeId),
+            from = SVG.get(self.source.id),
             instance = self._shared,
-            l = SVG.get(instance.$id),
-            r = SVG.get(self.source.id);
+            l = SVG.get(instance.$id);
 
-        this.source.to = nodeId;
-        instance.move();
+        self.source.to = nodeId;
+        instance.move(evt);
 
-        if (check) {
-            Draw._proto_RC.push({
-                id: instance.$id,
-                from: this.source.id,
-                to: nodeId,
-                ox2: l.attr("x2") - toRect.x(),
-                oy2: l.attr("y2") - toRect.y(),
-                ox1: l.attr("x1") - fromRect.x(),
-                oy1: l.attr("y1") - fromRect.y()
-            });
-        }
+        var last = instance.last();
+        var first = instance.first();
+
+        Draw._proto_RC.push({
+            id: instance.$id,
+            from: self.source.id,
+            to: nodeId,
+            ox2: last.x - to.x(),
+            oy2: last.y - to.y(),
+            ox1: first.x - from.x(),
+            oy1: first.y - from.y()
+        });
     }
 
     Draw.prototype.join = function () {
@@ -251,36 +260,45 @@
         this._initEvent();
         this.draw.off('mousedown').on('mousedown', function (evt) {
             var node = Draw.getEvent(evt);
-            if (node) {
-                self._start.call(self, node, evt);
-                self.draw.on('mousemove', function (e) {
-                    self._join.call(self, e);
-                });
+            if (node != null) {
+                if (self._start.call(self, node, evt)) {
+                    self.draw.on('mousemove', function (e) {
+                        self._join.call(self, e);
+                    });
+                }
             }
         });
+
         this.draw.on('mouseup', function (evt) {
             var node = Draw.getEvent(evt),
-                checkResult = (node);
+                check = (node != null);
+            if (check) {
 
-            if (checkResult) {
                 var nodeName = node.nodeName,
                     nodeId = node.id;
-                checkResult = ((nodeName == 'rect' || nodeName == 'use') && self.source);
 
-                if (checkResult) {
+
+                if ((nodeName == 'rect' || nodeName == 'use') && self.source) {
+
                     var nt = Draw._proto_NC[nodeId],
                         nf = Draw._proto_NC[self.source.id];
 
-                    checkResult = (
+                    var x = Draw.getClientX(evt),
+                        y = evt.clientY;
+
+                    check = (
                         nodeId !== self.source.id
                         && !nt.check(nf)
-                        && !Draw.duplicateCheck(self.source.id, nodeId));
-
-                    self._end.call(self, node, checkResult);
+                        && !Draw.duplicateCheck(self.source.id, nodeId)
+                        && nt.bound(x, y)
+                    );
+                    if (check) {
+                        self._end.call(self, node, evt);
+                    }
                 }
             }
 
-            if (!checkResult) {
+            if (!check) {
                 if (self._shared) {
                     self._shared.remove();
                 }
@@ -301,6 +319,7 @@
             switch (el.type) {
                 case "rect":
                 case "use":
+                case "circle":
                     el.mousedown(function (evt) {
                         self._drag.call(this, evt, self);
                     });
@@ -355,8 +374,9 @@
 
         build.append(config.rootStart);
         $.each(Draw._proto_NC, function () {
-            var self = this;
-            build.append(self.export());
+            if (this.category !== 'marker') {
+                build.append(this.export());
+            }
         });
 
         build.append(config.rootEnd);
@@ -371,18 +391,20 @@
         var dwInstance = this,
             data = Draw.parse(structure).workflow;
 
-        var record = process || [],
-            findUID = function (destination) {
-                var id;
-                for (var i = 0, len = data.length; i < len; i++) {
-                    var node = data[i];
-                    if (destination == node.id) {
-                        id = node.$id;
-                        break;
-                    }
+        var record = process || [];
+
+        function findUID(destination) {
+            var id;
+            for (var i = 0, len = data.length; i < len; i++) {
+                var node = data[i];
+                if (destination == node.id) {
+                    id = node.$id;
+                    break;
                 }
-                return id;
-            };
+            }
+            return id;
+        }
+
         $.each(data, function () {
             var node = this;
             node.category = node.category.toLowerCase();
@@ -402,23 +424,39 @@
                 var transition = new Line();
                 transition.drawInstance = dwInstance;
 
-                $.extend(transition, this, util.parseLine(this.layout));
+                var markerArray = (this.marker || []);
+                if (!!this.marker) {
+                    delete this.marker;
+                }
+
+                $.extend(transition, this);
+
                 transition.disable = (disable || false);
-                transition.draw();
+                transition.draw(this.layout);
 
                 var destinationId = findUID(transition.destination),
                     destination = SVG.get(destinationId),
-                    from = SVG.get(self.$id),
-                    line = SVG.get(transition.$id);
+                    from = SVG.get(self.$id);
+
+                var last = transition.last(),
+                    first = transition.first();
+
+                $.each(markerArray, function () {
+                    var marker = new Marker(parseFloat(this.x), parseFloat(this.y), transition);
+                    marker.length = this.length;
+                    marker.drawInstance = transition.drawInstance;
+                    marker.draw();
+                    transition.markerArray.push(marker);
+                });
 
                 Draw._proto_RC.push({
                     id: transition.$id,
                     from: self.$id,
                     to: destinationId,
-                    ox2: line.attr("x2") - destination.x(),
-                    oy2: line.attr("y2") - destination.y(),
-                    ox1: line.attr("x1") - from.x(),
-                    oy1: line.attr("y1") - from.y()
+                    ox2: last.x - destination.x(),
+                    oy2: last.y - destination.y(),
+                    ox1: first.x - from.x(),
+                    oy1: first.y - from.y()
                 });
             });
         });
@@ -427,17 +465,14 @@
     function Element(name, category) {
         //节点ID
         this.$id = undefined;
-
         //标识ID
         this.id = undefined;
-
         //文本画笔
         this.brush = undefined;
         //节点中文名称
         this.name = name;
         //节点类别（LINE、NODE、START、END,DECISION）
         this.category = category;
-        //this.unique = undefined;
         //禁用事件
         this.disable = false;
         //背景颜色
@@ -450,15 +485,11 @@
         constructor: Element,
         draw: function () {
             if (!this.disable) {
-                this.bindEvent.apply(SVG.get(this.$id), [this]);
+                var el = SVG.get(this.$id);
+                this.bindEvent.call(el, this);
             }
         },
         bindEvent: function (el) {
-            //绑定事件
-            this.mousedown(function (evt) {
-                el.drawInstance._drag.call(this, evt, el.drawInstance);
-            });
-
             this.dblclick(function (evt) {
                 evt.preventDefault();
                 var node = Draw._proto_NC[this.id()];
@@ -473,6 +504,8 @@
         this.form = undefined;
         this.group = [];
         this.actors = [];
+        /*边界高度*/
+        this.tickness = 20;
     }
 
     Shape.extend(Element, {
@@ -533,9 +566,7 @@
             .append(self[config.name])
             .append(config.rQuotation)
             .append(config.space)
-
-
-            .append('layout')
+            .append(config.layout)
             .append(config.equal)
             .append(config.lQuotation)
             .append(self.x + ' ' + self.disX + ' ' + self.y + ' ' + self.disY)
@@ -600,10 +631,10 @@
                     .append(N.id)
                     .append(config.rQuotation)
                     .append(config.space)
-                    .append('layout')
+                    .append(config.layout)
                     .append(config.equal)
                     .append(config.lQuotation)
-                    .append(L.x1 + ' ' + L.y1 + ' ' + L.x2 + ' ' + L.y2)
+                    .append(L.getPoints().join(" "))
                     .append(config.rQuotation)
                     .append(config.end);
 
@@ -619,6 +650,33 @@
                         .append(config.expression)
                         .append(config.end);
                 }
+
+                $.each(L.markerArray, function () {
+                    var marker = this;
+
+                    build.append(config.start)
+                        .append(config.marker)
+                        .append(config.space)
+                        .append("x")
+                        .append(config.equal)
+                        .append(config.lQuotation)
+                        .append(marker.x)
+                        .append(config.rQuotation)
+                        .append(config.space)
+                        .append("y")
+                        .append(config.equal)
+                        .append(config.lQuotation)
+                        .append(marker.y)
+                        .append(config.rQuotation)
+                        .append(config.space)
+                        .append("length")
+                        .append(config.equal)
+                        .append(config.lQuotation)
+                        .append(marker.length)
+                        .append(config.rQuotation)
+                        .append(config.afterClose)
+
+                });
 
                 build.append(config.beforeClose)
                     .append(config.transition)
@@ -652,116 +710,152 @@
         return build.toString();
     }
 
+    function Marker(x, y, line) {
+        this.x = x;
+        this.y = y;
+        this.r = 10;
+        this.cx = 40;
+        this.cy = 10;
+        this.disX = 0;
+        this.disY = 0;
+        this.border = 3;
+        //线段长度
+        this.length = 0;
+        this.line = line;
+        Marker.base.Constructor.call(this, "标记位", "marker");
+    }
+
+    Marker.extend(Shape, {
+        draw: function () {
+            var self = this,
+                dw = self.drawInstance.draw,
+                circle = dw.circle(self.r)
+                    .fill(self.bgColor);
+
+            circle.move(self.x, self.y);
+            self.$id = circle.id();
+
+            Draw._proto_NC[self.$id] = self;
+            return Shape.base.Parent.prototype.draw.call(this);
+        },
+        move: function (element, evt) {
+            var self = this;
+            self.x = evt.clientX - self.disX - self.cx;
+            self.y = evt.clientY - self.disY - self.cy;
+            element.move(self.x, self.y);
+            self.line.setPointArray();
+        },
+        bindEvent: function (el) {
+            //绑定事件
+            this.mousedown(function (evt) {
+                el.drawInstance._drag.call(this, evt, el.drawInstance);
+            });
+        },
+        validate: function () {
+            return true;
+        },
+        bound: function (mX, mY) {
+            var self = this;
+            return {
+                x: self.x + self.r,
+                y: self.y + self.r
+            };
+        },
+        math: function (sx, sy) {
+
+            var x = this.x,
+                y = this.y,
+                zx = sx,
+                zy = y;
+            var a = Math.ceil(Math.abs(x - sx)),
+                b = Math.ceil(Math.abs(sy - zy));
+            return Math.ceil(Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)));
+        }
+    });
+
     function Line() {
         this.x1 = 0;
         this.y1 = 0;
         this.x2 = 0;
         this.y2 = 0;
         this.border = 3;
-        this.orientation = 'down';
         this.expression = '';
-        this.textPath = undefined;
+        this.points = [];
         Line.base.Constructor.call(this, "line", "line");
+        this.markerArray = [];
     }
 
     Line.extend(Element, {
         constructor: Line,
-        draw: function () {
+        draw: function (points) {
             var self = this,
-                dw = self.drawInstance,
-                l = dw.draw.line(self.x1, self.y1, self.x2, self.y2);
-            l.stroke({ width: self.border, color: self.bgColor });
-            self.brush = dw.draw.text(self.name);
+                dw = self.drawInstance;
 
-            l.marker('end', 10, 10, function (add) {
+            var L = (!!points) ? dw.draw.polyline(points) :
+                dw.draw.polyline([[self.x1, self.y1], [self.x2, self.y2]]);
+
+            L.fill("none").stroke({
+                width: self.border,
+                color: self.bgColor
+            });
+
+            L.marker('end', 10, 10, function (add) {
                 add.path('M0,0 L0,6 L6,3 z').fill("#f00");
-                this.attr({ refX: 5, refY: 2.9, orient: 'auto', stroke: 'none', markerUNits: 'strokeWidth' });
+                this.attr({
+                    refX: 5,
+                    refY: 2.9,
+                    orient: 'auto',
+                    stroke: 'none',
+                    markerUNits: 'strokeWidth'
+                });
             });
 
-            self.brush.attr({
-                x: (self.x2 - self.x1) / 2 + self.x1,
-                y: (self.y2 - self.y1) / 2 + self.y1
-            });
-            self.$id = l.id();
+            self.$id = L.id();
             Draw._proto_LC[self.$id] = this;
             return Line.base.Parent.prototype.draw.call(self);
         },
-        bindEvent: function (l) {
+        bindEvent: function () {
             this.off('dblclick').on('dblclick', function (evt) {
                 evt.preventDefault();
                 var instance = Draw._proto_LC[this.id()];
                 if (evt.ctrlKey && evt.altKey) {
                     Draw.removeById(instance.$id);
-
                     this.off('dblclick');
                     instance.remove();
+                } else if (evt.ctrlKey && evt.shiftKey) {
+
+                    var marker = new Marker(Draw.getClientX(evt), evt.clientY, instance);
+                    marker.drawInstance = instance.drawInstance;
+                    marker.draw();
+
+                    var first = instance.first();
+                    marker.length = marker.math(first.x, first.y);
+                    instance.markerArray.push(marker);
+                    instance.setPointArray();
+
                 } else {
                     var nodeName = prompt("请输入路线名称", instance.name);
                     if (nodeName) {
                         instance.name = nodeName;
-                        instance.brush.text(instance.name);
                     }
                 }
                 return false;
             });
         },
-        move: function () {
-
+        move: function (evt) {
             var self = this,
                 dw = self.drawInstance,
-                instance = SVG.get(self.$id),
-                orientation = Draw.checkOrientation(instance),
-                position;
-
-            if (orientation == 'down') {
-                if (!dw.source.to) {
-                    var nl = Draw._proto_NC[dw.source.id];
-                    if (nl.down) {
-                        position = nl.down();
-                        this.x1 = position.x;
-                        this.y1 = position.y;
-                    }
-                }
-                else {
-                    var nl = Draw._proto_NC[dw.source.to];
-                    if (nl.endDown) {
-                        position = nl.endDown();
-                        this.x2 = position.x;
-                        this.y2 = position.y;
-                    }
-                }
-            } else {
-                if (!dw.source.to) {
-                    var nl = Draw._proto_NC[dw.source.id];
-                    if (nl.up) {
-                        position = nl.up();
-                        this.x1 = position.x;
-                        this.y1 = position.y;
-                    }
-                }
-                else {
-                    var nl = Draw._proto_NC[dw.source.to];
-                    if (nl.endUp) {
-                        position = nl.endUp();
-                        this.x2 = position.x;
-                        this.y2 = position.y;
-                    }
+                instance = SVG.get(self.$id);
+            if (dw.source.to && evt) {
+                var nl = Draw._proto_NC[dw.source.to];
+                var position = nl.bound(Draw.getClientX(evt), evt.clientY);
+                if (position) {
+                    self.x2 = position.x;
+                    self.y2 = position.y;
                 }
             }
-
-            instance.attr({
-                x1: this.x1,
-                y1: this.y1,
-                x2: this.x2,
-                y2: this.y2
-            });
-
-            this.brush.attr({
-                x: (this.x2 - this.x1) / 2 + this.x1,
-                y: (this.y2 - this.y1) / 2 + this.y1
-            });
-
-            Line.update(this);
+            instance.plot([[self.x1, self.y1], [self.x2, self.y2]]);
+            Line.update(self);
         },
         remove: function () {
             var self = this,
@@ -770,13 +864,90 @@
                 marker = line.attr('marker-end'),
                 arrow = /#[a-zA-Z0-9]+/.exec(marker)[0];
 
-            $.each([arrow, self.$id, instance.brush.id()], function (index, propertyName) {
+            $.each([arrow, self.$id], function (index, propertyName) {
                 if (propertyName) {
                     SVG.get(propertyName).remove();
                 }
             });
 
+            $.each(self.markerArray, function () {
+                SVG.get(this.$id).remove();
+                delete Draw._proto_NC[this.$id];
+            });
+
             delete Draw._proto_LC[self.$id];
+        },
+        first: function () {
+            var pointArray = this.getPoints()
+            var point = pointArray[0];
+            var xy = point.split(",");
+            return {
+                x: parseInt(xy[0]),
+                y: parseInt(xy[1])
+            };
+        },
+        last: function () {
+            var pointArray = this.getPoints();
+            var point = pointArray[pointArray.length - 1];
+            var xy = point.split(",");
+
+            return {
+                x: parseInt(xy[0]),
+                y: parseInt(xy[1])
+            };
+        },
+        setFirst: function () {
+            var pointArray = this.getPoints();
+            pointArray.shift();
+            pointArray.unshift([this.x1, this.y1].join(','));
+            this.plot(pointArray);
+        },
+        setLast: function () {
+            var pointArray = this.getPoints();
+            pointArray.pop();
+            pointArray.push([this.x2, this.y2].join(','));
+            this.plot(pointArray);
+        },
+        getPoints: function () {
+            var self = this,
+                L = SVG.get(self.$id),
+                points = L.attr("points");
+
+            return points.split(" ");
+        },
+        setPointArray: function () {
+            var $this = this,
+                pointArray = [],
+                first = $this.first(),
+                last = $this.last();
+
+            pointArray.push([first.x, first.y].join(','));
+            $this.sort();
+            $.each($this.markerArray, function () {
+                pointArray.push([this.x + this.r / 2,
+                this.y + this.r / 2].join(','));
+            });
+            pointArray.push([last.x, last.y].join(','));
+            $this.plot(pointArray);
+        },
+        plot: function (pointArray) {
+            var el = SVG.get(this.$id);
+            el.plot(pointArray.join(" "));
+        },
+        sort: function () {
+            var $this = this,
+                len = $this.markerArray.length - 1;
+            for (var i = 0; i < len; i++) {
+                for (var j = 0; j < len - i; j++) {
+                    var b = $this.markerArray[j],
+                        a = $this.markerArray[j + 1];
+                    if (b.length > a.length) {
+                        var tempObject = b;
+                        $this.markerArray[j] = a;
+                        $this.markerArray[j + 1] = tempObject;
+                    }
+                }
+            }
         }
     });
 
@@ -785,34 +956,24 @@
         var toElements = Draw.findById(current.$id, "to"),
             fromElements = Draw.findById(current.$id, "from");
         $.each(toElements, function () {
-            var lineElement = SVG.get(this.id),
+            var el = SVG.get(this.id),
                 instance = Draw._proto_LC[this.id];
 
-            if (lineElement && instance) {
+            if (el && instance) {
                 instance.x2 = current.x + this.ox2;
                 instance.y2 = current.y + this.oy2;
-                lineElement.attr({ x2: instance.x2, y2: instance.y2 });
-                instance.brush.attr({
-                    x: (instance.x2 - instance.x1) / 2 + instance.x1,
-                    y: (instance.y2 - instance.y1) / 2 + instance.y1
-                });
-
+                instance.setLast();
                 Line.update(instance);
             }
         });
 
         $.each(fromElements, function () {
-            var lineElement = SVG.get(this.id),
+            var el = SVG.get(this.id),
                 instance = Draw._proto_LC[this.id];
-            if (lineElement && instance) {
+            if (el && instance) {
                 instance.x1 = current.x + this.ox1;
                 instance.y1 = current.y + this.oy1;
-                lineElement.attr({ x1: instance.x1, y1: instance.y1 });
-                instance.brush.attr({
-                    x: (instance.x2 - instance.x1) / 2 + instance.x1,
-                    y: (instance.y2 - instance.y1) / 2 + instance.y1
-                });
-
+                instance.setFirst();
                 Line.update(instance);
             }
         });
@@ -854,23 +1015,101 @@
     Node.extend(Shape, {
         draw: function (b) {
             var n = this,
-                color = (b == n.id && b && n.id) ? n.bgCurrentColor : n.bgColor,
-                rect = n.drawInstance.draw.rect(n.w, n.h).attr({ fill: color, x: n.x, y: n.y });
+                dw = n.drawInstance,
+                color = (b == n.id && b && n.id) ?
+                    n.bgCurrentColor : n.bgColor,
 
-            if (this.category === 'node') {
-                n.brush = n.drawInstance.draw.text(n.name);
-                n.brush.attr({ x: n.x + rect.width() / 2, y: n.y + rect.height() / 2 + n.vertical() });
-            }
+                rect = dw.draw.rect(n.w, n.h)
+                    .attr({ fill: color, x: n.x, y: n.y });
 
+            n.brush = dw.draw.text(n.name);
+            n.brush.attr({
+                x: n.x + rect.width() / 2,
+                y: n.y + rect.height() / 2 + n.vertical()
+            });
             n.$id = rect.id();
             Draw._proto_NC[n.$id] = n;
             return Node.base.Parent.prototype.draw.call(this);
+        },
+        bound: function (moveX, moveY) {
+            var x = this.x,
+                y = this.y,
+                w = this.w,
+                h = this.h,
+                tickness = this.tickness,
+                xt = x + w,
+                yt = y + h;
+
+            var direction = {
+                bottom: function (moveX, moveY) {
+                    var center = {
+                        x: x + w / 2,
+                        y: yt
+                    };
+                    return (x + tickness <= moveX
+                        && xt - tickness >= moveX
+                        && moveY >= yt - tickness
+                        && moveY <= yt) ? center : false;
+                },
+                top: function (moveX, moveY) {
+
+                    var center = {
+                        x: x + w / 2,
+                        y: y
+                    };
+                    return (x + tickness <= moveX && xt - tickness >= moveX
+                        && moveY >= y
+                        && moveY <= y + tickness) ? center : false;
+
+                },
+                left: function (moveX, moveY) {
+                    var center = {
+                        x: x,
+                        y: y + h / 2
+                    };
+
+                    return (
+                        x <= moveX
+                        && x + tickness >= moveX
+                        && moveY >= y
+                        && moveY <= yt
+                    ) ? center : false;
+
+                },
+                right: function (moveX, moveY) {
+
+                    var center = {
+                        x: xt,
+                        y: y + h / 2
+                    };
+
+                    return (
+                        xt - tickness <= moveX
+                        && xt >= moveX
+                        && moveY >= y
+                        && moveY <= yt
+                    ) ? center : false;
+                }
+            }
+
+            for (var propertName in direction) {
+                var _check = direction[propertName](moveX, moveY);
+                if (_check) {
+                    return _check;
+                }
+            }
+
+            return false;
         },
         move: function (element, d) {
             var self = this;
             self.x = d.clientX - self.disX - self.cx;
             self.y = d.clientY - self.disY - self.cy;
-            element.attr({ x: self.x, y: self.y });
+
+            element.attr({
+                x: self.x,
+                y: self.y
+            });
 
             if (self.brush && this.category === 'node') {
                 self.brush.attr({
@@ -878,6 +1117,7 @@
                     y: element.y() + (element.height() / 2) + self.vertical()
                 });
             }
+
             Node.base.Parent.prototype.move.call(this);
         },
         validate: function () {
@@ -886,34 +1126,6 @@
         },
         vertical: function () {
             return util.ie ? 6 : 0;
-        },
-        down: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.height() + n.y(),
-                x: n.width() / 2 + n.x()
-            };
-        },
-        endDown: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.y(),
-                x: n.width() / 2 + n.x()
-            };
-        },
-        endUp: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.y() + n.height(),
-                x: n.width() / 2 + n.x() + 20
-            };
-        },
-        up: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.y(),
-                x: n.width() / 2 + n.x() + 20
-            };
         }
     });
 
@@ -924,8 +1136,6 @@
      * @param {any} category
      */
     function Circle(name, category) {
-        //this.w = 180;
-        //this.h = 40;
         this.x = 10;
         this.y = 10;
         this.cx = 40;
@@ -936,7 +1146,6 @@
     }
 
     Circle.extend(Shape, {
-
         draw: function () {
             return Circle.base.Parent.prototype.draw.call(this);
         },
@@ -956,6 +1165,122 @@
         validate: function () {
             return (Draw.findById(this.$id, 'to').length > 0
                 && Draw.findById(this.$id, 'from').length > 0);
+        },
+        bound: function (mX, mY) {
+            var r = 30,
+                cx = this.x + r,
+                cy = this.y,
+                z = r * 2;
+            var tickness = this.tickness;
+
+            var direction = {
+                bottom: {
+                    x1: cx - r,
+                    y1: cy + r,
+                    x2: cx - r,
+                    y2: cy + r - tickness,
+                    x3: cx + z - r,
+                    y3: cy + r - tickness,
+                    x4: cx - r + z,
+                    y4: cy + r,
+                    check: function (moveX, moveY) {
+
+                        /*检测边界*/
+                        var center = {
+                            x: cx,
+                            y: cy + r
+                        };
+
+                        return (this.x1 <= moveX &&
+                            this.x3 >= moveX &&
+                            this.y1 >= moveY &&
+                            this.y2 <= moveY) ? center : false;
+                    }
+
+                },
+                top: {
+                    x1: cx - r,
+                    y1: cy - r,
+                    x2: cx - r,
+                    y2: cy - r + tickness,
+                    x3: cx + z - r,
+                    y3: cy - r,
+                    x4: cx + z - r,
+                    y4: cy - r + tickness,
+                    check: function (moveX, moveY) {
+
+                        /*检测边界*/
+                        var center = {
+                            x: cx,
+                            y: cy - r
+                        };
+
+                        /*检测边界*/
+                        return (this.x1 <= moveX &&
+                            this.x3 >= moveX &&
+                            this.y1 <= moveY &&
+                            this.y2 >= moveY) ? center : false;
+                    }
+                },
+                left: {
+                    x1: cx - r,
+                    y1: cy - r + tickness,
+                    x2: cx - r,
+                    y2: cy + r - tickness,
+                    x3: cx - r + tickness,
+                    y3: cy - r + tickness,
+                    x4: cx - r + tickness,
+                    y4: cy + r - tickness,
+                    check: function (moveX, moveY) {
+
+                        /*检测边界*/
+                        var center = {
+                            x: cx - r,
+                            y: cy
+                        };
+
+                        /*检测边界*/
+                        return (this.x1 <= moveX &&
+                            this.x3 >= moveX &&
+                            this.y1 <= moveY &&
+                            this.y2 >= moveY) ? center : false;
+
+                        //上下上下
+                    }
+                },
+                right: {
+                    x1: cx + r,
+                    y1: cy - r + tickness,
+                    x2: cx + r,
+                    y2: cy + r - tickness,
+                    x3: cx + r - tickness,
+                    y3: cy - r + tickness,
+                    x4: cx + r - tickness,
+                    y4: cy + r - tickness,
+                    check: function (moveX, moveY) {
+
+                        /*检测边界*/
+                        var center = {
+                            x: cx + r,
+                            y: cy
+                        };
+
+                        /*检测边界*/
+                        return (this.x1 >= moveX &&
+                            this.x3 <= moveX &&
+                            this.y1 <= moveY &&
+                            this.y2 >= moveY) ? center : false;
+                    }
+                }
+            }
+            for (var propertName in direction) {
+                var _o = direction[propertName],
+                    check = _o.check(mX, mY);
+                if (check) {
+                    return check;
+                }
+            }
+            return false;
         }
     });
 
@@ -970,6 +1295,9 @@
         this.cy = 10;
         this.disX = 0;
         this.disY = 0;
+        this.w = 20;
+        this.h = 100;
+
     }
 
     Decision.extend(Shape, {
@@ -998,33 +1326,54 @@
             return (Draw.findById(this.$id, 'from').length > 1
                 && Draw.findById(this.$id, 'to').length > 0);
         },
-        down: function () {
+        bound: function (mX, mY) {
+
             var n = SVG.get(this.$id);
-            return {
-                x: 10 + n.x(),
-                y: n.y() + 90
-            };
-        },
-        up: function () {
-            var n = SVG.get(this.$id);
-            return {
-                x: 10 + n.x(),
-                y: n.y()
-            };
-        },
-        endDown: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.y(),
-                x: 10 + n.x()
-            };
-        },
-        endUp: function () {
-            var n = SVG.get(this.$id);
-            return {
-                y: n.y() + 90,
-                x: 10 + n.x()
-            };
+
+            var x = n.x(),
+                y = n.y(),
+                w = this.w,
+                h = this.h,
+                tickness = this.tickness,
+                xt = x + w,
+                yt = y + h;
+
+            var direction = {
+                bottom: function (moveX, moveY) {
+                    var center = {
+                        x: 10 + n.x(),
+                        y: n.y() + 90
+                    };
+                    return (x <= moveX && xt >= moveX
+                        && moveY >= yt - tickness
+                        && moveY <= yt) ? center : false;
+                },
+                top: function (moveX, moveY) {
+
+                    var center = {
+                        y: n.y(),
+                        x: 10 + n.x()
+                    };
+
+                    return (x <= moveX && xt >= moveX
+                        && moveY >= y
+                        && moveY <= y + tickness) ? center : false;
+                },
+                left: function (moveX, moveY) {
+                    return false;
+                },
+                right: function (moveX, moveY) {
+                    return false;
+                }
+            }
+
+            for (var propertName in direction) {
+                var _check = direction[propertName](mX, mY);
+                if (_check) {
+                    return _check;
+                }
+            }
+            return false;
         },
         exportDecision: function (build) {
             var self = this;
@@ -1089,13 +1438,6 @@
         validate: function () {
             return (Draw.findById(this.$id, 'from').length > 0
                 && Draw.findById(this.$id, 'to').length == 0);
-        },
-        down: function () {
-            var n = SVG.get(this.$id);
-            return {
-                x: n.x() + 30,
-                y: n.y() + 30
-            };
         }
     });
 
@@ -1132,15 +1474,9 @@
         validate: function () {
             return (Draw.findById(this.$id, 'from').length == 0
                 && Draw.findById(this.$id, 'to').length > 0);
-        },
-        endDown: function () {
-            var n = SVG.get(this.$id);
-            return {
-                x: n.x() + 30,
-                y: n.y() - 30
-            };
         }
     });
+
 
     function XML(xml) {
         this.xml = xml;
@@ -1152,18 +1488,20 @@
 
     XML.config = {
         group: [],
-        transition: []
+        transition: [],
+        marker: []
     }
 
     XML.contains = function (name) {
         var result = false;
-        $.each(['command','transition'], function (i, value) {
+        $.each(['command', 'transition'], function (i, value) {
             if (value == name) {
                 result = true;
             }
         });
         return result;
     }
+
     XML.getAttributes = function (attrs) {
         if (!attrs) return {};
         var O = {};
@@ -1174,27 +1512,42 @@
         }
         return O;
     }
-    XML.convert = function (nodes) {
 
+    XML.convert = function (nodes) {
         var O = {};
         $.each(nodes, function () {
-            O[this.nodeName] = XML.getValue(this);
+            if (!O[this.nodeName] && this.nodeName !== "marker") {
+                O[this.nodeName] = XML.getValue(this);
+            } else {
+                if (O[this.nodeName]) {
+                    O[this.nodeName].push(XML.marker(this));
+                } else {
+                    O[this.nodeName] = [XML.marker(this)];
+                }
+            }
         });
         return O;
     }
+
+    XML.marker = function (node) {
+        return XML.getAttributes(node.attributes);
+    }
+
     XML.getValue = function (node) {
         return (node.textContent || node.text || node.value);
     }
+
     XML.single = function (process, node, contains) {
         var attr = XML.getAttributes(node.attributes),
             name = node.nodeName,
             innerObject = $.extend(attr,
-                (contains) ?XML.convert(node.childNodes) : {
+                (contains) ? XML.convert(node.childNodes) : {
                     name: XML.getValue(node)
                 });
 
         process[name] = XML.config[name] ? [innerObject] : innerObject;
     }
+
     XML.multiple = function (process, node, contains) {
 
         var attr = XML.getAttributes(node.attributes),
@@ -1215,7 +1568,6 @@
         }
     }
 
-
     XML.prototype.init = function () {
 
         if (this.support) {
@@ -1230,7 +1582,6 @@
         this.root[el.nodeName] = el.childNodes.length > 0 ? [] : {};
         this.parse(this.root[el.nodeName], el.childNodes);
     }
-
 
     XML.prototype.parse = function (process, nodes) {
         var $this = this;
@@ -1259,11 +1610,6 @@
         });
     }
 
-    Draw.parse = function (xml) {
-        return new XML(xml).root;
-    }
-
-
     $.fn.SMF = function (option) {
         var id = $(this).attr("id");
         Draw._proto_Cc[id] = new Draw(option);
@@ -1276,3 +1622,4 @@
     }
 
 })(jQuery);
+
