@@ -585,26 +585,7 @@
             eachAttributs(build, this);
             build.append(config.afterClose);
         });
-
-        if (self.form) {
-            var formElement = self.form;
-            build.append(config.start)
-                .append(config.form)
-                .append(config.space)
-                .append(config.name)
-                .append(config.equal)
-                .append(config.lQuotation)
-                .append(formElement[config.name])
-                .append(config.rQuotation)
-                .append(config.end)
-                .append("<![CDATA[")
-                .append(formElement.text)
-                .append("]]>")
-                .append(config.beforeClose)
-                .append(config.form)
-                .append(config.end);
-        }
-
+  
         if (self.exportDecision) {
             self.exportDecision(build);
         }
