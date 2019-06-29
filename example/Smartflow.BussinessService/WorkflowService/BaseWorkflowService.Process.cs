@@ -74,11 +74,8 @@ namespace Smartflow.BussinessService.WorkflowService
         {
             string instanceID = executeContext.Instance.InstanceID;
             string NID = executeContext.Instance.Current.NID;
-            pendingService.Delete(pending =>
-                pending.NODEID == NID &&
-                pending.INSTANCEID == instanceID);
-
             var current = GetCurrentNode(executeContext.Instance.InstanceID);
+
             if (current.NodeType != WorkflowNodeCategory.Decision)
             {
                 List<User> userList = GetUsersByGroup(current.Groups);
@@ -86,11 +83,11 @@ namespace Smartflow.BussinessService.WorkflowService
                 {
                     WritePending(user.IDENTIFICATION.ToString(), executeContext);
                 }
-
-                pendingService.Delete(pending =>
-                    pending.NODEID == NID &&
-                    pending.INSTANCEID == instanceID);
             }
+
+            pendingService.Delete(pending =>
+                 pending.NODEID == NID &&
+                 pending.INSTANCEID == instanceID);
         }
 
         /// <summary>

@@ -66,14 +66,14 @@ namespace Smartflow.Elements
         {
             this.name = element.Attribute("name").Value;
             this.destination = element.Attribute("destination").Value;
-
             if (element.HasElements)
             {
-                this.expression = element
-                    .Elements("expression")
-                    .FirstOrDefault().Value;
+                XElement expression = element.Elements("expression").FirstOrDefault();
+                if (expression != null)
+                {
+                    this.expression =expression.Value;
+                }
             }
-
             return this;
         }
     }
