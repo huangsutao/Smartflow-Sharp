@@ -258,6 +258,7 @@ textarea {
     resize: none;
 }
 
-.text-path{
-    pointer-events:none;
+circle {
+    /*pointer-events:painted;*/
+    opacity: 0.4;
 }
