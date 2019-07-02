@@ -910,6 +910,8 @@
             });
             pointArray.push([last.x, last.y].join(','));
             $this.plot(pointArray);
+
+            Line.update($this);
         },
         plot: function (pointArray) {
             var el = SVG.get(this.$id);
