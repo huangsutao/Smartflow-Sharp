@@ -34,3 +34,5 @@ bin
 obj
 example/Smartflow.Web.Mvc/Content/design/smartflow.dev.js
 example/Smartflow.Web.Mvc/test.html
+
+docs/docs.html
