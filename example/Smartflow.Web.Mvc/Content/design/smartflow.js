@@ -836,7 +836,6 @@
                 }
             }
             instance.plot([[self.x1, self.y1], [self.x2, self.y2]]);
-            Line.update(self);
         },
         remove: function () {
             var self = this,
@@ -910,12 +909,11 @@
             });
             pointArray.push([last.x, last.y].join(','));
             $this.plot(pointArray);
-
-            Line.update($this);
         },
         plot: function (pointArray) {
             var el = SVG.get(this.$id);
             el.plot(pointArray.join(" "));
+            Line.update($this);
         },
         sort: function () {
             var $this = this,
@@ -946,7 +944,6 @@
                 instance.x2 = current.x + this.ox2;
                 instance.y2 = current.y + this.oy2;
                 instance.setLast();
-                Line.update(instance);
             }
         });
 
@@ -957,7 +954,6 @@
                 instance.x1 = current.x + this.ox1;
                 instance.y1 = current.y + this.oy1;
                 instance.setFirst();
-                Line.update(instance);
             }
         });
     }
