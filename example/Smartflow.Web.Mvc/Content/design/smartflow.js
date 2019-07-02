@@ -913,7 +913,7 @@
         plot: function (pointArray) {
             var el = SVG.get(this.$id);
             el.plot(pointArray.join(" "));
-            Line.update($this);
+            Line.update(this);
         },
         sort: function () {
             var $this = this,
