@@ -14,23 +14,23 @@ namespace Smartflow.Internals
 {
     internal class ElementContainer
     {
-        private static Dictionary<string, Type> innerTypeMapper = new Dictionary<string, Type>();
+        private static Dictionary<string, Type> innerHandleMapper = new Dictionary<string, Type>();
 
         static ElementContainer()
         {
-            innerTypeMapper.Add("start", typeof(Start));
-            innerTypeMapper.Add("end", typeof(End));
-            innerTypeMapper.Add("node", typeof(Node));
-            innerTypeMapper.Add("decision", typeof(Decision));
-            innerTypeMapper.Add("group", typeof(Group));
-            innerTypeMapper.Add("command", typeof(Command));
-            innerTypeMapper.Add("transition", typeof(Transition));
-            innerTypeMapper.Add("actor", typeof(Actor));
+            innerHandleMapper.Add("start", typeof(Start));
+            innerHandleMapper.Add("end", typeof(End));
+            innerHandleMapper.Add("node", typeof(Node));
+            innerHandleMapper.Add("decision", typeof(Decision));
+            innerHandleMapper.Add("group", typeof(Group));
+            innerHandleMapper.Add("command", typeof(Command));
+            innerHandleMapper.Add("transition", typeof(Transition));
+            innerHandleMapper.Add("actor", typeof(Actor));
         }
 
         public static Element Resolve(string name)
         {
-            Type innerType = innerTypeMapper[name];
+            Type innerType = innerHandleMapper[name];
 
             return (Utils.CreateInstance(innerType) 
                 as Element);
@@ -38,7 +38,7 @@ namespace Smartflow.Internals
 
         public static bool Contains(string name)
         {
-            return innerTypeMapper.ContainsKey(name);
+            return innerHandleMapper.ContainsKey(name);
         }
     }
 }
