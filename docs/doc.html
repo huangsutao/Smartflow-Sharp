@@ -252,6 +252,12 @@
         <p>
             正在编写中。
         </p>
+
+        <h3 id="FQA" class="marker_title">FQA问题汇总</h3>
+        <p>
+           1、VS2017 打开解决方案编译不通过
+            <strong style="display:block;text-align:left;">答：请在NuGet的控制台里执行如下命令：<br/>update-package -project Smartflow.Web.Mvc -reinstall</strong>
+        </p>
         <h3 id="未来" class="marker_title">未来</h3>
         <p>
             作者会对Smartflow-Sharp工作流组件，一直负责到底。未来，我会对工作流管理组件增加更多实用性的功能，以便你能将工作流组件更加快速的融入到业务系统中。期望，能打造成符合中国特色工作流管理平台，造福更多企业和开发人员。如果你觉得能帮助到你，欢迎帮忙推荐。 <strong style="color:#ff0000">若需要定制开发或项目，也可以与我联系，我很愿意，花点时间来挣取零花钱</strong>。
@@ -310,7 +316,8 @@
             { id: 241, pId: 24, name: "定义元素" },
             { id: 242, pId: 24, name: "元素属性设置" },
             { id: 25, pId: 2, name: "流程引擎" },
-            { id: 3, pId: 0, name: "未来" },
+            { id: 3, pId: 0, name: "FQA" },
+            { id: 4, pId: 0, name: "未来" }
         ];
 
         function addDiyDom(treeId, treeNode) {
