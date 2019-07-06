@@ -13,139 +13,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
     <link rel="stylesheet" type="text/css" href="./css/sheets-of-paper-a4.css" />
     <link rel="stylesheet" href="./css/zTreeStyle/zTreeStyle.css" type="text/css" />
+    <link rel="stylesheet" href="./css/article.css" type="text/css" />
     <script type="text/javascript" src="https://hm.baidu.com/hm.js?1d12f66f2f6f25504daa528cd96ea7e8"></script>
-    <style type="text/css">
-        p {
-            text-align: justify;
-            line-height: 30px;
-        }
-
-        body {
-            padding-top: 30px;
-        }
-
-        .navbar-brand-icon {
-            background: url(./css/smartflow-sharp.png) no-repeat center;
-            width: 260px;
-        }
-
-        .navbar {
-            background-color: #FFF;
-        }
-
-        .ztree * {
-            font-size: 16px;
-            font-family: "Microsoft Yahei",Verdana,Simsun,"Segoe UI Web Light","Segoe UI Light","Segoe UI Web Regular","Segoe UI","Segoe UI Symbol","Helvetica Neue",Arial
-        }
-
-        .ztree li ul {
-            margin: 0;
-            padding: 0
-        }
-
-        .ztree li {
-            line-height: 30px;
-        }
-
-            .ztree li a {
-                width: 200px;
-                height: 30px;
-                padding-top: 0px;
-            }
-
-                .ztree li a:hover {
-                    text-decoration: none;
-                    background-color: #E7E7E7;
-                }
-
-                .ztree li a span.button.switch {
-                    visibility: hidden
-                }
-
-        .ztree.showIcon li a span.button.switch {
-            visibility: visible
-        }
-
-        .ztree li a.curSelectedNode {
-            background-color: #D4D4D4;
-            border: 0;
-            height: 30px;
-        }
-
-        .ztree li span {
-            line-height: 30px;
-        }
-
-            .ztree li span.button {
-                margin-top: -7px;
-            }
-
-                .ztree li span.button.switch {
-                    width: 16px;
-                    height: 16px;
-                }
-
-        .ztree li a.level0 span {
-            font-size: 150%;
-            font-weight: bold;
-        }
-
-        .ztree li span.button {
-            background-image: url("./css/left_menuForOutLook.png");
-            *background-image: url("./css/left_menuForOutLook.gif")
-        }
-
-            .ztree li span.button.switch.level0 {
-                width: 20px;
-                height: 20px
-            }
-
-            .ztree li span.button.switch.level1 {
-                width: 20px;
-                height: 20px
-            }
-
-            .ztree li span.button.noline_open {
-                background-position: 0 0;
-            }
-
-            .ztree li span.button.noline_close {
-                background-position: -18px 0;
-            }
-
-            .ztree li span.button.noline_open.level0 {
-                background-position: 0 -18px;
-            }
-
-            .ztree li span.button.noline_close.level0 {
-                background-position: -18px -18px;
-            }
-
-        .left_menu {
-            width: 240px;
-            height: 100%;
-            position: fixed;
-            left: 0;
-            top: 50px;
-            bottom: 0;
-            /*border-right: 2px #eee solid;*/
-            padding-top: 40px;
-            background-color: #fff;
-            padding-left:20px;
-        }
-       
-        .marker_title {
-            padding-top: 100px;
-            margin-top: -100px;
-        }
-
-        p{
-           margin-bottom:20px;
-        }
-    </style>
 </head>
 <body class="document">
-
     <nav class="navbar  navbar-default navbar-cover navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -203,7 +74,7 @@
             工作流组件在与业务系统融合过程中，有些必须的信息是需要由业务系统提供支撑如用户、组织机构、角色等基础信息。工作流组件通过开放集成式接口的与这些基础信息进行绑定，从而与业务系统建立关联关系。
         </p>
         <p>
-            工作流组件集成到业务系统中，我将其分为数据库、业务流程引擎、流程设计器三个部分，逐一阐述三个部分的集成步骤。
+            工作流组件集成到业务系统中，我将其分为数据库、业务流程引擎、流程设计器、审批页面四个部分，逐一阐述四个部分的集成步骤。
         </p>
         <h3 id="数据库" class="marker_title">数据库</h3>
         <p>
@@ -228,6 +99,13 @@
         </p>
         <p>
             <img src="./css/flow.png" />
+        </p>
+        <h3 id="审批页面" class="marker_title">审批页面</h3>
+        <p>
+            为了方便用户快速与业务系统集成，Smartflow-Sharp工作流组件中提供统一的审批框架页面（Views/Shared/AuditFrame.cshtml），以供用户使用。审批框架页面是以将表单页面嵌入的形式进行集成，用户只需要传递表单的URL，表单中提前定义好相关保存接口，以供审批框架页面调用，在后续的审批动作都是由审批框架页面自动完成。
+        </p>
+        <p>
+            <img src="./css/audit.png" style="width:100%;" />
         </p>
     </div>
     <div class="page" contenteditable="false">
@@ -312,6 +190,7 @@
             { id: 231, pId: 23, name: "数据库" },
             { id: 232, pId: 23, name: "业务流程引擎" },
             { id: 233, pId: 23, name: "流程设计器" },
+            { id: 234, pId: 23, name: "审批页面" },
             { id: 24, pId: 2, name: "流程设计工具", open: true },
             { id: 241, pId: 24, name: "定义元素" },
             { id: 242, pId: 24, name: "元素属性设置" },
