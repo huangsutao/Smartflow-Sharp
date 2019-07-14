@@ -62,6 +62,7 @@ namespace Smartflow
             wfNode.Transitions = wfNode.QueryWorkflowNode(node.NID);
             wfNode.FromTransition = wfNode.GetHistoryTransition();
             wfNode.Groups = wfNode.GetGroup();
+            wfNode.Actors = wfNode.GetActors();
 
             return wfNode;
         }
@@ -77,7 +78,7 @@ namespace Smartflow
             return WorkflowNode.ConvertToReallyType(node);
         }
 
-        public List<Actor> GetActors()
+        protected List<Actor> GetActors()
         {
             string query = " SELECT * FROM T_ACTOR WHERE RelationshipID=@RelationshipID AND InstanceID=@InstanceID ";
             return Connection.Query<Actor>(query, new
