@@ -64,10 +64,13 @@
             var checkbox = getCheckbox();
             $.each(checkbox.all, function () {
                 var self = $(this);
-                actorArray.push({
-                    id: self.attr('actorID'),
-                    name: self.attr('actor')
-                });
+                var name = self.attr('actor');
+                if (name!='') {
+                    actorArray.push({
+                        id: self.attr('actorID'),
+                        name: self.attr('actor')
+                    });
+                }
             });
             nx.actor = actorArray;
         }
