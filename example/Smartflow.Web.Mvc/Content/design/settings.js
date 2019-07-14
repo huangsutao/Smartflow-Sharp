@@ -376,7 +376,7 @@
 
                 $.each(serverData, function (index, item) {
                     var data = JSON.stringify(this),
-                        option = new Option(this.NAME, this.ID);
+                        option = new Option(this.Name, this.ID);
                     option.setAttribute("data", escape(data));
                     $(ruleSelector).append(option);
                 });

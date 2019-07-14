@@ -91,7 +91,7 @@ namespace Smartflow.Web.Mvc.Controllers
 
         public JsonResult GetConfigs()
         {
-            return JsonWrapper(bridgeService.GetSettings());
+            return Json(bridgeService.GetSettings());
         }
     }
 }
