@@ -17,10 +17,10 @@ namespace Smartflow
     public class MailService : IMailService
     {
         private static Lazy<MailConfiguration> mailConfigurationLazy = new
-            Lazy<MailConfiguration>(() => (ConfigurationManager.GetSection("mailConfiguration") as MailConfiguration));
+            Lazy<MailConfiguration>(() => (MailConfiguration.Configure()));
 
         private static
-            Lazy<SmtpClient> smtpClientLazy= new Lazy<SmtpClient>(() => new SmtpClient());
+            Lazy<SmtpClient> smtpClientLazy = new Lazy<SmtpClient>(() => new SmtpClient());
 
         static MailService()
         {
@@ -31,7 +31,7 @@ namespace Smartflow
                 _smtp.Host = mailConfiguration.Host;
                 _smtp.Port = mailConfiguration.Port;
                 _smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                _smtp.EnableSsl = mailConfiguration.EnableSsl;
+                _smtp.EnableSsl = mailConfiguration.EnableSsl==1;
                 _smtp.UseDefaultCredentials = true;
                 _smtp.Credentials =
                     new NetworkCredential(mailConfiguration.Account,

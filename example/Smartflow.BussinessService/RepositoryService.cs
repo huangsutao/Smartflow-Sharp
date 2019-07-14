@@ -12,7 +12,7 @@ namespace Smartflow.BussinessService
     {
         protected IDbConnection Connection
         {
-            get { return DbHelper.CreateConnection(); }
+            get { return DBUtils.CreateConnection(); }
         }
 
         public void Insert(T entity)

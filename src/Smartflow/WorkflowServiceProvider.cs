@@ -22,14 +22,14 @@ namespace Smartflow
             _collection.Add(new MailService());
         }
 
-        public static IList<object> Services
+        public static void Add(object registerObject)
         {
-            get { return _collection; }
+            _collection.Add(registerObject);
         }
 
         public static T OfType<T>()
         {
-            return (T)Services.Where(o => (o is T)).FirstOrDefault();
+            return (T)_collection.Where(o => (o is T)).FirstOrDefault();
         }
     }
 }

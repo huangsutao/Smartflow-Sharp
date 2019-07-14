@@ -27,6 +27,7 @@ namespace Smartflow
         protected void OnExecuteProcess(ExecutingContext executeContext)
         {
             Processing(executeContext);
+
             OnProcess(executeContext);
         }
 
@@ -104,6 +105,13 @@ namespace Smartflow
                 TransitionID = executeContext.TransitionID,
                 InstanceID = executeContext.Instance.InstanceID,
                 NodeType = executeContext.From.NodeType
+            });
+
+
+            System.Threading.Tasks.Task.Factory.StartNew(() => 
+            {
+
+
             });
         }
     }

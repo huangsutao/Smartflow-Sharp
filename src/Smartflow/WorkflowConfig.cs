@@ -9,6 +9,12 @@ namespace Smartflow
 {
     public class WorkflowConfig
     {
+        public long ID
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 配置名称
         /// </summary>
@@ -36,25 +42,11 @@ namespace Smartflow
             set;
         }
 
-        public static WorkflowConfig GetInstance(string id)
-        {
-            string query = " SELECT * FROM T_CONFIG WHERE ID=@ID ";
 
-            return DapperFactory
-                .CreateWorkflowConnection()
-                .Query<WorkflowConfig>(query, new { ID = id })
-                .FirstOrDefault();
-        }
-
-        public static DataTable GetSettings()
+        public static List<WorkflowConfig> GetSettings()
         {
             string query = " SELECT * FROM T_CONFIG ";
-            DataTable configData = new DataTable(Guid.NewGuid().ToString());
-            using (IDataReader dr = DapperFactory.CreateWorkflowConnection().ExecuteReader(query))
-            {
-                configData.Load(dr);
-            }
-            return configData;
+            return DapperFactory.CreateWorkflowConnection().Query<WorkflowConfig>(query).ToList();
         }
     }
 }

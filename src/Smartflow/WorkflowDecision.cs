@@ -42,7 +42,11 @@ namespace Smartflow
         public Transition GetTransition()
         {
             Command command = GetExecuteCmd();
-            WorkflowConfig config=WorkflowConfig.GetInstance(command.ID);
+
+            List<WorkflowConfig> settings= WorkflowConfig.GetSettings();
+            WorkflowConfig config= settings
+                .Where(cfg=>cfg.ID==long.Parse(command.ID))
+                .FirstOrDefault();
 
             IDbConnection connection = DapperFactory.CreateConnection(config.ProviderName, config.ConnectionString);
             try
@@ -83,5 +87,6 @@ namespace Smartflow
             string query = "SELECT * FROM T_COMMAND WHERE RelationshipID=@RelationshipID";
             return Connection.Query<Command>(query, new { RelationshipID = NID }).FirstOrDefault();
         }
+
     }
 }

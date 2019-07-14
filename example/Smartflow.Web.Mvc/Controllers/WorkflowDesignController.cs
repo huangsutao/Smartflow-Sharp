@@ -21,7 +21,7 @@ namespace Smartflow.Web.Mvc.Controllers
     public class WorkflowDesignController : BaseController
     {
         private WorkflowDesignService designService = new WorkflowDesignService();
-        private ActorService roleService = new ActorService();
+        private AbstractBridgeService bridgeService = new BaseBridgeService();
 
         public ActionResult Design(string id)
         {
@@ -38,7 +38,6 @@ namespace Smartflow.Web.Mvc.Controllers
                 structure = workflowStructure.STRUCTUREXML
             });
         }
-
 
         [HttpPost]
         public JsonResult Save(WorkflowStructure model)
@@ -65,28 +64,34 @@ namespace Smartflow.Web.Mvc.Controllers
         [HttpPost]
         public JsonResult GetProcess(string instanceID)
         {
-            WorkflowInstance instance = WorkflowInstance.GetInstance(instanceID);
-            return Json(new
-            {
-                structure = instance.Resource,
-                id = instance.Current.ID
-            });
+            return Json(bridgeService.GetJumpProcess(instanceID));
         }
-
 
         public ActionResult WorkflowDesignSettings()
         {
             return View();
         }
 
-        public JsonResult GetRole(string roleIds, string searchKey)
+        public JsonResult GetRole()
         {
-            return JsonWrapper(roleService.GetRole(roleIds, searchKey));
+            return Json(bridgeService.GetGroup());
+        }
+
+        public JsonResult GetActors(int pageIndex, int pageSize, string actorIDs, string searchKey)
+        {
+            int total;
+            var result = bridgeService.GetActors(pageIndex, pageSize, out total, actorIDs, searchKey);
+            return Json(new
+            {
+                code=0,
+                total = total,
+                rows = result
+            });
         }
 
         public JsonResult GetConfigs()
         {
-            return JsonWrapper(WorkflowConfig.GetSettings());
+            return JsonWrapper(bridgeService.GetSettings());
         }
     }
 }

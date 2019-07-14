@@ -503,7 +503,7 @@
         Shape.base.Constructor.call(this, name, category);
         this.form = undefined;
         this.group = [];
-        this.actors = [];
+        this.actor= [];
         /*边界高度*/
         this.tickness = 20;
     }
@@ -665,7 +665,7 @@
             }
         });
 
-        $.each(self.actors, function () {
+        $.each(self.actor, function () {
             build.append(config.start)
                 .append(config.actor);
             eachAttributs(build, this);
@@ -1467,6 +1467,7 @@
 
     XML.config = {
         group: [],
+        acotr:[],
         transition: [],
         marker: []
     }

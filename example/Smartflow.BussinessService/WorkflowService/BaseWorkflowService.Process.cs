@@ -16,20 +16,29 @@ namespace Smartflow.BussinessService.WorkflowService
             return WorkflowInstance.GetInstance(instanceID).Current.Groups;
         }
 
-        protected List<User> GetUsersByGroup(List<Group> items)
+        protected List<User> GetUsersByGroup(List<Group> items, List<Actor> actors)
         {
+            List<User> userList = new List<User>();
             List<string> gList = new List<string>();
+            List<string> ids = new List<string>();
             foreach (Group g in items)
             {
                 gList.Add(g.ID.ToString());
             }
-
-            if (gList.Count == 0)
+            foreach (Actor item in actors)
             {
-                return new List<User>();
+                ids.Add(item.ID);
             }
-
-            return new UserService().GetUserList(string.Join(",", gList));
+            var userService = new UserService();
+            if (ids.Count > 0)
+            {
+                userList.AddRange(userService.GetUserListByActor(string.Join(",", ids)));
+            }
+            if (gList.Count > 0)
+            {
+                userList.AddRange(userService.GetUserList(string.Join(",", gList)));
+            }
+            return userList;
         }
 
         public void OnProcess(ExecutingContext executeContext)
@@ -50,16 +59,12 @@ namespace Smartflow.BussinessService.WorkflowService
                 }
                 else
                 {
-
                     //流程跳转|流程撤销(重新指派人审批) 仅限演示
-                    List<Group> items =   current.Groups;
-                    List<User> userList = GetUsersByGroup(items);
+                    List<User> userList = GetUsersByGroup(current.Groups, current.Actors);
                     foreach (User user in userList)
                     {
                         WritePending(user.IDENTIFICATION.ToString(), executeContext);
                     }
-
-
                     string NID = executeContext.Instance.Current.NID;
                     pendingService.Delete(pending => pending.NODEID == NID && pending.INSTANCEID == instanceID);
                 }
@@ -78,7 +83,7 @@ namespace Smartflow.BussinessService.WorkflowService
 
             if (current.NodeType != WorkflowNodeCategory.Decision)
             {
-                List<User> userList = GetUsersByGroup(current.Groups);
+                List<User> userList = GetUsersByGroup(current.Groups, current.Actors);
                 foreach (var user in userList)
                 {
                     WritePending(user.IDENTIFICATION.ToString(), executeContext);

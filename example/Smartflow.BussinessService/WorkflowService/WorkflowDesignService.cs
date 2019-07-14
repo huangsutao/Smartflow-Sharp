@@ -16,7 +16,7 @@ namespace Smartflow.BussinessService.WorkflowService
     {
         protected IDbConnection Connection
         {
-            get { return DbHelper.CreateConnection(); }
+            get { return DBUtils.CreateConnection(); }
         }
 
         public void Persistent(WorkflowStructure workflowStructure)

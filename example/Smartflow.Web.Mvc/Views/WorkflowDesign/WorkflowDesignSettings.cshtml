@@ -7,105 +7,155 @@
 <head>
     <title>流程节点配置</title>
     <link href="~/Content/design/layui/css/layui.css" rel="stylesheet" />
-    <link href="~/Content/design/smartflow.css" rel="stylesheet" />
+    <style type="text/css">
+        .layui-table-tool-temp {
+            padding-right: 0;
+        }
+
+        .layui-table-tool {
+            padding: 5px 15px;
+            min-height: initial;
+            background-color: #FAFAFA;
+        }
+
+        .layui-elem-field legend {
+            font-size: 16px;
+            color: #32a6fa;
+        }
+
+        .layui-input,
+        .layui-transfer-box,
+        .layui-textarea {
+            border-radius: initial;
+            resize: none;
+        }
+
+        .layui-textarea {
+            min-height: initial;
+            height: 60px;
+        }
+
+        .layui-to-tool {
+            height: 340px;
+            padding-top: 140px;
+            text-align: center;
+            margin-left: 25px;
+        }
+    </style>
     <script src="~/Content/design/jquery.min.js"></script>
     <script src="~/Content/design/utils.js"></script>
-    <script src="~/Content/design/settings.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            SMF.init({
-                configUrl: '@Url.Action("GetConfigs", "WorkflowDesign")',
-                roleUrl: '@Url.Action("GetRole", "WorkflowDesign")'
-            });
 
-            $("#btnSearch").click(function () {
-                var searchKey = $.trim($(".smartflow-search-input").val());
-                SMF.search(searchKey);
-            });
-        });
-    </script>
 </head>
 <body>
     <div class="layui-container">
-        <div class="layui-tab layui-tab-brief">
-            <ul class="layui-tab-title" id="tab">
-                <li category="info" class="layui-this">基本信息</li>
-                <li category="role">参与角色</li>
-                <li category="rule">规则配置</li>
+        <div class="layui-tab layui-tab-brief" lay-filter="tabs">
+            <ul class="layui-tab-title">
+                <li lay-id="workflow-info" class="layui-this">基本信息</li>
+                <li lay-id="workflow-role">参与角色</li>
+                <li lay-id="workflow-rule">规则配置</li>
+                <li lay-id="workflow-actor">参与人</li>
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
-                    <table class="layui-table" lay-skin="nob">
-                        <tr>
-                            <td style="width:60px;" class="layui-text">名称</td>
-                            <td>
-                                <input type="text" id="txtNodeName" class="layui-input smartflow-input" />
-                            </td>
-                        </tr>
-                    </table>
+                    <input type="text" id="txtNodeName" placeholder="请输入节点名称" class="layui-input" />
+                </div>
+                <div class="layui-tab-item">
+                    <div id="transfer"></div>
+                </div>
+                <div class="layui-tab-item">
+                    <form class="layui-form">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">数据源</label>
+                            <div class="layui-input-block">
+                                <select id="ddlDataSource" class="layui-select" style="width:100%;"></select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">SQL脚本</label>
+                            <div class="layui-input-block">
+                                <textarea id="txtCommand" name="txtCommand" class="layui-textarea" spellcheck="false"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>表达式配置</legend>
+                        <div class="layui-field-box" style="height:200px;overflow: auto;">
+                            <div class="layui-form" lay-filter="expression" id="expression"></div>
+                        </div>
+                    </fieldset>
                 </div>
                 <div class="layui-tab-item">
                     <div class="layui-row">
-                        <div class="layui-col-xs6">
-                            <div class="smartflow-role-box">
-                                <div style="padding-bottom:5px;position:relative;">
-                                    <input type="text" placeholder="按角色名称搜索" class="layui-input smartflow-input smartflow-search-input" />
-                                    <span class="layui-icon layui-icon-search smartflow-search-icon" id="btnSearch"></span>
+                        <div class="layui-col-xs7">
+                            <div id="assign_actor" style="margin-top:-10px;padding:0;" lay-filter="users"></div>
+                        </div>
+                        <div class="layui-col-xs2">
+                            <div class="layui-transfer-active layui-to-tool">
+                                <button type="button" id="to_right" class="layui-btn layui-btn-sm layui-btn-primary layui-btn-disabled" data-index="0">
+                                    <i class="layui-icon layui-icon-next"></i>
+                                </button>
+                                <button type="button" id="to_left" class="layui-btn layui-btn-sm layui-btn-primary layui-btn-disabled" data-index="1">
+                                    <i class="layui-icon layui-icon-prev"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="layui-col-xs3">
+                            <div class="layui-container" style="height:340px;border:solid 1px #EEE;padding:0;">
+                                <div class="layui-form" style="padding-left:10px;" lay-filter="selectAll">
+                                    <div class="layui-form-item">
+                                        <input type="checkbox" id="selectAll" class="layui-form-checkbox" lay-filter="chkAll" title="已选择" lay-skin="primary" />
+                                    </div>
                                 </div>
-                                <div class="smartflow-role-list">
-                                    <ul id="roleGrid" class="smartflow-list"></ul>
+                                <div style="overflow-y:auto;border-top:solid 1px #EEE;height:300px;" id="selectItems">
+                                    <div class="layui-form" style="padding-left:10px;" lay-filter="assign_to_actor" id="assign_to_actor">
+                                      
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="layui-col-xs6">
-                            <fieldset class="layui-elem-field layui-elem-field-h" style="margin-left:10px;">
-                                <legend>已选角色</legend>
-                                <div class="layui-field-box">
-                                    <ul id="roleAssign" class="smartflow-list"></ul>
-                                </div>
-                            </fieldset>
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-tab-item">
-                    <fieldset class="layui-elem-field layui-field-title layui-field-title-mp">
-                        <legend>SQL脚本</legend>
-                    </fieldset>
-                    <table class="layui-table smartflow-table-tb" lay-skin="nob">
-                        <tbody>
-                            <tr>
-                                <td style="width:120px;" class="layui-text">
-                                    数据源
-                                </td>
-                                <td>
-                                    <select id="ddlRuleConfig" class="layui-select smartflow-input" style="width:100%;"></select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width:120px;" class="layui-text">SQL脚本</td>
-                                <td>
-                                    <textarea id="txtCommand" class="layui-textarea smartflow-textarea" spellcheck="false">
-</textarea>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <fieldset class="layui-elem-field  layui-field-title layui-field-title-mp">
-                        <legend>表达式配置</legend>
-                    </fieldset>
-                    <div style="height:200px;overflow: auto;">
-                        <table class="layui-table smartflow-table-tb" id="transitions" lay-skin="nob">
-                            <tbody></tbody>
-                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="~/Content/layui/layui.js"></script>
+    <script type="text/html" id="tools">
+        <div class="layui-form" style="border:solid 1px #ddd;">
+            <div class="layui-input-inline" style="width:270px;">
+                <input type="text" name="searchKey" autocomplete="off"
+                       placeholder="请按用户名搜索" class="layui-input" style="height:30px;line-height:30px;border:none;">
+            </div>
+            <div class="layui-input-inline" style="width: 20px">
+                <button style="background-color:#FAFAFA;border:none;">
+                    <i class="layui-icon" style="font-size: 18px; color:#0094ff"></i>
+                </button>
+            </div>
+        </div>
+    </script>
+    <script src="~/Content/design/layui/layui.all.js"></script>
+    <script src="~/Content/design/settings.js"></script>
+
+    <script type="text/html" id="common_expression">
+        <div class="layui-form-item">
+            <label class="layui-form-label">{{name}}</label>
+            <div class="layui-input-block">
+                <textarea id={{id}} class="layui-textarea">{{expression}}</textarea>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/html" id="common_user">
+        <div class="layui-form-item">
+            <input type="checkbox" name="custTransferLeftCheck" lay-filter="custTransferCheck" title="{{name}}"  actor="{{name}}"  actorID="{{value}}"  class="select-item" lay-skin="primary" />
+        </div>
+    </script>
+
     <script type="text/javascript">
-        //注意：选项卡 依赖 element 模块，否则无法进行功能性操作
-        layui.use(['element', 'form'], function () {
+          $(function () {
+            SMF.init({
+                configUrl: '@Url.Action("GetConfigs", "WorkflowDesign")',
+                roleUrl: '@Url.Action("GetRole", "WorkflowDesign")',
+                actorUrl: '@Url.Action("GetActors", "WorkflowDesign")'
+            });
         });
     </script>
 </body>
