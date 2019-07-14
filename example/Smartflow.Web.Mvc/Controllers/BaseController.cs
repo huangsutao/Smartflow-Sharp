@@ -6,8 +6,6 @@ using System.Web.Mvc;
 
 using Smartflow.Web.Mvc.Code;
 using Smartflow.BussinessService.Models;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
 
 namespace Smartflow.Web.Mvc.Controllers
 {

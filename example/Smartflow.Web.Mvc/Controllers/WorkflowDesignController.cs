@@ -13,7 +13,6 @@ using System.Web.Script.Serialization;
 
 using Smartflow;
 using Smartflow.Elements;
-using Newtonsoft.Json;
 using Smartflow.BussinessService.WorkflowService;
 
 namespace Smartflow.Web.Mvc.Controllers

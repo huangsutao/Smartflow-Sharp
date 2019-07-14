@@ -8,8 +8,6 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
-
-using System.Data.OracleClient;
 using System.Data.Common;
 
 namespace Smartflow
