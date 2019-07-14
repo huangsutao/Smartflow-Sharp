@@ -295,12 +295,11 @@
         table.on('checkbox(users)', function () {
             doRightCheckStatus();
         });
-
         $('#to_right').click(function () {
             var selectRow = table.checkStatus('users'),
                 template = document.getElementById("common_user").innerHTML;
 
-            var userIDs = [];
+          
             $(selectRow.data).each(function () {
                 $("#assign_to_actor").append(template
                     .replace(/{{name}}/ig, this.Name)
@@ -309,15 +308,28 @@
             });
 
             form.render('checkbox', 'assign_to_actor');
+            renderer();
+        });
+        function renderer(searchKey) {
             var checkbox = getCheckbox();
+            var userIDs = [];
             $.each(checkbox.all, function () {
                 userIDs.push($(this).attr('actorID'));
             });
             table.reload('users', {
                 where: {
-                    actorIDs: userIDs.join(',')
+                    actorIDs: userIDs.join(','),
+                    searchKey: (searchKey || '')
                 }
             });
+        }
+
+        table.on('toolbar(users)', function (e) {
+            var source= e.event; 
+            if (source === 'query') {
+                var value = $("#txtSearchKey").val();
+                renderer(value);
+            }
         });
     }
 
