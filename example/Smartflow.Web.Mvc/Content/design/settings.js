@@ -115,6 +115,7 @@
     }
 
     function loadActor(actors) {
+
         initRightActor(actors);
         initLeftActor(actors);
     }
@@ -189,7 +190,6 @@
             });
 
             $(this).addClass('layui-btn-disabled');
-            $('#to_right').prop('disabled', 'disabled');
 
             $("#selectAll").prop('checked', false);
             form.render('checkbox', "selectAll");
