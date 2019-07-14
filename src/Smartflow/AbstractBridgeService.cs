@@ -36,6 +36,11 @@ namespace Smartflow
             return WorkflowConfig.GetSettings();
         }
 
+        /// <summary>
+        /// 获取当前执行节点的记录
+        /// </summary>
+        /// <param name="instanceID"></param>
+        /// <returns></returns>
         public dynamic GetJumpProcess(string instanceID)
         {
             WorkflowInstance instance = WorkflowInstance.GetInstance(instanceID);
