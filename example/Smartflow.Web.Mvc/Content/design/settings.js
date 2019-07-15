@@ -59,6 +59,8 @@
             });
             nx.group = roleArray;
 
+            nx.actor.length == 0;
+
             var actorArray = [];
             //获取
             var checkbox = getCheckbox();
@@ -72,7 +74,7 @@
                     });
                // }
             });
-            nx.actor = actorArray;
+            nx.actor=actorArray;
         }
 
         if (name && nx.brush) {
