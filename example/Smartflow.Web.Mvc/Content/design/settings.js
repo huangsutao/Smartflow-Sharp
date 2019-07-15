@@ -65,12 +65,12 @@
             $.each(checkbox.all, function () {
                 var self = $(this);
                 var name = self.attr('actor');
-                if (name!='') {
+               // if (name!='') {
                     actorArray.push({
                         id: self.attr('actorID'),
-                        name: self.attr('actor')
+                        name: name
                     });
-                }
+               // }
             });
             nx.actor = actorArray;
         }
