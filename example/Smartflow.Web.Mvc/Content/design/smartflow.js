@@ -31,6 +31,11 @@
         layout: 'layout'
     };
 
+    ///检测为空
+    function checkNull(value) {
+        return (!(value == '' || value == undefined));
+    }
+
     function Draw(option) {
         this.draw = SVG(option.container);
         this.drawOption = $.extend({}, option);
@@ -119,6 +124,7 @@
         return new XML(xml).root;
     }
 
+
     Draw.create = function (category) {
         var strategy = {
             node: function () {
@@ -136,6 +142,9 @@
         };
         return strategy[category]();
     }
+
+   
+
     Draw.prototype._init = function () {
         var self = this,
             dw = self.draw;
@@ -666,10 +675,13 @@
         });
 
         $.each(self.actor, function () {
-            build.append(config.start)
-                .append(config.actor);
-            eachAttributs(build, this);
-            build.append(config.afterClose);
+
+            if (checkNull(this.id) && checkNull(this.name)) {
+                build.append(config.start)
+                    .append(config.actor);
+                eachAttributs(build, this);
+                build.append(config.afterClose);
+            }
         });
 
         build.append(config.beforeClose)
