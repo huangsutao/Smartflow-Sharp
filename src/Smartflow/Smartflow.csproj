@@ -49,7 +49,6 @@
     <Compile Include="Elements\End.cs" />
     <Compile Include="AbstractBridgeService.cs" />
     <Compile Include="IMailService.cs" />
-    <Compile Include="INotification.cs" />
     <Compile Include="Internals\Automatic.cs" />
     <Compile Include="Internals\ElementContainer.cs" />
     <Compile Include="Internals\IResolution.cs" />
