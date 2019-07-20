@@ -38,7 +38,12 @@ namespace Smartflow.BussinessService.WorkflowService
             {
                 userList.AddRange(userService.GetUserList(string.Join(",", gList)));
             }
-            return userList;
+
+            //去重了
+            return userList
+                .ToLookup(p => p.IDENTIFICATION)
+                .Select(c => c.First())
+                .ToList();
         }
 
         public void OnProcess(ExecutingContext executeContext)
