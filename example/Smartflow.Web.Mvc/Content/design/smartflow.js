@@ -155,7 +155,7 @@
 
         self._initEvent();
         self._decision = dw.group()
-            .add(dw.path("M0 0,l20 0,v0 100,l-10 -15,l-10 15z").fill("#f06"));
+            .add(dw.path("M0 0 l20 0 v0 100 l-10 -15 l-10 15z").fill("#f06"));
 
         dw.defs().add(self._decision);
 
