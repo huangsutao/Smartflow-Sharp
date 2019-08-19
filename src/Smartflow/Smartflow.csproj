@@ -62,6 +62,7 @@
     <Compile Include="Elements\Start.cs" />
     <Compile Include="Elements\Transition.cs" />
     <Compile Include="Elements\Workflow.cs" />
+    <Compile Include="IWorkflowAction.cs" />
     <Compile Include="WorkflowActor.cs" />
     <Compile Include="WorkflowGroup.cs" />
     <Compile Include="WorkflowInstanceState.cs" />
