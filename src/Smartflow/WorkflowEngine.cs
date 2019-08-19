@@ -106,13 +106,6 @@ namespace Smartflow
                 InstanceID = executeContext.Instance.InstanceID,
                 NodeType = executeContext.From.NodeType
             });
-
-
-            System.Threading.Tasks.Task.Factory.StartNew(() => 
-            {
-
-
-            });
         }
     }
 }
