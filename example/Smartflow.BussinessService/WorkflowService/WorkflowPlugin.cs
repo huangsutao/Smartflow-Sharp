@@ -1,19 +1,53 @@
-﻿using System;
+﻿using Smartflow.BussinessService.Models;
+using Smartflow.BussinessService.Services;
+using Smartflow.Elements;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Smartflow.Elements;
-using Smartflow.BussinessService.Models;
-using Smartflow.BussinessService.Services;
-using System.Reflection;
 
 namespace Smartflow.BussinessService.WorkflowService
 {
-    public partial class BaseWorkflowService
+    public class WorkflowPlugin : IPlugin
     {
-        public List<Group> GetCurrentActorGroup(string instanceID)
+        private RecordService recordService = new RecordService();
+        private PendingService pendingService = new PendingService();
+
+        public void ActionExecute(WorkflowContext context)
         {
-            return WorkflowInstance.GetInstance(instanceID).Current.Groups;
+            
+        }
+
+        public void ActionExecuted(ExecutingContext executeContext)
+        {
+
+            if (executeContext.Instance.Current.NodeType == WorkflowNodeCategory.Decision)
+            {
+                DecisionJump(executeContext);
+            }
+            else
+            {
+                //写入审批记录
+                WriteRecord(executeContext);
+                string instanceID = executeContext.Instance.InstanceID;
+                var current = GetCurrentNode(instanceID);
+                if (current.Name == "结束")
+                {
+                    pendingService.Delete(p => p.INSTANCEID == instanceID);
+                }
+                else
+                {
+                    //流程跳转|流程撤销(重新指派人审批) 仅限演示
+                    List<User> userList = GetUsersByGroup(current.Groups, current.Actors);
+                    foreach (User user in userList)
+                    {
+                        WritePending(user.IDENTIFICATION.ToString(), executeContext);
+                    }
+                    string NID = executeContext.Instance.Current.NID;
+                    pendingService.Delete(pending => pending.NODEID == NID && pending.INSTANCEID == instanceID);
+                }
+            }
+
         }
 
         protected List<User> GetUsersByGroup(List<Group> items, List<Actor> actors)
@@ -46,35 +80,6 @@ namespace Smartflow.BussinessService.WorkflowService
                 .ToList();
         }
 
-        public void OnProcess(ExecutingContext executeContext)
-        {
-            if (executeContext.Instance.Current.NodeType == WorkflowNodeCategory.Decision)
-            {
-                DecisionJump(executeContext);
-            }
-            else
-            {
-                //写入审批记录
-                WriteRecord(executeContext);
-                string instanceID = executeContext.Instance.InstanceID;
-                var current = GetCurrentNode(instanceID);
-                if (current.Name == "结束")
-                {
-                    pendingService.Delete(p => p.INSTANCEID == instanceID);
-                }
-                else
-                {
-                    //流程跳转|流程撤销(重新指派人审批) 仅限演示
-                    List<User> userList = GetUsersByGroup(current.Groups, current.Actors);
-                    foreach (User user in userList)
-                    {
-                        WritePending(user.IDENTIFICATION.ToString(), executeContext);
-                    }
-                    string NID = executeContext.Instance.Current.NID;
-                    pendingService.Delete(pending => pending.NODEID == NID && pending.INSTANCEID == instanceID);
-                }
-            }
-        }
 
         /// <summary>
         /// 多条件跳转
@@ -129,6 +134,11 @@ namespace Smartflow.BussinessService.WorkflowService
                 NODEID = GetCurrentNode(executeContext.Instance.InstanceID).NID,
                 APPELLATION = executeContext.Data.Url
             });
+        }
+
+        public WorkflowNode GetCurrentNode(string instanceID)
+        {
+            return WorkflowInstance.GetInstance(instanceID).Current;
         }
     }
 }

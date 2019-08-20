@@ -1,4 +1,5 @@
-﻿using Smartflow.Web.Mvc.Code;
+﻿using Smartflow.BussinessService.WorkflowService;
+using Smartflow.Web.Mvc.Code;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,9 @@ namespace Smartflow.Web.Mvc
     {
         protected void Application_Start()
         {
+            //默认服务
+            WorkflowGlobalServiceProvider.Add(new WorkflowPlugin());
+
             AreaRegistration.RegisterAllAreas();
             //WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);

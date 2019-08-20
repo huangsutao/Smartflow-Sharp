@@ -14,17 +14,11 @@ using System.Threading.Tasks;
 
 namespace Smartflow.BussinessService.WorkflowService
 {
-    public partial class BaseWorkflowService
+    public  class BaseWorkflowService
     {
-        private static WorkflowEngine context = BaseWorkflowEngine.CreateWorkflowEngine();
-        private readonly static BaseWorkflowService singleton = new BaseWorkflowService();
-        private RecordService recordService = new RecordService();
-        private PendingService pendingService = new PendingService();
+        private static WorkflowEngine context = WorkflowEngine.Instance;
 
-        private BaseWorkflowService()
-        {
-            WorkflowEngine.OnProcess += new DelegatingProcessHandle(OnProcess);
-        }
+        private readonly static BaseWorkflowService singleton = new BaseWorkflowService();
 
         public static BaseWorkflowService Instance
         {
@@ -46,7 +40,6 @@ namespace Smartflow.BussinessService.WorkflowService
         {
             return WorkflowInstance.GetInstance(instanceID).Current;
         }
-
 
         public string Start(string identification)
         {

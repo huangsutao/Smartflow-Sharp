@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DapperFactory.cs" />
+    <Compile Include="DefaultPluginService.cs" />
     <Compile Include="DelegatingHandle.cs" />
     <Compile Include="Elements\ASTNode.cs" />
     <Compile Include="Elements\Command.cs" />
@@ -62,7 +63,8 @@
     <Compile Include="Elements\Start.cs" />
     <Compile Include="Elements\Transition.cs" />
     <Compile Include="Elements\Workflow.cs" />
-    <Compile Include="IWorkflowAction.cs" />
+    <Compile Include="IPlugin.cs" />
+    <Compile Include="IResolve.cs" />
     <Compile Include="WorkflowActor.cs" />
     <Compile Include="WorkflowGroup.cs" />
     <Compile Include="WorkflowInstanceState.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="WorkflowDecision.cs" />
     <Compile Include="WorkflowEngine.cs" />
     <Compile Include="WorkflowInfrastructure.cs" />
+    <Compile Include="WorkflowPluginFactory.cs" />
     <Compile Include="WorkflowServiceProvider.cs" />
     <Compile Include="WorkflowInstance.cs" />
     <Compile Include="WorkflowNode.cs" />

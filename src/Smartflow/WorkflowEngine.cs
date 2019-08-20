@@ -16,19 +16,33 @@ namespace Smartflow
 {
     public  class WorkflowEngine
     {
-        private IWorkflow workflowService = WorkflowServiceProvider.OfType<IWorkflow>();
+        private readonly static WorkflowEngine singleton = new WorkflowEngine();
+        private IWorkflow workflowService = WorkflowGlobalServiceProvider.OfType<IWorkflow>();
 
-        public static event DelegatingProcessHandle OnProcess;
+        protected WorkflowEngine()
+        {
+
+        }
 
         /// <summary>
-        /// 触发流程跳转事件
+        /// 全局的插件
         /// </summary>
-        /// <param name="executeContext">执行上下文</param>
-        protected void OnExecuteProcess(ExecutingContext executeContext)
+        protected IList<IPlugin> Plugins
         {
-            Processing(executeContext);
+            get{ return WorkflowGlobalServiceProvider.Query<IPlugin>();}
+        }
 
-            OnProcess(executeContext);
+        /// <summary>
+        /// 默认的插件解析服务
+        /// </summary>
+        protected IResolve Resolve
+        {
+            get { return WorkflowGlobalServiceProvider.OfType<IResolve>(); }
+        }
+
+        public static WorkflowEngine Instance
+        {
+            get { return singleton; }
         }
 
         /// <summary>
@@ -52,15 +66,16 @@ namespace Smartflow
             {
                 WorkflowNode current = instance.Current;
 
-
                 string transitionTo = current.Transitions
                                   .FirstOrDefault(e => e.NID == context.TransitionID).Destination;
 
-                
+                ASTNode to = current.GetNode(transitionTo);
+
+                Process(context,to);
+
                 instance.Jump(transitionTo);
 
-                ASTNode to = current.GetNode(transitionTo);
-                OnExecuteProcess(new ExecutingContext()
+                Processing(new ExecutingContext()
                 {
                     From = current,
                     To = to,
@@ -97,6 +112,9 @@ namespace Smartflow
         /// <param name="executeContext">执行上下文</param>
         protected void Processing(ExecutingContext executeContext)
         {
+            List<IPlugin> allPlugin = new List<IPlugin>();
+            allPlugin.AddRange(this.Plugins);
+            //allPlugin.Add(Resolve.Scan());
             workflowService.Processing(new WorkflowProcess()
             {
                 RelationshipID = executeContext.To.NID,
@@ -106,6 +124,21 @@ namespace Smartflow
                 InstanceID = executeContext.Instance.InstanceID,
                 NodeType = executeContext.From.NodeType
             });
+
+            allPlugin.ForEach(pluin => pluin.ActionExecuted(executeContext));
+        }
+
+        /// <summary>
+        ///  跳转前
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="to"></param>
+        protected void Process(WorkflowContext context, ASTNode to)
+        {
+            List<IPlugin> allPlugin = new List<IPlugin>();
+            allPlugin.AddRange(this.Plugins);
+            //allPlugin.Add(Resolve.Scan());
+            allPlugin.ForEach(pluin => pluin.ActionExecute(context));
         }
     }
 }
