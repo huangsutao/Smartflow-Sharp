@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Smartflow.BussinessService.WorkflowService
 {
-    public class WorkflowPlugin : IPlugin
+    public class WorkflowAction : IWorkflowAction
     {
         private RecordService recordService = new RecordService();
         private PendingService pendingService = new PendingService();

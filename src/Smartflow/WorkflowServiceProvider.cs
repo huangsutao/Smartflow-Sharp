@@ -15,20 +15,26 @@ namespace Smartflow
     public static class WorkflowGlobalServiceProvider
     {
         private static IList<object> _globalCollection = new List<object>();
+        private static IList<IWorkflowAction> _partCollection = new List<IWorkflowAction>();
 
         static WorkflowGlobalServiceProvider()
         {
             _globalCollection.Add(new WorkflowService());
             _globalCollection.Add(new MailService());
-            _globalCollection.Add(new DefaultPluginService());
+            _globalCollection.Add(new DefaultActionService());
         }
 
-        public static void Add(object registerObject)
+        public static void RegisterGlobalService(object registerObject)
         {
             _globalCollection.Add(registerObject);
         }
 
-        public static T OfType<T>()
+        public static void RegisterPartService(IWorkflowAction action)
+        {
+            _partCollection.Add(action);
+        }
+
+        public static T Resolve<T>()
         {
             return (T)_globalCollection.Where(o => (o is T)).FirstOrDefault();
         }
@@ -45,15 +51,13 @@ namespace Smartflow
             return types;
         }
 
-        public static IList<Type> QueryPluginType()
+        /// <summary>
+        /// 获取自定义的动作
+        /// </summary>
+        /// <returns></returns>
+        public static IList<IWorkflowAction> QueryActions()
         {
-            List<IPlugin> plugins = WorkflowGlobalServiceProvider.Query<IPlugin>();
-            List<String> assemblyNames = new List<string>();
-            plugins.ForEach(plugin => assemblyNames.Add(plugin.GetType().FullName));
-            return WorkflowPluginFactory
-                        .Plugins
-                        .Where(e => !assemblyNames.Contains(e.FullName))
-                        .ToList();
+            return WorkflowGlobalServiceProvider._partCollection;
         }
     }
 }

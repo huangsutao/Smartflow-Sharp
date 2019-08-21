@@ -17,7 +17,7 @@ namespace Smartflow
     public  class WorkflowEngine
     {
         private readonly static WorkflowEngine singleton = new WorkflowEngine();
-        private IWorkflow workflowService = WorkflowGlobalServiceProvider.OfType<IWorkflow>();
+        private IWorkflow workflowService = WorkflowGlobalServiceProvider.Resolve<IWorkflow>();
 
         protected WorkflowEngine()
         {
@@ -25,19 +25,19 @@ namespace Smartflow
         }
 
         /// <summary>
-        /// 全局的插件
+        /// 全局 自定义动作
         /// </summary>
-        protected IList<IPlugin> Plugins
+        protected IList<IWorkflowAction> Actions
         {
-            get{ return WorkflowGlobalServiceProvider.Query<IPlugin>();}
+            get{ return WorkflowGlobalServiceProvider.Query<IWorkflowAction>();}
         }
 
         /// <summary>
-        /// 默认的插件解析服务
+        /// 默认的动作解析服务
         /// </summary>
         protected IResolve Resolve
         {
-            get { return WorkflowGlobalServiceProvider.OfType<IResolve>(); }
+            get { return WorkflowGlobalServiceProvider.Resolve<IResolve>(); }
         }
 
         public static WorkflowEngine Instance
@@ -112,9 +112,8 @@ namespace Smartflow
         /// <param name="executeContext">执行上下文</param>
         protected void Processing(ExecutingContext executeContext)
         {
-            List<IPlugin> allPlugin = new List<IPlugin>();
-            allPlugin.AddRange(this.Plugins);
-            //allPlugin.Add(Resolve.Scan());
+            List<IWorkflowAction> allAction = new List<IWorkflowAction>();
+            allAction.AddRange(this.Actions);
             workflowService.Processing(new WorkflowProcess()
             {
                 RelationshipID = executeContext.To.NID,
@@ -125,7 +124,7 @@ namespace Smartflow
                 NodeType = executeContext.From.NodeType
             });
 
-            allPlugin.ForEach(pluin => pluin.ActionExecuted(executeContext));
+            allAction.ForEach(pluin => pluin.ActionExecuted(executeContext));
         }
 
         /// <summary>
@@ -135,10 +134,9 @@ namespace Smartflow
         /// <param name="to"></param>
         protected void Process(WorkflowContext context, ASTNode to)
         {
-            List<IPlugin> allPlugin = new List<IPlugin>();
-            allPlugin.AddRange(this.Plugins);
-            //allPlugin.Add(Resolve.Scan());
-            allPlugin.ForEach(pluin => pluin.ActionExecute(context));
+            List<IWorkflowAction> allAction = new List<IWorkflowAction>();
+            allAction.AddRange(this.Actions);
+            allAction.ForEach(pluin => pluin.ActionExecute(context));
         }
     }
 }

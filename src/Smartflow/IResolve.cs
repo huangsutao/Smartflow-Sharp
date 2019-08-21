@@ -7,6 +7,6 @@ namespace Smartflow
 {
     public interface IResolve
     {
-        IPlugin Scan(string name);
+        IWorkflowAction Scan(string name);
     }
 }

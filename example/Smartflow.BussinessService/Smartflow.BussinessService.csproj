@@ -55,7 +55,7 @@
     <Compile Include="DBUtils.cs" />
     <Compile Include="Services\RecordService.cs" />
     <Compile Include="Services\UserService.cs" />
-    <Compile Include="WorkflowService\WorkflowPlugin.cs" />
+    <Compile Include="WorkflowService\WorkflowAction.cs" />
     <Compile Include="WorkflowService\WorkflowDesignService.cs" />
     <Compile Include="WorkflowService\WorkflowStructure.cs" />
   </ItemGroup>

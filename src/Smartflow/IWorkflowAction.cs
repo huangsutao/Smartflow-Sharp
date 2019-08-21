@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Smartflow
 {
-    public interface IPlugin
+    public interface IWorkflowAction
     {
         /// <summary>
         /// 执行跳转前的操作
