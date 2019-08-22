@@ -9,7 +9,7 @@
         designConfig = {
             message: '请输入流程名称',
             success: '操作成功'
-        }
+        };
 
     function saveflow() {
 

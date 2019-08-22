@@ -17,6 +17,7 @@
     function setSettingsToNode(nx) {
         var roleArray = [],
             expressions = [],
+            actionArray=[],
             name = $("#txtNodeName").val();
         if (nx.category.toLowerCase() === 'decision') {
             $("#expression  textarea").each(function () {
@@ -48,7 +49,8 @@
         } else {
 
             var transfer = layui.transfer,
-                rightData = transfer.getData('rightGroup'); 
+                rightData = transfer.getData('rightGroup'),
+                rightActionData = transfer.getData('rightActions');
 
             $(rightData).each(function () {
                 var self = this;
@@ -57,22 +59,29 @@
                     name: self.title
                 });
             });
+
+
+            $(rightActionData).each(function () {
+                actionArray.push({
+                    id: this.value,
+                    name: this.title
+                });
+            });
+
             nx.group = roleArray;
+            nx.action = actionArray;
 
-            nx.actor.length == 0;
-
+            nx.actor.length = 0;
             var actorArray = [];
             //获取
             var checkbox = getCheckbox();
             $.each(checkbox.all, function () {
                 var self = $(this);
                 var name = self.attr('actor');
-               // if (name!='') {
-                    actorArray.push({
-                        id: self.attr('actorID'),
-                        name: name
-                    });
-               // }
+                actorArray.push({
+                    id: self.attr('actorID'),
+                    name: name
+                });
             });
             nx.actor=actorArray;
         }
@@ -105,15 +114,17 @@
         } else {
             loadGroup(nx.group);
             loadActor(nx.actor);
+            loadActions(nx.action);
         }
 
         var nodeName = nx.category.toLocaleLowerCase();
         var el = layui.element;
-        var tabs= {
+        var tabs = {
             node: ['workflow-rule', 'workflow-form'],
-            decision: ['workflow-role', 'workflow-form', 'workflow-actor'],
-            start: ['workflow-rule', 'workflow-role', 'workflow-info', 'workflow-actor']
-        }
+            decision: ['workflow-role', 'workflow-form', 'workflow-actor', 'workflow-action'],
+            start: ['workflow-rule', 'workflow-role', 'workflow-info', 'workflow-actor', 'workflow-action']
+        };
+
         $.each(tabs[nodeName], function (index,propertyName) {
             el.tabDelete('tabs', propertyName);
         });
@@ -124,6 +135,49 @@
         initRightActor(actors);
         initLeftActor(actors);
     }
+
+
+    function loadActions(actions) {
+
+        var ajaxSettings = { url: config.actionUrl };
+        ajaxSettings.data = ajaxSettings.data || {};
+
+        ajaxSettings.success = function (serverData) {
+
+            var leftDataSource = [], rightDataSource = [];
+
+            $.each(serverData, function () {
+                leftDataSource.push({
+                    value: this.id,
+                    title: this.name,
+                    disabled: '',
+                    checked: ''
+                });
+            });
+
+            $.each(actions, function () {
+                rightDataSource.push(this.id);
+            });
+
+            var transfer = layui.transfer;
+
+            //基础效果
+            transfer.render({
+                 elem: '#workflow-action'
+                , title: ['待选择', '已选择']
+                , data: leftDataSource
+                , value: rightDataSource
+                , height: 325
+                , width: 250
+                , id: 'rightActions'
+            });
+        };
+        ajaxService(ajaxSettings);
+    }
+
+
+
+
 
     function initRightActor(actors) {
 

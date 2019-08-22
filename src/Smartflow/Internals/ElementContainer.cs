@@ -26,6 +26,7 @@ namespace Smartflow.Internals
             innerHandleMap.Add("command", typeof(Command));
             innerHandleMap.Add("transition", typeof(Transition));
             innerHandleMap.Add("actor", typeof(Actor));
+            innerHandleMap.Add("action", typeof(Elements.Action)); 
         }
 
         public static Element Resolve(string name)

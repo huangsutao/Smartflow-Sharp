@@ -28,7 +28,8 @@
         to: 'destination',
         expression: 'expression',
         marker: 'marker',
-        layout: 'layout'
+        layout: 'layout',
+        action:'action'
     };
 
     ///检测为空
@@ -512,6 +513,7 @@
         Shape.base.Constructor.call(this, name, category);
         this.form = undefined;
         this.group = [];
+        this.action= [];
         this.actor= [];
         /*边界高度*/
         this.tickness = 20;
@@ -594,7 +596,15 @@
             eachAttributs(build, this);
             build.append(config.afterClose);
         });
-  
+
+
+        $.each(self.action, function () {
+            build.append(config.start)
+                .append(config.action);
+            eachAttributs(build, this);
+            build.append(config.afterClose);
+        });
+
         if (self.exportDecision) {
             self.exportDecision(build);
         }
@@ -1479,7 +1489,8 @@
 
     XML.config = {
         group: [],
-        acotr:[],
+        acotr: [],
+        action:[],
         transition: [],
         marker: []
     }

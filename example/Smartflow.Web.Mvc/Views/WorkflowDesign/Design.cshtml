@@ -15,14 +15,16 @@
     <script src="~/Content/design/design.js"></script>
     <script type="text/javascript">
       $(function () {
-            design.init({
+
+          design.init({
                 id: '@ViewBag.WFID',
                 container: 'drawing',
                 windowUrl: '@Url.Action("WorkflowDesignSettings", "WorkflowDesign")',
                 instanceUrl: '@Url.Action("GetWorkflowStructure", "WorkflowDesign")',
                 saveUrl: '@Url.Action("Save", "WorkflowDesign")'
             });
-            $("#menus li").click(function () {
+
+          $("#menus li").click(function () {
                 var command = $(this).attr("command");
                 var instance = $.SMF.get('drawing');
                 switch (command) {
@@ -48,12 +50,15 @@
                         break;
                 }
             });
-            $(".tools-menu img").mousedown(function () {
+
+          $(".tools-menu img").mousedown(function () {
                 $(this).css("border", "solid 1px #ad9d9d");
             });
-            $(".tools-menu img").mouseup(function () {
+
+          $(".tools-menu img").mouseup(function () {
                 $(this).css("border", "none");
             });
+
         });
     </script>
 </head>

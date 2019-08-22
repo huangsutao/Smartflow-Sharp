@@ -14,7 +14,7 @@ using Smartflow.Elements;
 
 namespace Smartflow
 {
-    public  class WorkflowEngine
+    public class WorkflowEngine
     {
         private readonly static WorkflowEngine singleton = new WorkflowEngine();
         private IWorkflow workflowService = WorkflowGlobalServiceProvider.Resolve<IWorkflow>();
@@ -29,7 +29,7 @@ namespace Smartflow
         /// </summary>
         protected IList<IWorkflowAction> Actions
         {
-            get{ return WorkflowGlobalServiceProvider.Query<IWorkflowAction>();}
+            get { return WorkflowGlobalServiceProvider.Query<IWorkflowAction>(); }
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Smartflow
 
                 ASTNode to = current.GetNode(transitionTo);
 
-                Process(context,to);
+                Process(context, to);
 
                 instance.Jump(transitionTo);
 
@@ -124,6 +124,12 @@ namespace Smartflow
                 NodeType = executeContext.From.NodeType
             });
 
+
+            WorkflowNode nodes = WorkflowNode.ConvertToReallyType(executeContext.To);
+            foreach (Element el in nodes.Actions)
+            {
+                allAction.Add(Resolve.Scan(el.ID));
+            }
             allAction.ForEach(pluin => pluin.ActionExecuted(executeContext));
         }
 
@@ -136,6 +142,11 @@ namespace Smartflow
         {
             List<IWorkflowAction> allAction = new List<IWorkflowAction>();
             allAction.AddRange(this.Actions);
+            WorkflowNode nodes = WorkflowNode.ConvertToReallyType(to);
+            foreach (Element el in nodes.Actions)
+            {
+                allAction.Add(Resolve.Scan(el.ID));
+            }
             allAction.ForEach(pluin => pluin.ActionExecute(context));
         }
     }

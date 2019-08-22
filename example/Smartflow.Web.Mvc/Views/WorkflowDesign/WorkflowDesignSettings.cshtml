@@ -66,6 +66,7 @@
                 <li lay-id="workflow-role">参与角色</li>
                 <li lay-id="workflow-rule">规则配置</li>
                 <li lay-id="workflow-actor">参与人</li>
+                <li lay-id="workflow-action">自定义动作</li>
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
@@ -106,7 +107,7 @@
                                 <button type="button" id="to_right" class="layui-btn layui-btn-sm layui-btn-primary layui-btn-disabled" data-index="0">
                                     <i class="layui-icon layui-icon-next"></i>
                                 </button>
-                                <button type="button" id="to_left" class="layui-btn layui-btn-sm layui-btn-primary layui-btn-disabled"  data-index="1">
+                                <button type="button" id="to_left" class="layui-btn layui-btn-sm layui-btn-primary layui-btn-disabled" data-index="1">
                                     <i class="layui-icon layui-icon-prev"></i>
                                 </button>
                             </div>
@@ -120,11 +121,16 @@
                                 </div>
                                 <div style="overflow-y:auto;border-top:solid 1px #EEE;height:300px;" id="selectItems">
                                     <div class="layui-form" style="padding-left:10px;" lay-filter="assign_to_actor" id="assign_to_actor">
-                                      
+
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-row">
+                        <div id="workflow-action"></div>
                     </div>
                 </div>
             </div>
@@ -166,7 +172,8 @@
             SMF.init({
                 configUrl: '@Url.Action("GetConfigs", "WorkflowDesign")',
                 roleUrl: '@Url.Action("GetRole", "WorkflowDesign")',
-                actorUrl: '@Url.Action("GetActors", "WorkflowDesign")'
+                actorUrl: '@Url.Action("GetActors", "WorkflowDesign")',
+                actionUrl: '@Url.Action("QueryAction", "WorkflowDesign")'
             });
         });
     </script>

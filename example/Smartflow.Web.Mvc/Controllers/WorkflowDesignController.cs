@@ -82,7 +82,7 @@ namespace Smartflow.Web.Mvc.Controllers
             var result = bridgeService.GetActors(pageIndex, pageSize, out total, actorIDs, searchKey);
             return Json(new
             {
-                code=0,
+                code = 0,
                 total = total,
                 rows = result
             });
@@ -91,6 +91,20 @@ namespace Smartflow.Web.Mvc.Controllers
         public JsonResult GetConfigs()
         {
             return Json(bridgeService.GetSettings());
+        }
+
+        public JsonResult QueryAction()
+        {
+            IList<dynamic> types = new List<dynamic>();
+            foreach (IWorkflowAction action in WorkflowGlobalServiceProvider.QueryActions())
+            {
+                Type type = action.GetType();
+                types.Add(new {
+                    id= type.FullName,
+                    name= type.Name
+                });
+            }
+            return Json(types);
         }
     }
 }

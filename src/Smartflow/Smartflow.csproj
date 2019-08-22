@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="DapperFactory.cs" />
     <Compile Include="DefaultActionService.cs" />
+    <Compile Include="Elements\Action.cs" />
     <Compile Include="Elements\ASTNode.cs" />
     <Compile Include="Elements\Command.cs" />
     <Compile Include="Elements\Decision.cs" />
@@ -85,7 +86,7 @@
     <Compile Include="WorkflowEngine.cs" />
     <Compile Include="WorkflowInfrastructure.cs" />
     <Compile Include="WorkflowActionFactory.cs" />
-    <Compile Include="WorkflowServiceProvider.cs" />
+    <Compile Include="WorkflowGlobalServiceProvider.cs" />
     <Compile Include="WorkflowInstance.cs" />
     <Compile Include="WorkflowNode.cs" />
     <Compile Include="WorkflowProcess.cs" />

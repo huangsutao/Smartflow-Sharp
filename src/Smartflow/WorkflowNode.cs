@@ -63,7 +63,7 @@ namespace Smartflow
             wfNode.FromTransition = wfNode.GetHistoryTransition();
             wfNode.Groups = wfNode.GetGroup();
             wfNode.Actors = wfNode.GetActors();
-
+            wfNode.Actions = wfNode.GetActions();
             return wfNode;
         }
 
@@ -82,6 +82,17 @@ namespace Smartflow
         {
             string query = " SELECT * FROM T_ACTOR WHERE RelationshipID=@RelationshipID AND InstanceID=@InstanceID ";
             return Connection.Query<Actor>(query, new
+            {
+                RelationshipID = NID,
+                InstanceID = InstanceID
+            }).ToList();
+        }
+
+
+        protected List<Elements.Action> GetActions()
+        {
+            string query = " SELECT * FROM T_ACTION WHERE RelationshipID=@RelationshipID AND InstanceID=@InstanceID ";
+            return Connection.Query<Elements.Action>(query, new
             {
                 RelationshipID = NID,
                 InstanceID = InstanceID

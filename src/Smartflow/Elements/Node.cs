@@ -21,6 +21,7 @@ namespace Smartflow.Elements
     {
         protected List<Actor> actors = new List<Actor>();
         protected List<Group> groups = new List<Group>();
+        protected List<Action> actions = new List<Action>();
 
         public List<Group> Groups
         {
@@ -34,12 +35,17 @@ namespace Smartflow.Elements
             set { actors = value; }
         }
 
+        public List<Action> Actions
+        {
+            get { return actions; }
+            set { actions = value; }
+        }
 
         internal override void Persistent()
         {
             base.Persistent();
 
-            if (Groups != null)
+            if (Groups.Count > 0)
             {
                 foreach (Group r in Groups)
                 {
@@ -49,8 +55,8 @@ namespace Smartflow.Elements
                 }
             }
 
-           
-            if (Actors != null)
+
+            if (Actors.Count > 0)
             {
                 foreach (Actor a in Actors)
                 {
@@ -59,8 +65,17 @@ namespace Smartflow.Elements
                     a.Persistent();
                 }
             }
-        }
 
+            if (Actions.Count > 0)
+            {
+                foreach (Action a in Actions)
+                {
+                    a.RelationshipID = this.NID;
+                    a.InstanceID = InstanceID;
+                    a.Persistent();
+                }
+            }
+        }
 
         internal override Element Parse(XElement element)
         {
@@ -88,7 +103,6 @@ namespace Smartflow.Elements
                         this.Groups.Add(g as Group);
                     });
 
-
                 nodes
                    .Where(transition => (transition is Transition))
                    .ToList()
@@ -104,6 +118,15 @@ namespace Smartflow.Elements
                  {
                      this.actors.Add(actor as Actor);
                  });
+
+
+                nodes
+               .Where(action => (action is Action))
+               .ToList()
+               .ForEach(action =>
+               {
+                   this.actions.Add(action as Action);
+               });
             }
             return this;
         }
