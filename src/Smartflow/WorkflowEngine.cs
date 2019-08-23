@@ -21,7 +21,6 @@ namespace Smartflow
 
         protected WorkflowEngine()
         {
-
         }
 
         /// <summary>
@@ -140,7 +139,11 @@ namespace Smartflow
             WorkflowNode nodes = WorkflowNode.ConvertToReallyType(to);
             nodes.Actions.ForEach(el =>
             {
-                partAction.Add(Resolve.Scan(el.ID));
+                IWorkflowAction defaultAction = Resolve.Scan(el.ID);
+                if (defaultAction != null)
+                {
+                    partAction.Add(defaultAction);
+                }
             });
             return partAction;
         }
