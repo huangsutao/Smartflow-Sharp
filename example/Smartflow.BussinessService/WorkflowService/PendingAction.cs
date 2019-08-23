@@ -8,9 +8,8 @@ using System.Text;
 
 namespace Smartflow.BussinessService.WorkflowService
 {
-    public class WorkflowAction : IWorkflowAction
+    public class PendingAction : IWorkflowAction
     {
-        private RecordService recordService = new RecordService();
         private PendingService pendingService = new PendingService();
 
         public void ActionExecute(WorkflowContext context)
@@ -27,8 +26,6 @@ namespace Smartflow.BussinessService.WorkflowService
             }
             else
             {
-                //写入审批记录
-                WriteRecord(executeContext);
                 string instanceID = executeContext.Instance.InstanceID;
                 var current = GetCurrentNode(instanceID);
                 if (current.Name == "结束")
@@ -103,21 +100,6 @@ namespace Smartflow.BussinessService.WorkflowService
             pendingService.Delete(pending =>
                  pending.NODEID == NID &&
                  pending.INSTANCEID == instanceID);
-        }
-
-        /// <summary>
-        /// 写入审批记录
-        /// </summary>
-        /// <param name="executeContext"></param>
-        public void WriteRecord(ExecutingContext executeContext)
-        {
-            //写入审批记录
-            recordService.Insert(new Record()
-            {
-                INSTANCEID = executeContext.Instance.InstanceID,
-                NODENAME = executeContext.From.Name,
-                MESSAGE = executeContext.Data.Message
-            });
         }
 
         /// <summary>
