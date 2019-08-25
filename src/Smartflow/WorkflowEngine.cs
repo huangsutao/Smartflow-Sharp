@@ -26,17 +26,9 @@ namespace Smartflow
         /// <summary>
         /// 全局 自定义动作
         /// </summary>
-        protected IList<IWorkflowAction> Actions
+        protected List<IWorkflowAction> Actions
         {
             get { return WorkflowGlobalServiceProvider.Query<IWorkflowAction>(); }
-        }
-
-        /// <summary>
-        /// 默认的动作解析服务
-        /// </summary>
-        protected IResolve Resolve
-        {
-            get { return WorkflowGlobalServiceProvider.Resolve<IResolve>(); }
         }
 
         public static WorkflowEngine Instance
@@ -68,9 +60,8 @@ namespace Smartflow
                                   .FirstOrDefault(e => e.NID == context.TransitionID).Destination;
 
                 ASTNode to = current.GetNode(transitionTo);
-                List<IWorkflowAction> partAction = this.GetWorkflowActions(to);
 
-                Process(context, partAction);
+
                 instance.Jump(transitionTo);
 
                 Processing(new ExecutingContext()
@@ -82,7 +73,7 @@ namespace Smartflow
                     Data = context.Data,
                     ActorID = context.ActorID,
                     ActorName = context.ActorName
-                }, partAction);
+                });
 
                 if (to.NodeType == WorkflowNodeCategory.End)
                 {
@@ -108,7 +99,7 @@ namespace Smartflow
         /// 跳转过程处理入库
         /// </summary>
         /// <param name="executeContext">执行上下文</param>
-        protected void Processing(ExecutingContext executeContext, List<IWorkflowAction> partAction)
+        protected void Processing(ExecutingContext executeContext)
         {
             workflowService.Processing(new WorkflowProcess()
             {
@@ -119,33 +110,9 @@ namespace Smartflow
                 InstanceID = executeContext.Instance.InstanceID,
                 NodeType = executeContext.From.NodeType
             });
-            partAction.ForEach(pluin => pluin.ActionExecuted(executeContext));
+
+            this.Actions.ForEach(pluin => pluin.ActionExecute(executeContext));
         }
 
-        /// <summary>
-        ///  跳转前
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="to"></param>
-        protected void Process(WorkflowContext context, List<IWorkflowAction> partAction)
-        {
-            partAction.ForEach(pluin => pluin.ActionExecute(context));
-        }
-
-        private List<IWorkflowAction> GetWorkflowActions(ASTNode to)
-        {
-            List<IWorkflowAction> partAction = new List<IWorkflowAction>();
-            partAction.AddRange(this.Actions);
-            WorkflowNode nodes = WorkflowNode.ConvertToReallyType(to);
-            nodes.Actions.ForEach(el =>
-            {
-                IWorkflowAction defaultAction = Resolve.Scan(el.ID);
-                if (defaultAction != null)
-                {
-                    partAction.Add(defaultAction);
-                }
-            });
-            return partAction;
-        }
     }
 }

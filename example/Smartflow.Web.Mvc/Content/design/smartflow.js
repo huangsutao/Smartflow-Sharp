@@ -1470,7 +1470,7 @@
         },
         bindEvent: function (n) {
             End.base.Parent.prototype.bindEvent.call(this, n);
-            this.off('dblclick');
+            //this.off('dblclick');
         },
         validate: function () {
             return (Draw.findById(this.$id, 'from').length == 0

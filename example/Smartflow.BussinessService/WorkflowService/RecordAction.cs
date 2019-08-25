@@ -1,5 +1,6 @@
 ﻿using Smartflow.BussinessService.Models;
 using Smartflow.BussinessService.Services;
+using Smartflow.Elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,7 @@ namespace Smartflow.BussinessService.WorkflowService
     {
         private RecordService recordService = new RecordService();
 
-        public void ActionExecute(WorkflowContext context)
-        {
-
-        }
-
-        public void ActionExecuted(ExecutingContext executeContext)
+        public void ActionExecute(ExecutingContext executeContext)
         {
             if (executeContext.Instance.Current.NodeType != WorkflowNodeCategory.Decision)
             {

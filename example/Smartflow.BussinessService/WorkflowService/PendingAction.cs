@@ -12,12 +12,7 @@ namespace Smartflow.BussinessService.WorkflowService
     {
         private PendingService pendingService = new PendingService();
 
-        public void ActionExecute(WorkflowContext context)
-        {
-            
-        }
-
-        public void ActionExecuted(ExecutingContext executeContext)
+        public void ActionExecute(ExecutingContext executeContext)
         {
 
             if (executeContext.Instance.Current.NodeType == WorkflowNodeCategory.Decision)
