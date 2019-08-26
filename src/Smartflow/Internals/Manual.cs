@@ -41,15 +41,17 @@ namespace Smartflow.Internals
                     }
                 });
 
-            Workflow instance = new Workflow();
 
+            Workflow instance = new Workflow();
             instance.Start = nodes
                 .Where(e =>e.NodeType == WorkflowNodeCategory.Start)
-                .FirstOrDefault() as Start;
+                .Cast<Start>()
+                .FirstOrDefault();
 
             instance.End= nodes
                 .Where(e => e.NodeType == WorkflowNodeCategory.End)
-                .FirstOrDefault() as End;
+                .Cast<End>()
+                .FirstOrDefault();
 
             nodes.Where(e => e.NodeType == WorkflowNodeCategory.Decision)
                 .ToList()

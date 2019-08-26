@@ -39,22 +39,16 @@ namespace Smartflow
             return (T)_globalCollection.Where(o => (o is T)).FirstOrDefault();
         }
 
-       /// <summary>
-       /// 查询注册到全局里面的
-       /// </summary>
-       /// <typeparam name="T"></typeparam>
-       /// <returns></returns>
+        /// <summary>
+        /// 查询注册到全局里面的
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static List<T> Query<T>() where T : class
         {
-            List<T> types = new List<T>();
-            _globalCollection.Where(o => (o is T)).ToList().ForEach(t => types.Add((t as T)));
-            return types;
+            return _globalCollection.Where(o => (o is T)).Cast<T>().ToList();
         }
 
-        /// <summary>
-        /// 获取自定义的动作
-        /// </summary>
-        /// <returns></returns>
         public static IList<IWorkflowAction> QueryActions()
         {
             return WorkflowGlobalServiceProvider._partCollection;
