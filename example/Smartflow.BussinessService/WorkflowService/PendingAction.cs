@@ -31,6 +31,22 @@ namespace Smartflow.BussinessService.WorkflowService
                 {
                     //流程跳转|流程撤销(重新指派人审批) 仅限演示
                     List<User> userList = GetUsersByGroup(current.Groups, current.Actors);
+
+                    /****************************************************
+                     * 发送邮件的示例代码
+                     * 此处仅仅演示如何调用发送邮件的方法
+                    System.Threading.Tasks.Task.Factory.StartNew(() => {
+                        List<string> recList = new List<string>();
+                        foreach (User item in userList)
+                        {
+                            //接收邮箱地址
+                            recList.Add(item.USERNAME);
+                        }
+                        //发送邮件
+                        WorkflowGlobalServiceProvider.Resolve<IMailService>().Notification(recList.ToArray<string>(), "您有新待办信息，请及时审批。");
+                    });
+                    ********************************************************/
+
                     foreach (User user in userList)
                     {
                         WritePending(user.IDENTIFICATION.ToString(), executeContext);
@@ -104,6 +120,8 @@ namespace Smartflow.BussinessService.WorkflowService
         /// <param name="executeContext"></param>
         public void WritePending(string actorID, ExecutingContext executeContext)
         {
+            
+
             pendingService.Insert(new Pending()
             {
                 ACTORID = actorID,
