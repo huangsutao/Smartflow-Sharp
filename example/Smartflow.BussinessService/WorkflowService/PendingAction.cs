@@ -14,7 +14,6 @@ namespace Smartflow.BussinessService.WorkflowService
 
         public void ActionExecute(ExecutingContext executeContext)
         {
-
             if (executeContext.Instance.Current.NodeType == WorkflowNodeCategory.Decision)
             {
                 DecisionJump(executeContext);
@@ -121,7 +120,6 @@ namespace Smartflow.BussinessService.WorkflowService
         public void WritePending(string actorID, ExecutingContext executeContext)
         {
             
-
             pendingService.Insert(new Pending()
             {
                 ACTORID = actorID,
