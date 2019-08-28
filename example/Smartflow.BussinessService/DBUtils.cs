@@ -11,7 +11,7 @@ namespace Smartflow.BussinessService
     {
         public static IDbConnection CreateConnection()
         {
-            ConnectionStringSettings connectionStringSettings = ConfigurationManager.ConnectionStrings["busConnection"];
+            ConnectionStringSettings connectionStringSettings = ConfigurationManager.ConnectionStrings["demoConnection"];
             IDbConnection connection = 
                 DbProviderFactories.GetFactory(connectionStringSettings.ProviderName).CreateConnection();
             connection.ConnectionString = connectionStringSettings.ConnectionString;

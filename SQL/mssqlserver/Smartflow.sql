@@ -1,6 +1,6 @@
-CREATE DATABASE flow
+﻿CREATE DATABASE Smartflow
 GO
-USE [flow]
+USE [Smartflow]
 GO
 /****** Object:  Table [dbo].[t_action]    Script Date: 2019/8/23 21:23:56 ******/
 SET ANSI_NULLS ON

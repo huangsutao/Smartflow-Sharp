@@ -1,5 +1,5 @@
 --如果与当前数据库的关键字有冲突，请自行调整
-USE bussiness
+USE Demo
 
 GO
 --T_USER
