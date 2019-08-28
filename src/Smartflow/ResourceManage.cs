@@ -38,8 +38,8 @@ namespace Smartflow
         public const string MAIL_URL_EXPRESSION = "MAIL_URL_EXPRESSION";
 
         public const string SMARTFLOW_SHARP_NAME = "SMARTFLOW_SHARP_NAME";
-        public const string SMARTFLOW_SHARP_TITLE = "SMARTFLOW_SHARP_NAME";
-        public const string SMARTFLOW_SHARP_VERSION = "SMARTFLOW_SHARP_NAME";
+        public const string SMARTFLOW_SHARP_TITLE = "SMARTFLOW_SHARP_TITLE";
+        public const string SMARTFLOW_SHARP_VERSION = "SMARTFLOW_SHARP_VERSION";
 
         private static readonly ResourceManager resourceManage =new ResourceManager("Smartflow.SmartflowResource",Assembly.GetExecutingAssembly());
         
