@@ -12,7 +12,7 @@ namespace Smartflow
         {
             return WorkflowActionFactory
                       .Actions
-                      .FirstOrDefault(entry => entry.GetType().FullName == name);
+                      .FirstOrDefault(entry =>string.Equals(entry.GetType().FullName,name,StringComparison.OrdinalIgnoreCase));
         }
 
         public void ActionExecute(ExecutingContext executingContext)
