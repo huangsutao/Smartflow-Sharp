@@ -83,7 +83,7 @@ namespace Smartflow
 
                 ASTNode to = current.GetNode(transitionTo);
 
-                this.Invoke(context, to, transitionTo,(executeContext)=> Processing(executeContext));
+                this.Invoke(context, to, transitionTo, (executeContext) => Processing(executeContext));
 
                 if (to.NodeType == WorkflowNodeCategory.End)
                 {
@@ -125,16 +125,14 @@ namespace Smartflow
             this.Actions.ForEach(pluin => pluin.ActionExecute(executeContext));
         }
 
-        protected void Invoke(WorkflowContext context,ASTNode to, string selectTransition, System.Action<ExecutingContext> executeAction)
+        protected void Invoke(WorkflowContext context, ASTNode to, string selectTransition, System.Action<ExecutingContext> executeAction)
         {
             WorkflowNode current = context.Instance.Current;
 
-            bool isValid = WorkflowCooperationService
-                    .Check(current,
-                    ProcessService
-                    .GetLatestRecords(current.InstanceID, current.NID, current.Increment));
+            bool validation = (WorkflowCooperationService == null) ? true :
+                    WorkflowCooperationService.Check(current,ProcessService.GetLatestRecords(current.InstanceID, current.NID, current.Increment));
 
-            if (isValid)
+            if (validation)
             {
                 context.Instance.Jump(selectTransition);
                 var next = WorkflowInstance
@@ -155,7 +153,7 @@ namespace Smartflow
                 Data = context.Data,
                 ActorID = context.ActorID,
                 ActorName = context.ActorName,
-                IsValid = isValid
+                IsValid = validation
             });
         }
     }
