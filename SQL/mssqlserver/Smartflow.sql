@@ -1,4 +1,4 @@
-CREATE DATABASE [Smartflow]
+﻿CREATE DATABASE  Smartflow
 GO
 USE [Smartflow]
 GO
