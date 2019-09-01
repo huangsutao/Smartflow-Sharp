@@ -18,8 +18,11 @@
         var roleArray = [],
             expressions = [],
             actionArray=[],
-            name = $("#txtNodeName").val();
+            name = $("#txtNodeName").val(),
+            cooperation = $('#chkCooperation').is(":checked") ? 1 : 0;
+
         if (nx.category.toLowerCase() === 'decision') {
+           
             $("#expression  textarea").each(function () {
                 var input = $(this);
                 expressions.push({
@@ -45,6 +48,8 @@
             }
 
             nx.setExpression(expressions);
+
+            nx.cooperation = 0;
 
         } else {
 
@@ -86,6 +91,8 @@
             nx.actor=actorArray;
         }
 
+        nx.cooperation = cooperation;
+
         if (name && nx.brush) {
             nx.name = name;
             nx.brush.text(nx.name);
@@ -94,6 +101,8 @@
 
     function setNodeToSettings(nx) {
         $("#txtNodeName").val(nx.name);
+        
+        $('#chkCooperation').prop('checked', parseInt(nx.cooperation,10)===1);
         if (nx.category.toLowerCase() === 'decision') {
             var LC = nx.getTransitions();
             if (LC.length > 0) {
@@ -122,7 +131,7 @@
         var tabs = {
             end: ['workflow-rule','workflow-role', 'workflow-form', 'workflow-actor','workflow-info'],
             node: ['workflow-rule', 'workflow-form'],
-            decision: ['workflow-role', 'workflow-form', 'workflow-actor', 'workflow-action'],
+            decision: ['workflow-role', 'workflow-form', 'workflow-actor', 'workflow-action', 'workflow-info'],
             start: ['workflow-rule', 'workflow-role', 'workflow-info', 'workflow-actor', 'workflow-action']
         };
 
@@ -136,7 +145,6 @@
         initRightActor(actors);
         initLeftActor(actors);
     }
-
 
     function loadActions(actions) {
 
@@ -175,10 +183,6 @@
         };
         ajaxService(ajaxSettings);
     }
-
-
-
-
 
     function initRightActor(actors) {
 

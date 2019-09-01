@@ -12,7 +12,7 @@ using System.Data;
 
 namespace Smartflow
 {
-    public class WorkflowProcess :WorkflowInfrastructure,IPersistent, IRelationship
+    public class WorkflowProcess :IRelationship
     {
         /// <summary>
         /// 外键
@@ -86,37 +86,13 @@ namespace Smartflow
             set;
         }
 
-
         /// <summary>
-        /// 将数据持久到数据库
+        /// 批次记数
         /// </summary>
-        public void Persistent()
+        public int Increment
         {
-            string sql = "INSERT INTO T_PROCESS(NID,Origin,Destination,TransitionID,InstanceID,NodeType,RelationshipID) VALUES(@NID,@Origin,@Destination,@TransitionID,@InstanceID,@NodeType,@RelationshipID)";
-            Connection.Execute(sql, new
-            {
-                NID = Guid.NewGuid().ToString(),
-                Origin = Origin,
-                Destination = Destination,
-                TransitionID = TransitionID,
-                InstanceID = InstanceID,
-                NodeType = NodeType.ToString(),
-                RelationshipID = RelationshipID
-            });
-        }
-
-        public static WorkflowProcess GetWorkflowProcessInstance(string instanceID, string NID)
-        {
-            WorkflowProcess instance = new WorkflowProcess();
-            string query = ResourceManage.GetString(ResourceManage.SQL_WORKFLOW_PROCESS);
-            instance = instance.Connection.Query<WorkflowProcess>(query, new
-            {
-                InstanceID = instanceID,
-                NID = NID
-
-            }).OrderByDescending(order => order.CreateDateTime).FirstOrDefault();
-
-            return instance;
+            get;
+            set;
         }
     }
 }

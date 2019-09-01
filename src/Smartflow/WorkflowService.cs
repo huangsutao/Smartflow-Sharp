@@ -35,10 +35,5 @@ namespace Smartflow
         {
             return WorkflowInstance.CreateWorkflowInstance(NID, resource);
         }
-
-        public void Processing(IPersistent persistent)
-        {
-            persistent.Persistent();
-        }
     }
 }

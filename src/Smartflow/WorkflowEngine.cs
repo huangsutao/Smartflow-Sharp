@@ -37,6 +37,28 @@ namespace Smartflow
         }
 
         /// <summary>
+        /// 监控的过程服务
+        /// </summary>
+        protected IWorkProcessPersistent ProcessService
+        {
+            get
+            {
+                return WorkflowGlobalServiceProvider.Resolve<IWorkProcessPersistent>();
+            }
+        }
+
+        /// <summary>
+        /// 会签服务
+        /// </summary>
+        protected IWorkflowCooperation WorkflowCooperationService
+        {
+            get
+            {
+                return WorkflowGlobalServiceProvider.Resolve<IWorkflowCooperation>();
+            }
+        }
+
+        /// <summary>
         /// 根据传递的流程XML字符串,启动工作流
         /// </summary>
         /// <param name="resourceXml"></param>
@@ -61,19 +83,7 @@ namespace Smartflow
 
                 ASTNode to = current.GetNode(transitionTo);
 
-
-                instance.Jump(transitionTo);
-
-                Processing(new ExecutingContext()
-                {
-                    From = current,
-                    To = to,
-                    TransitionID = context.TransitionID,
-                    Instance = instance,
-                    Data = context.Data,
-                    ActorID = context.ActorID,
-                    ActorName = context.ActorName
-                });
+                this.Invoke(context, to, transitionTo,(executeContext)=> Processing(executeContext));
 
                 if (to.NodeType == WorkflowNodeCategory.End)
                 {
@@ -101,17 +111,52 @@ namespace Smartflow
         /// <param name="executeContext">执行上下文</param>
         protected void Processing(ExecutingContext executeContext)
         {
-            workflowService.Processing(new WorkflowProcess()
+            ProcessService.Persistent(new WorkflowProcess()
             {
-                RelationshipID = executeContext.To.NID,
+                RelationshipID = executeContext.From.NID,
                 Origin = executeContext.From.ID,
                 Destination = executeContext.To.ID,
                 TransitionID = executeContext.TransitionID,
                 InstanceID = executeContext.Instance.InstanceID,
-                NodeType = executeContext.From.NodeType
+                NodeType = executeContext.From.NodeType,
+                Increment = executeContext.From.Increment
             });
 
             this.Actions.ForEach(pluin => pluin.ActionExecute(executeContext));
+        }
+
+        protected void Invoke(WorkflowContext context,ASTNode to, string selectTransition, System.Action<ExecutingContext> executeAction)
+        {
+            WorkflowNode current = context.Instance.Current;
+
+            bool isValid = WorkflowCooperationService
+                    .Check(current,
+                    ProcessService
+                    .GetLatestRecords(current.InstanceID, current.NID, current.Increment));
+
+            if (isValid)
+            {
+                context.Instance.Jump(selectTransition);
+                var next = WorkflowInstance
+                   .GetInstance(current.InstanceID)
+                   .Current;
+                if (next.NodeType != WorkflowNodeCategory.End)
+                {
+                    next.DoIncrement();
+                }
+            }
+
+            executeAction(new ExecutingContext()
+            {
+                From = current,
+                To = to,
+                TransitionID = context.TransitionID,
+                Instance = context.Instance,
+                Data = context.Data,
+                ActorID = context.ActorID,
+                ActorName = context.ActorName,
+                IsValid = isValid
+            });
         }
     }
 }

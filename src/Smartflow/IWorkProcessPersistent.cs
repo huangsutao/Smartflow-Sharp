@@ -11,10 +11,14 @@ using System.Text;
 namespace Smartflow
 {
     /// <summary>
-    /// 提供持久化接口
+    /// 提供过程服务接口
     /// </summary>
-    public interface IPersistent
+    public interface IWorkProcessPersistent
     {
-        void Persistent();
+        void Persistent(WorkflowProcess process);
+
+        WorkflowProcess GetProcessRecord(string instanceID, string destinationID);
+
+        IList<WorkflowProcess> GetLatestRecords(string instanceID, string NID,int Increment);
     }
 }

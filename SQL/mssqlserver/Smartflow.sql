@@ -1,8 +1,8 @@
-﻿CREATE DATABASE Smartflow
+CREATE DATABASE [Smartflow]
 GO
 USE [Smartflow]
 GO
-/****** Object:  Table [dbo].[t_action]    Script Date: 2019/8/23 21:23:56 ******/
+/****** Object:  Table [dbo].[t_action]    Script Date: 2019/9/1 14:25:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[t_action](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[t_actor]    Script Date: 2019/8/23 21:23:57 ******/
+/****** Object:  Table [dbo].[t_actor]    Script Date: 2019/9/1 14:25:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -38,7 +38,7 @@ CREATE TABLE [dbo].[t_actor](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[t_command]    Script Date: 2019/8/23 21:23:57 ******/
+/****** Object:  Table [dbo].[t_command]    Script Date: 2019/9/1 14:25:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -55,7 +55,7 @@ CREATE TABLE [dbo].[t_command](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[t_config]    Script Date: 2019/8/23 21:23:57 ******/
+/****** Object:  Table [dbo].[t_config]    Script Date: 2019/9/1 14:25:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -71,7 +71,7 @@ CREATE TABLE [dbo].[t_config](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[t_form]    Script Date: 2019/8/23 21:23:57 ******/
+/****** Object:  Table [dbo].[t_form]    Script Date: 2019/9/1 14:25:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -88,7 +88,7 @@ CREATE TABLE [dbo].[t_form](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[t_group]    Script Date: 2019/8/23 21:23:57 ******/
+/****** Object:  Table [dbo].[t_group]    Script Date: 2019/9/1 14:25:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -105,7 +105,7 @@ CREATE TABLE [dbo].[t_group](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[t_instance]    Script Date: 2019/8/23 21:23:57 ******/
+/****** Object:  Table [dbo].[t_instance]    Script Date: 2019/9/1 14:25:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -122,7 +122,7 @@ CREATE TABLE [dbo].[t_instance](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[t_mail]    Script Date: 2019/8/23 21:23:57 ******/
+/****** Object:  Table [dbo].[t_mail]    Script Date: 2019/9/1 14:25:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -136,7 +136,7 @@ CREATE TABLE [dbo].[t_mail](
 	[EnableSsl] [int] NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[t_node]    Script Date: 2019/8/23 21:23:57 ******/
+/****** Object:  Table [dbo].[t_node]    Script Date: 2019/9/1 14:25:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -147,13 +147,15 @@ CREATE TABLE [dbo].[t_node](
 	[Name] [varchar](50) NULL,
 	[NodeType] [varchar](50) NULL,
 	[InstanceID] [varchar](50) NULL,
+	[Increment] [int] NULL,
+	[Cooperation] [int] NULL,
  CONSTRAINT [PK_t_node] PRIMARY KEY CLUSTERED 
 (
 	[NID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[t_process]    Script Date: 2019/8/23 21:23:57 ******/
+/****** Object:  Table [dbo].[t_process]    Script Date: 2019/9/1 14:25:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -167,13 +169,14 @@ CREATE TABLE [dbo].[t_process](
 	[NodeType] [varchar](50) NULL,
 	[CreateDateTime] [datetime] NULL,
 	[RelationshipID] [varchar](50) NULL,
+	[Increment] [int] NULL,
  CONSTRAINT [PK_t_process] PRIMARY KEY CLUSTERED 
 (
 	[NID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[t_transition]    Script Date: 2019/8/23 21:23:57 ******/
+/****** Object:  Table [dbo].[t_transition]    Script Date: 2019/9/1 14:25:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -202,7 +205,13 @@ ALTER TABLE [dbo].[t_instance] ADD  CONSTRAINT [DF_t_instance_STATUS]  DEFAULT (
 GO
 ALTER TABLE [dbo].[t_mail] ADD  CONSTRAINT [DF_t_mail_EnableSsl]  DEFAULT ((0)) FOR [EnableSsl]
 GO
+ALTER TABLE [dbo].[t_node] ADD  CONSTRAINT [DF_t_node_NID]  DEFAULT ((0)) FOR [NID]
+GO
+ALTER TABLE [dbo].[t_node] ADD  CONSTRAINT [DF_t_node_Cooperation]  DEFAULT ((0)) FOR [Cooperation]
+GO
 ALTER TABLE [dbo].[t_process] ADD  CONSTRAINT [DF_t_process_INSERTDATE]  DEFAULT (getdate()) FOR [CreateDateTime]
+GO
+ALTER TABLE [dbo].[t_process] ADD  CONSTRAINT [DF_t_process_Increment]  DEFAULT ((0)) FOR [Increment]
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'主键' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N't_actor', @level2type=N'COLUMN',@level2name=N'NID'
 GO
@@ -282,6 +291,10 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'节点类型�
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工作流实例ID 与 T_INSTANCE表关联' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N't_node', @level2type=N'COLUMN',@level2name=N'InstanceID'
 GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'当前节点的批次' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N't_node', @level2type=N'COLUMN',@level2name=N'Increment'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'0 不协办（任务一个审批完成，即向下一节点跳转） 1会签节点（同时需要多个人进行审批）' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N't_node', @level2type=N'COLUMN',@level2name=N'Cooperation'
+GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'流程节点表' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N't_node'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'主键' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N't_process', @level2type=N'COLUMN',@level2name=N'NID'
@@ -299,6 +312,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'创建时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N't_process', @level2type=N'COLUMN',@level2name=N'CreateDateTime'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'跳转到的节点NID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N't_process', @level2type=N'COLUMN',@level2name=N'RelationshipID'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'与t_node.increment的值一致，让用户判断会签满足条件' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N't_process', @level2type=N'COLUMN',@level2name=N'Increment'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'记录所有审批操作' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N't_process'
 GO

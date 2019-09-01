@@ -514,7 +514,8 @@
         this.form = undefined;
         this.group = [];
         this.action= [];
-        this.actor= [];
+        this.actor = [];
+        this.cooperation = 0;
         /*边界高度*/
         this.tickness = 20;
     }
@@ -587,6 +588,13 @@
             .append(config.equal)
             .append(config.lQuotation)
             .append(self.category)
+            .append(config.rQuotation)
+
+            .append(config.space)
+            .append('cooperation')
+            .append(config.equal)
+            .append(config.lQuotation)
+            .append(self.cooperation)
             .append(config.rQuotation)
             .append(config.end);
 
@@ -1144,6 +1152,7 @@
         this.disX = 0;
         this.disY = 0;
         Circle.base.Constructor.call(this, name, category);
+        this.cooperation = 0;
     }
 
     Circle.extend(Shape, {
@@ -1298,7 +1307,7 @@
         this.disY = 0;
         this.w = 20;
         this.h = 100;
-
+        this.cooperation = 0;
     }
 
     Decision.extend(Shape, {

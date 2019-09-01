@@ -22,12 +22,5 @@ namespace Smartflow
         /// <param name="resourceXml">流程结构</param>
         /// <returns></returns>
         string Start(string resourceXml);
-    
-
-        /// <summary>
-        /// 监控跳转过程
-        /// </summary>
-        /// <param name="persistent">持久化接口</param>
-        void Processing(IPersistent persistent);
     }
 }

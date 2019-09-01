@@ -16,9 +16,16 @@ namespace Smartflow.Web.Mvc
     {
         protected void Application_Start()
         {
+
+            //移队默认的协办服务
+            WorkflowGlobalServiceProvider.Remove<IWorkflowCooperation>();
+
             //注册全局的动作 即每跳转一个节点，都会执行动作。
             WorkflowGlobalServiceProvider.RegisterGlobalService(new PendingAction());
             WorkflowGlobalServiceProvider.RegisterGlobalService(new RecordAction());
+          
+            //自定义协办服务
+            WorkflowGlobalServiceProvider.RegisterGlobalService(new SmartWorkflowCooperation());
 
             //注册局部动作 即跳转到特定节点中执行的动作
             WorkflowGlobalServiceProvider.RegisterPartService(new DefaultAction());

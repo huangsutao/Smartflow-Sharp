@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="DapperFactory.cs" />
     <Compile Include="DefaultActionService.cs" />
+    <Compile Include="DefaultWorkflowCooperationService.cs" />
     <Compile Include="Elements\Action.cs" />
     <Compile Include="Elements\ASTNode.cs" />
     <Compile Include="Elements\Command.cs" />
@@ -64,13 +65,14 @@
     <Compile Include="Elements\Workflow.cs" />
     <Compile Include="IWorkflowAction.cs" />
     <Compile Include="IResolve.cs" />
+    <Compile Include="IWorkflowCooperation.cs" />
     <Compile Include="WorkflowActor.cs" />
     <Compile Include="WorkflowGroup.cs" />
     <Compile Include="WorkflowInstanceState.cs" />
     <Compile Include="WorkflowNodeCategory.cs" />
     <Compile Include="ExecutingContext.cs" />
     <Compile Include="ITransition.cs" />
-    <Compile Include="IPersistent.cs" />
+    <Compile Include="IWorkProcessPersistent.cs" />
     <Compile Include="IWorkflow.cs" />
     <Compile Include="MailConfiguration.cs" />
     <Compile Include="MailService.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="WorkflowInstance.cs" />
     <Compile Include="WorkflowNode.cs" />
     <Compile Include="WorkflowProcess.cs" />
+    <Compile Include="WorkflowProcessService.cs" />
     <Compile Include="WorkflowService.cs" />
   </ItemGroup>
   <ItemGroup>

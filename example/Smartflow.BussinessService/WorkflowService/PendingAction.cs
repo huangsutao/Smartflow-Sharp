@@ -45,16 +45,18 @@ namespace Smartflow.BussinessService.WorkflowService
                         WorkflowGlobalServiceProvider.Resolve<IMailService>().Notification(recList.ToArray<string>(), "您有新待办信息，请及时审批。");
                     });
                     ********************************************************/
-
                     foreach (User user in userList)
                     {
                         WritePending(user.IDENTIFICATION.ToString(), executeContext);
                     }
-                    string NID = executeContext.Instance.Current.NID;
-                    pendingService.Delete(pending => pending.NODEID == NID && pending.INSTANCEID == instanceID);
-                }
-            }
 
+                    if (executeContext.IsValid)
+                    {
+                        string NID = executeContext.Instance.Current.NID;
+                        pendingService.Delete(pending => pending.NODEID == NID && pending.INSTANCEID == instanceID);
+                    }
+                 }
+             }
         }
 
         protected List<User> GetUsersByGroup(List<Group> items, List<Actor> actors)

@@ -21,6 +21,11 @@ namespace Smartflow.Elements
     {
         protected Command command;
 
+        public override int Cooperation
+        {
+            get { return 0; }
+        }
+
         public Command Command
         {
             get { return command; }

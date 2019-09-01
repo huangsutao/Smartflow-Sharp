@@ -22,6 +22,8 @@ namespace Smartflow
             _globalCollection.Add(new WorkflowService());
             _globalCollection.Add(new MailService());
             _globalCollection.Add(new DefaultActionService());
+            _globalCollection.Add(new WorkflowProcessService());
+            _globalCollection.Add(new DefaultWorkflowCooperationService());
         }
 
         public static void RegisterGlobalService(object registerObject)
@@ -38,6 +40,19 @@ namespace Smartflow
         {
             return (T)_globalCollection.Where(o => (o is T)).FirstOrDefault();
         }
+
+        /// <summary>
+        /// 移除全局服务
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public static void Remove<T>() where T : class
+        {
+             _globalCollection.Where(o => (o is T))
+                .Cast<T>()
+                .ToList()
+                .ForEach((entry)=> _globalCollection.Remove(entry));
+        }
+
 
         /// <summary>
         /// 查询注册到全局里面的

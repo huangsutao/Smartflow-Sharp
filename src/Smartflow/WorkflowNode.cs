@@ -18,6 +18,17 @@ namespace Smartflow
 {
     public class WorkflowNode : Node
     {
+        /// <summary>
+        /// 监控的过程服务
+        /// </summary>
+        protected IWorkProcessPersistent ProcessService
+        {
+            get
+            {
+                return WorkflowGlobalServiceProvider.Resolve<IWorkProcessPersistent>();
+            }
+        }
+
         protected WorkflowNode()
         {
 
@@ -59,6 +70,8 @@ namespace Smartflow
             wfNode.Name = node.Name;
             wfNode.NodeType = node.NodeType;
             wfNode.InstanceID = node.InstanceID;
+            wfNode.Increment = node.Increment;
+            wfNode.Cooperation = node.Cooperation;
             wfNode.Transitions = wfNode.QueryWorkflowNode(node.NID);
             wfNode.FromTransition = wfNode.GetHistoryTransition();
             wfNode.Groups = wfNode.GetGroup();
@@ -108,13 +121,13 @@ namespace Smartflow
             Transition transition = null;
             try
             {
-                WorkflowProcess process = WorkflowProcess.GetWorkflowProcessInstance(InstanceID, NID);
+                WorkflowProcess process = ProcessService.GetProcessRecord(InstanceID,this.ID);
                 if (process != null && NodeType != WorkflowNodeCategory.Start)
                 {
                     ASTNode n = GetNode(process.Origin);
                     while (n.NodeType == WorkflowNodeCategory.Decision)
                     {
-                        process = WorkflowProcess.GetWorkflowProcessInstance(InstanceID, n.NID);
+                        process = ProcessService.GetProcessRecord(InstanceID, n.ID);
                         n = GetNode(process.Origin);
 
                         if (n.NodeType == WorkflowNodeCategory.Start)
@@ -198,6 +211,19 @@ namespace Smartflow
 
             }).ToList();
         }
+
         #endregion
+
+        internal void DoIncrement()
+        {
+            this.Increment += 1;
+            string sql = "UPDATE T_NODE SET Increment=@Increment WHERE InstanceID=@InstanceID AND  NID=@NID ";
+            Connection.ExecuteScalar<long>(sql, new
+            {
+                NID = NID,
+                InstanceID = InstanceID,
+                Increment = this.Increment
+            });
+        }
     }
 }

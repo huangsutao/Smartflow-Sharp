@@ -82,5 +82,13 @@ namespace Smartflow
             set;
         }
 
+        /// <summary>
+        /// 是否验证
+        /// </summary>
+        public bool IsValid
+        {
+            get;
+            set;
+        }
     }
 }

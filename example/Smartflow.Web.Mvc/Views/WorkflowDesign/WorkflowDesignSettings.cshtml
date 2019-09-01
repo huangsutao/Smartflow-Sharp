@@ -44,6 +44,17 @@
             vertical-align: middle;
             margin: 0 15px;
         }
+        
+        .smartflow-checkbox{
+           margin-top:10px;
+        }
+
+        .smartflow-checkbox-box,.smartflow-checkbox-label{
+            vertical-align:middle;
+            display:inline;
+            user-select:none;
+            font-size:14px;
+        }
 
         /*.layui-to-tool .layui-btn:first-child {
             margin-bottom: 15px;
@@ -71,6 +82,10 @@
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
                     <input type="text" id="txtNodeName" placeholder="请输入节点名称" class="layui-input" />
+                    <div class="smartflow-checkbox">
+                        <input type="checkbox" id="chkCooperation" class="smartflow-checkbox-box" />
+                        <label for="chkCooperation" class="smartflow-checkbox-label">是否会签</label>
+                    </div>
                 </div>
                 <div class="layui-tab-item">
                     <div id="transfer"></div>
