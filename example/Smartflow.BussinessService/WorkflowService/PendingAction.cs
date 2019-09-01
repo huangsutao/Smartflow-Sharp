@@ -39,10 +39,11 @@ namespace Smartflow.BussinessService.WorkflowService
                         foreach (User item in userList)
                         {
                             //接收邮箱地址
-                            recList.Add(item.USERNAME);
+                            recList.Add(item.mail);
                         }
                         //发送邮件
-                        WorkflowGlobalServiceProvider.Resolve<IMailService>().Notification(recList.ToArray<string>(), "您有新待办信息，请及时审批。");
+                        WorkflowGlobalServiceProvider.Resolve<IMailService>()
+                            .Notification(recList.ToArray<string>(), "您有新待办信息，请及时审批。");
                     });
                     ********************************************************/
                     foreach (User user in userList)

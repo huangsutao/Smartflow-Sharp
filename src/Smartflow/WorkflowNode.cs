@@ -121,13 +121,13 @@ namespace Smartflow
             Transition transition = null;
             try
             {
-                WorkflowProcess process = ProcessService.GetProcessRecord(InstanceID,this.ID);
+                WorkflowProcess process = ProcessService.GetRecord(InstanceID,this.ID);
                 if (process != null && NodeType != WorkflowNodeCategory.Start)
                 {
                     ASTNode n = GetNode(process.Origin);
                     while (n.NodeType == WorkflowNodeCategory.Decision)
                     {
-                        process = ProcessService.GetProcessRecord(InstanceID, n.ID);
+                        process = ProcessService.GetRecord(InstanceID, n.ID);
                         n = GetNode(process.Origin);
 
                         if (n.NodeType == WorkflowNodeCategory.Start)

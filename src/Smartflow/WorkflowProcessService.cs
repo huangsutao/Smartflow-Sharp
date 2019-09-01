@@ -24,7 +24,7 @@ namespace Smartflow
             });
         }
 
-        public WorkflowProcess GetProcessRecord(string instanceID, string destinationID)
+        public WorkflowProcess GetRecord(string instanceID, string destinationID)
         {
             WorkflowProcess instance = new WorkflowProcess();
             string query = ResourceManage.GetString(ResourceManage.SQL_WORKFLOW_PROCESS);

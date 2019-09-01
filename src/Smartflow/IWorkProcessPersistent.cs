@@ -17,7 +17,7 @@ namespace Smartflow
     {
         void Persistent(WorkflowProcess process);
 
-        WorkflowProcess GetProcessRecord(string instanceID, string destinationID);
+        WorkflowProcess GetRecord(string instanceID, string destinationID);
 
         IList<WorkflowProcess> GetLatestRecords(string instanceID, string NID,int Increment);
     }

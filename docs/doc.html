@@ -123,15 +123,47 @@
             b)	普通节点：设置业务环节节点的名称，以及业务环节审批人的信息；支持按组设置节点审批人；<br />
             c)	分支节点：提供基于自定义条件设定，根据条件动态判定表单流转方向。
         </p>
+
         <h3 id="流程引擎" class="marker_title">流程引擎</h3>
         <p>
-            正在编写中。
+            流程引擎是工作流组件核心部分，本节对流程引擎设计思想以及想法进行介绍，以让你更加了解工作流引擎运行机制。
+        </p>
+
+        <h3 id="服务容器" class="marker_title">服务容器</h3>
+        <p>
+            WorkflowGlobalServiceProvider是整个流程引擎的服务提供者，贯穿整个流程引擎组件。为了使流程引擎中的服务方便维护管理，流程引擎在设计的的时候引入类似服务容器WorkflowGlobalServiceProvider，即流程引擎中所有的服务是通过容器进行管理。
+        </p>
+        <p><img src="./css/WorkflowGlobalServiceProvider.png" style="width:400px;" /></p>
+        <h3 id="自定义动作" class="marker_title">自定义动作</h3>
+        <p>
+            为了满足一些特殊的要求，Smartflow工作流组件开放扩展接口，允许用户在流转的过程中执行一些额外的操作如表单状态更新、待办、审批记录等等操作，都可以通过实现IWorkflowAction接口完成。
+            在向服务容器注册的时候，若注册到全局服务中，即流程中任何节点的跳转都会执行此动作。局部服务，即只在特定节点中进行触发的。
+        </p>
+        <p>
+            <img src="./css/WorkflowActionSettings.png" style="width:400px;" />
+            <img src="./css/workflowactionreg.png" style="width:400px;" />
+        </p>
+        <h3 id="会签" class="marker_title">会签</h3>
+        <p>
+            会签是允许多人同时审批一个节点。工作流组件开放IWorkflowCooperation接口，让用户依据的自身的需求，动态限定节点会签人数，默认情况下是不做任何限制。可以参照示例中实现方式，按需调整。
+        </p>
+        <p>
+            <img src="./css/cooperation.png" style="width:400px;" />
+        </p>
+    </div>
+    <div class="page" contenteditable="false">
+        <h3 id="邮件" class="marker_title">邮件</h3>
+        <p>
+            工作流引擎组件提供已经封装好的邮件服务，在使用邮件服务的时候，需要优先配置SMTP账户信息，配置信息在数据库T_MAIL表中进行配置。配置好后，调用方式如下：
+        </p>
+        <p>
+            <img src="./css/mail.png" style="width:400px;" />
         </p>
 
         <h3 id="FQA" class="marker_title">FQA问题汇总</h3>
         <p>
-           1、VS2017 打开解决方案编译不通过
-            <strong style="display:block;text-align:left;">答：请在NuGet的控制台里执行如下命令：<br/>update-package -project Smartflow.Web.Mvc -reinstall</strong>
+            1、VS2017 打开解决方案编译不通过
+            <strong style="display:block;text-align:left;">答：请在NuGet的控制台里执行如下命令：<br />update-package -project Smartflow.Web.Mvc -reinstall</strong>
         </p>
         <h3 id="未来" class="marker_title">未来</h3>
         <p>
@@ -191,7 +223,11 @@
             { id: 24, pId: 2, name: "流程设计工具", open: true },
             { id: 241, pId: 24, name: "定义元素" },
             { id: 242, pId: 24, name: "元素属性设置" },
-            { id: 25, pId: 2, name: "流程引擎" },
+            { id: 25, pId: 2, name: "流程引擎", open: true },
+            { id: 251, pId: 25, name: "服务容器" },
+            { id: 252, pId: 25, name: "自定义动作" },
+            { id: 253, pId: 25, name: "会签" },
+            { id: 254, pId: 25, name: "邮件" },
             { id: 3, pId: 0, name: "FQA" },
             { id: 4, pId: 0, name: "未来" }
         ];

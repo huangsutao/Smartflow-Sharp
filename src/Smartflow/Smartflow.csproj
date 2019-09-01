@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="DapperFactory.cs" />
     <Compile Include="DefaultActionService.cs" />
-    <Compile Include="DefaultWorkflowCooperationService.cs" />
     <Compile Include="Elements\Action.cs" />
     <Compile Include="Elements\ASTNode.cs" />
     <Compile Include="Elements\Command.cs" />
