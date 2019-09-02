@@ -50,11 +50,11 @@ namespace Smartflow
         /// <summary>
         /// 会签服务
         /// </summary>
-        protected IWorkflowCooperation WorkflowCooperationService
+        protected AbstractWorkflowCooperation WorkflowCooperationService
         {
             get
             {
-                return WorkflowGlobalServiceProvider.Resolve<IWorkflowCooperation>();
+                return WorkflowGlobalServiceProvider.Resolve<AbstractWorkflowCooperation>();
             }
         }
 
@@ -129,8 +129,20 @@ namespace Smartflow
         {
             WorkflowNode current = context.Instance.Current;
 
-            bool validation = (WorkflowCooperationService == null) ? true :
-                    WorkflowCooperationService.Check(current,ProcessService.GetLatestRecords(current.InstanceID, current.NID, current.Increment));
+            bool validation = true;
+
+            if (WorkflowCooperationService != null)
+            {
+                IList<WorkflowProcess> records = ProcessService.GetLatestRecords(current.InstanceID, current.NID, current.Increment);
+
+                validation =WorkflowCooperationService.Check(current, records);
+
+                selectTransition = WorkflowCooperationService
+                    .SelectStrategy()
+                    .Decide(records,to.ID, 
+                    (workflowProcess)=> ProcessService.Persistent(workflowProcess),
+                    (destination) =>current.GetNode(destination).NID);
+            }
 
             if (validation)
             {

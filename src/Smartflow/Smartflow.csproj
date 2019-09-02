@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="DapperFactory.cs" />
     <Compile Include="DefaultActionService.cs" />
+    <Compile Include="LastStrategy.cs" />
+    <Compile Include="DemocraticStrategy.cs" />
     <Compile Include="Elements\Action.cs" />
     <Compile Include="Elements\ASTNode.cs" />
     <Compile Include="Elements\Command.cs" />
@@ -49,6 +51,7 @@
     <Compile Include="Elements\Element.cs" />
     <Compile Include="Elements\End.cs" />
     <Compile Include="AbstractBridgeService.cs" />
+    <Compile Include="FirstStrategy.cs" />
     <Compile Include="IMailService.cs" />
     <Compile Include="Internals\ElementContainer.cs" />
     <Compile Include="Internals\IResolution.cs" />
@@ -64,7 +67,8 @@
     <Compile Include="Elements\Workflow.cs" />
     <Compile Include="IWorkflowAction.cs" />
     <Compile Include="IResolve.cs" />
-    <Compile Include="IWorkflowCooperation.cs" />
+    <Compile Include="AbstractWorkflowCooperation.cs" />
+    <Compile Include="IWorkflowCooperationStrategy.cs" />
     <Compile Include="WorkflowActor.cs" />
     <Compile Include="WorkflowGroup.cs" />
     <Compile Include="WorkflowInstanceState.cs" />
