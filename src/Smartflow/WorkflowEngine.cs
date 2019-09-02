@@ -131,22 +131,22 @@ namespace Smartflow
 
             bool validation = true;
 
-            if (WorkflowCooperationService != null)
+            if (WorkflowCooperationService != null && current.Cooperation > 0)
             {
                 IList<WorkflowProcess> records = ProcessService.GetLatestRecords(current.InstanceID, current.NID, current.Increment);
 
-                validation =WorkflowCooperationService.Check(current, records);
+                validation = WorkflowCooperationService.Check(current, records);
 
                 selectTransition = WorkflowCooperationService
                     .SelectStrategy()
-                    .Decide(records,to.ID, 
-                    (workflowProcess)=> ProcessService.Persistent(workflowProcess),
-                    (destination) =>current.GetNode(destination).NID);
+                    .Decide(records, to.ID,
+                    (workflowProcess) => ProcessService.Persistent(workflowProcess));
             }
 
             if (validation)
             {
-                context.Instance.Jump(selectTransition);
+                context.Instance.Jump(to.ID);
+
                 var next = WorkflowInstance
                    .GetInstance(current.InstanceID)
                    .Current;
