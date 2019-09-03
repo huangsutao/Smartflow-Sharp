@@ -1,5 +1,5 @@
-﻿@model System.Collections.Generic.IEnumerable<Smartflow.WorkflowStructure>
-@using Smartflow
+﻿@model System.Collections.Generic.IEnumerable<Smartflow.BussinessService.WorkflowService.WorkflowStructure>
+@using Smartflow.BussinessService.WorkflowService
 @{
     Layout = null;
 }
@@ -9,16 +9,18 @@
     <title>Smartflow-Sharp 工作流程列表</title>
     <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
     <style type="text/css">
-        .layui-btn {border-radius: initial;}
+        .layui-btn {
+            border-radius: initial;
+        }
     </style>
     <script src="~/Content/jquery.min.js"></script>
+    <script src="~/Content/layui/layui.all.js"></script>
     <script src="~/Content/common.js"></script>
     <script type="text/javascript">
         function delWf(id) {
             if (window.confirm('删除？')) {
-                $.ajax({
+               util.ajaxPost({
                     url: '@Url.Action("Delete", "Default")',
-                    type: 'post',
                     data: { WFID: id },
                     success: function () {
                         document.location.href = '@Url.Action("List", "Default")';
@@ -26,13 +28,26 @@
                 });
             }
         }
+
+        function openWin(url) {
+            parent.util.create({
+                content: url,
+                title: '流程设计器',
+                width: 960,
+                height: 560,
+                end: function () {
+                    util.refreshPage();
+                }
+            });
+        }
+
     </script>
 </head>
 <body>
     <br />
     <div class="layui-container">
         <div class="layui-btn-group">
-            <input type="button" value="增加" class="layui-btn  layui-btn-sm" onclick="openWin('../../Smartflow.Web.Design/WorkflowDesign/Design', 960, 560)" />
+            <input type="button" value="增加" class="layui-btn  layui-btn-sm" onclick="openWin('@Url.Action("Design","WorkflowDesign")')" />
         </div>
         <table class="layui-table">
             <thead>
@@ -46,8 +61,8 @@
                 {
                     <tr>
                         <td>@wf.APPELLATION</td>
-                        <td style="width:120px;text-align:center;">
-                            <a class="layui-btn layui-btn-xs" href="javascript:openWin('../../Smartflow.Web.Design/WorkflowDesign/Design?id=@wf.IDENTIFICATION',960,560)">修改</a>
+                        <td style="width:160px;text-align:center;">
+                            <a class="layui-btn layui-btn-xs" href="javascript:openWin('@Url.Action("Design","WorkflowDesign",new { id=wf.IDENTIFICATION})')">修改</a>
                             <a class="layui-btn layui-btn-danger layui-btn-xs" href="javascript:delWf('@wf.IDENTIFICATION')">删除</a>
                         </td>
                     </tr>

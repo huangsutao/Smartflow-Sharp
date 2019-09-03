@@ -7,7 +7,6 @@ using System.Web.Mvc;
 using Smartflow.Web.Mvc.Code;
 using Smartflow.BussinessService.Models;
 
-
 namespace Smartflow.Web.Mvc.Controllers
 {
     [AuthorizationFilter]

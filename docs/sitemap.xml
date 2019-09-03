@@ -8,33 +8,14 @@
   <url>
     <loc>https://www.smartflow-sharp.com</loc>
     <priority>0.5</priority>
-    <lastmod>2018-06-06</lastmod>
+    <lastmod>2019-05-28</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://www.smartflow-sharp.com/</loc>
     <priority>0.5</priority>
-    <lastmod>2018-06-06</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://www.smartflow-sharp.com/tool.html</loc>
-    <priority>0.5</priority>
-    <lastmod>2018-06-18</lastmod>
+    <lastmod>2019-05-28</lastmod>
     <changefreq>weekly</changefreq>
   </url>
 
-  <url>
-    <loc>https://www.smartflow-sharp.com/doc.html</loc>
-    <priority>0.5</priority>
-    <lastmod>2018-06-18</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
-
-  <url>
-    <loc>https://www.smartflow-sharp.com/donate.html</loc>
-    <priority>0.5</priority>
-    <lastmod>2018-06-18</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
 </urlset>

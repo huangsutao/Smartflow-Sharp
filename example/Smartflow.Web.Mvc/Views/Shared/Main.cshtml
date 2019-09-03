@@ -1,116 +1,93 @@
-﻿@{
-    Layout = null;
-}
-
+﻿@using System.Collections.Generic
+@using Smartflow.BussinessService.Models
 <!DOCTYPE html>
 <html>
 <head>
     <title>Smartflow-Sharp工作流管理平台</title>
-    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
     <link href="~/Content/main.css" rel="stylesheet" />
+    <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
     <script src="~/Content/jquery.min.js"></script>
     <script src="~/Content/layui/layui.all.js"></script>
-
-    <style>
-        .top-menu-container {
-            margin-right: 40px;
-        }
-
-        .top-menu {
-            float: right;
-        }
-
-        .top-menu-item {
-            height: 65px;
-            width: 70px;
-            display: inline-block;
-            padding-top: 48px;
-            cursor: pointer;
-            text-align: center;
-        }
-
-            .top-menu-item span {
-                color: #fff;
-                font-weight: 300;
-                font-size: 13px;
-            }
-    </style>
+    <script src="~/Content/common.js"></script>
+    <script src="~/Content/main.js"></script>
     <script type="text/javascript">
         $(function () {
-            $("#off").click(function () {
-                //具体逻辑就不写，仅为演示使用
-                window.location.href = '@Url.Action("Login", "Default")';
-            });
-        });
 
-        $(function () {
+            var tableTemplate = $("#common_template_pending").html(),
+                rowTemplate = $("#common_template_pending_row").html();
 
-            //仅演示:轮询查询待办数量
-            setInterval(function () {
-                $.ajax({
-                    url: '@Url.Action("GetPendingCount", "Default")',
-                    type: 'post',
-                    success: function (data) {
-                        $("#items").text(data);
-                    }
-                });
-            }, 1000 * 5);
-
-            $("#message").click(function () {
-                //iframe窗
-                layer.open({
-                    type: 2,
-                    title: "待办",
-                    closeBtn: 1, //不显示关闭按钮
-                    shade: 0,
-                    //shadeClose: true,
-                    area: ['400px', '400px'],
-                    offset: 'rb', //右下角弹出
-                    //time: 2000, //2秒后自动关闭
-                    anim: 2,
-                    content: ['@Url.Action("Pending","Default")', 'no'] //iframe的url，no代表不显示滚动条
-                });
+            $.Main({
+                tableTemplate: tableTemplate,
+                rowTemplate: rowTemplate,
+                url: '@Url.Action("GetPendingList","Default")',
+                audit: '@Url.Action("AuditFrame", "Audit")',
+                selector: '#pendingTable tbody',
+                id: '#pendingTable',
+                iframeContent: '#ifrmContent',
+                off: '@Url.Action("Off","Default")',
+                login: '@Url.Action("Login", "Default")'
             });
         });
     </script>
 </head>
-<body class="mainFrame">
-    <div class="top">
-        <span class="top-header">Smartflow-Sharp 工作流管理平台</span>
-        <div class="top-menu-container">
-            <div class="top-menu">
-                <div class="top-menu-item" style="background:  url(../Content/images/user.png) no-repeat center center;">
-                    <span>@(ViewBag.EmployeeName)</span>
-                </div>
-                <div class="top-menu-item" style="background:  url(../Content/images/message.png) no-repeat center center;" id="message">
-                    <span>消息(<i style="color:red;padding-right:2px;" id="items">0</i>)</span>
-                </div>
-                <div class="top-menu-item" style="background:  url(../Content/images/off.png) no-repeat center center;" id="off">
-                    <span>注销</span>
-                </div>
-            </div>
+<body class="smartflow_main">
+    <div class="smartflow_head">
+        <span class="smartflow_title">Smartflow-Sharp 工作流管理平台</span>
+        <div class="smartflow_menu fr">
+            <ul class="smartflow_menu_items clearfix">
+                <li class="smartflow_menu_item fr">
+                    <div class="smartflow_more">
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                    </div>
+                    <ul class="smartflow_drop hide" id="smartflow_drop_items">
+                        <li class="smartflow_drop_item" command="message">消息</li>
+                        <li class="smartflow_drop_item" command="exit">退出</li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
-    <div class="content">
-        <div class="left menu">
-            <div class="menu-item">
-                <ul class="menu-sub-items">
-                    <li>
-                        <a href="@Url.Action("FileApplyList", "FileApply")" target="frmContent">文件定密申请</a>
+    <div class="smartflow_content">
+        <div class="smartflow_left clearfix" id="menu">
+            <div class="menu_item">
+                <div class="menu_title">业务管理</div>
+                <ul class="menu_sub_items hide">
+                    <li class="menu_sub_item">
+                        <span url="../Default/List">流程定义</span>
                     </li>
-                    <li>
-                        <a href="@Url.Action("List", "Default")" target="frmContent">流程设计器</a>
+                    <li class="menu_sub_item">
+                        <span url="../FileApply/FileApplyList">文件定密申请</span>
                     </li>
                 </ul>
             </div>
         </div>
-        <div class="right">
-            <iframe style="width:100%;height:100%;"
-                    id="frmContent"
-                    name="frmContent"
-                    frameborder="0"
-                    src="@Url.Action("FileApplyList", "FileApply")"></iframe>
+        <div class="smartflow_right">
+            <iframe style="width:100%;height:100%;" id="ifrmContent" frameborder="0"></iframe>
         </div>
     </div>
+    <script type="text/html" id="common_template_tab_content">
+        <div class="smartflow_tab_content">
+            <iframe style="width:100%;height:100%;" frameborder="0"></iframe>
+        </div>
+    </script>
+    <script type="text/html" id="common_template_tab_head">
+        <li class="smartflow_tab_item smartflow_tab_select"></li>
+    </script>
+    <script type="text/html" id="common_template_pending_row">
+        <tr>
+            <td url="{{url}}" instanceID="{{instanceID}}">
+                你有新待的任务
+            </td>
+        </tr>
+    </script>
+    <script type="text/html" id="common_template_pending">
+        <div class="layui-container" style="width:100%;padding:0 10px;">
+            <table class="layui-table" id="pendingTable">
+                <tbody></tbody>
+            </table>
+        </div>
+    </script>
 </body>
 </html>

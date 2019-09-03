@@ -11,79 +11,124 @@ using System.Text;
 using System.Xml.Serialization;
 
 using Smartflow.Dapper;
-using Smartflow.Enums;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
+using Smartflow;
+using System.Xml.Linq;
+using Smartflow.Internals;
 
 namespace Smartflow.Elements
 {
-    [XmlInclude(typeof(List<Transition>))]
-    [XmlInclude(typeof(List<Group>))]
     public class Node : ASTNode
     {
-        private WorkflowNodeCategeory _nodeType = WorkflowNodeCategeory.Normal;
+        protected List<Actor> actors = new List<Actor>();
+        protected List<Group> groups = new List<Group>();
+        protected List<Action> actions = new List<Action>();
 
-        [JsonProperty("category", ItemConverterType = typeof(EnumConverter))]
-        public override WorkflowNodeCategeory NodeType
+        public List<Group> Groups
         {
-            get { return _nodeType; }
-            set { _nodeType = value; }
+            get { return groups; }
+            set { groups = value; }
         }
 
-        [JsonProperty("layout")]
-        [XmlAttribute("layout")]
-        public virtual string Layout
+        public List<Actor> Actors
         {
-            get;
-            set;
+            get { return actors; }
+            set { actors = value; }
         }
 
-        [JsonProperty("group")]
-        [XmlElement(ElementName = "group")]
-        public virtual List<Group> Groups
+        public List<Action> Actions
         {
-            get;
-            set;
+            get { return actions; }
+            set { actions = value; }
         }
 
         internal override void Persistent()
         {
             base.Persistent();
 
-            if (Transitions != null)
-            {
-                foreach (Transition transition in Transitions)
-                {
-                    transition.RNID = this.NID;
-                    transition.ORIGIN = this.IDENTIFICATION;
-                    transition.INSTANCEID = INSTANCEID;
-                    transition.Persistent();
-                }
-            }
-
-            if (Groups != null)
+            if (Groups.Count > 0)
             {
                 foreach (Group r in Groups)
                 {
-                    r.RNID = this.NID;
-                    r.INSTANCEID = INSTANCEID;
+                    r.RelationshipID = this.NID;
+                    r.InstanceID = InstanceID;
                     r.Persistent();
+                }
+            }
+
+
+            if (Actors.Count > 0)
+            {
+                foreach (Actor a in Actors)
+                {
+                    a.RelationshipID = this.NID;
+                    a.InstanceID = InstanceID;
+                    a.Persistent();
+                }
+            }
+
+            if (Actions.Count > 0)
+            {
+                foreach (Action a in Actions)
+                {
+                    a.RelationshipID = this.NID;
+                    a.InstanceID = InstanceID;
+                    a.Persistent();
                 }
             }
         }
 
-        public ASTNode GetNode(string IDENTIFICATION)
+        internal override Element Parse(XElement element)
         {
-            string query = "SELECT * FROM T_NODE WHERE IDENTIFICATION=@IDENTIFICATION AND INSTANCEID=@INSTANCEID";
-            ASTNode node = Connection.Query<ASTNode>(query, new
+            base.ParseXml(element);
+
+            if (element.HasElements)
             {
-                IDENTIFICATION = IDENTIFICATION,
-                INSTANCEID = INSTANCEID
+                List<Element> nodes = new List<Element>();
+                element.Elements().ToList().ForEach(entry =>
+                {
+                    string nodeName = entry.Name.LocalName;
+                    if (ElementContainer.Contains(nodeName))
+                    {
+                        nodes.Add(ElementContainer
+                            .Resolve(nodeName)
+                            .Parse(entry));
+                    }
+                });
 
-            }).FirstOrDefault();
+                nodes
+                    .Where(group => (group is Group))
+                    .ToList()
+                    .ForEach(g =>
+                    {
+                        this.Groups.Add(g as Group);
+                    });
 
-            return node;
+                nodes
+                   .Where(transition => (transition is Transition))
+                   .ToList()
+                   .ForEach(g =>
+                   {
+                       this.Transitions.Add(g as Transition);
+                   });
+
+                nodes
+                 .Where(actor => (actor is Actor))
+                 .ToList()
+                 .ForEach(actor =>
+                 {
+                     this.actors.Add(actor as Actor);
+                 });
+
+
+                nodes
+               .Where(action => (action is Action))
+               .ToList()
+               .ForEach(action =>
+               {
+                   this.actions.Add(action as Action);
+               });
+            }
+            return this;
         }
     }
 }

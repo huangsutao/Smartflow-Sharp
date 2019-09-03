@@ -8,17 +8,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Smartflow.Dapper;
-using Smartflow.Enums;
 using System.Data;
 
 namespace Smartflow
 {
-    public class WorkflowProcess :Infrastructure,IPersistent, IRelationShip
+    public class WorkflowProcess :IRelationship
     {
         /// <summary>
         /// 外键
         /// </summary>
-        public string RNID
+        public string RelationshipID
         {
             get;
             set;
@@ -36,7 +35,7 @@ namespace Smartflow
         /// <summary>
         /// 当前节点
         /// </summary>
-        public string ORIGIN
+        public string Origin
         {
             get;
             set;
@@ -45,7 +44,7 @@ namespace Smartflow
         /// <summary>
         /// 跳转到的节点
         /// </summary>
-        public string DESTINATION
+        public string Destination
         {
             get;
             set;
@@ -54,7 +53,7 @@ namespace Smartflow
         /// <summary>
         /// 路线ID
         /// </summary>
-        public string TRANSITIONID
+        public string TransitionID
         {
             get;
             set;
@@ -63,7 +62,7 @@ namespace Smartflow
         /// <summary>
         /// 实例ID
         /// </summary>
-        public string INSTANCEID
+        public string InstanceID
         {
             get;
             set;
@@ -72,7 +71,7 @@ namespace Smartflow
         /// <summary>
         /// 节点类型
         /// </summary>
-        public WorkflowNodeCategeory NODETYPE
+        public WorkflowNodeCategory NodeType
         {
             get;
             set;
@@ -81,53 +80,19 @@ namespace Smartflow
         /// <summary>
         /// 创建日期
         /// </summary>
-        public DateTime CREATEDATETIME
+        public DateTime CreateDateTime
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 退回、撤销、跳转
+        /// 批次记数
         /// </summary>
-        public WorkflowAction OPERATION
+        public int Increment
         {
             get;
             set;
-        }
-
-        /// <summary>
-        /// 将数据持久到数据库
-        /// </summary>
-        public void Persistent()
-        {
-            string sql = "INSERT INTO T_PROCESS(NID,ORIGIN,DESTINATION,TRANSITIONID,INSTANCEID,NODETYPE,RNID,OPERATION) VALUES(@NID,@ORIGIN,@DESTINATION,@TRANSITIONID,@INSTANCEID,@NODETYPE,@RNID,@OPERATION)";
-            Connection.Execute(sql, new
-            {
-                NID = Guid.NewGuid().ToString(),
-                ORIGIN = ORIGIN,
-                DESTINATION = DESTINATION,
-                TRANSITIONID = TRANSITIONID,
-                INSTANCEID = INSTANCEID,
-                NODETYPE = NODETYPE.ToString(),
-                RNID = RNID,
-                OPERATION = OPERATION
-            });
-        }
-
-        public static WorkflowProcess GetWorkflowProcessInstance(string instanceID, string NID)
-        {
-            WorkflowProcess instance = new WorkflowProcess();
-            string query = ResourceManage.GetString(ResourceManage.SQL_WORKFLOW_PROCESS);
-            instance = instance.Connection.Query<WorkflowProcess>(query, new
-            {
-                INSTANCEID = instanceID,
-                NID = NID,
-                OPERATION = WorkflowAction.Jump
-
-            }).OrderByDescending(order => order.CREATEDATETIME).FirstOrDefault();
-
-            return instance;
         }
     }
 }

@@ -10,7 +10,7 @@ using System.Text;
 
 using Smartflow.Elements;
 using System.Dynamic;
-using Smartflow.Enums;
+
 
 namespace Smartflow
 {
@@ -83,12 +83,12 @@ namespace Smartflow
         }
 
         /// <summary>
-        /// 操作方式
+        /// 是否验证
         /// </summary>
-        public WorkflowAction Operation
+        public bool IsValid
         {
             get;
-            internal set;
+            set;
         }
     }
 }

@@ -8,57 +8,25 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 using Smartflow.Dapper;
-using Smartflow.Enums;
-using Newtonsoft.Json;
+using Smartflow;
 
 namespace Smartflow.Elements
 {
-    public class Command : Element, IRelationShip
+    public class Command : Element, IRelationship
     {
-        /// <summary>
-        /// 执行SQL语句
-        /// </summary>
-        [JsonProperty("script")]
-        [XmlElement("script")]
-        public string SCRIPT
-        {
-            get;
-            set;
-        }
+        private string text = string.Empty;
 
-        /// <summary>
-        /// 连接字符串
-        /// </summary>
-        [JsonProperty("connecte")]
-        [XmlElement("connecte")]
-        public string CONNECTE
+        public string Text
         {
-            get;
-            set;
+            get { return text; }
+            set { text = value; }
         }
-
-        [JsonProperty("providername")]
-        [XmlElement("providername")]
-        public string PROVIDERNAME
-        {
-            get;
-            set;
-        }
-
-        [JsonProperty("commandtype")]
-        [XmlElement("commandtype")]
-        public string COMMANDTYPE
-        {
-            get;
-            set;
-        }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string RNID
+    
+        public string RelationshipID
         {
             get;
             set;
@@ -66,18 +34,31 @@ namespace Smartflow.Elements
 
         internal override void Persistent()
         {
-            string sql = "INSERT INTO T_COMMAND(NID,RNID,APPELLATION,SCRIPT,CONNECTE,INSTANCEID,PROVIDERNAME,COMMANDTYPE) VALUES(@NID,@RNID,@APPELLATION,@SCRIPT,@CONNECTE,@INSTANCEID,@PROVIDERNAME,@COMMANDTYPE)";
+            string sql = "INSERT INTO T_Command(NID,ID,RelationshipID,Text,InstanceID) VALUES(@NID,@ID,@RelationshipID,@Text,@InstanceID)";
             Connection.Execute(sql, new
             {
                 NID = Guid.NewGuid().ToString(),
-                RNID = RNID,
-                APPELLATION = APPELLATION,
-                SCRIPT = SCRIPT,
-                CONNECTE = CONNECTE,
-                INSTANCEID = INSTANCEID,
-                PROVIDERNAME = PROVIDERNAME,
-                COMMANDTYPE = COMMANDTYPE
+                ID=ID,
+                RelationshipID = RelationshipID,
+                Text = Text,
+                InstanceID = InstanceID
             });
+        }
+
+        internal override Element Parse(XElement element)
+        {
+            if (element.HasElements)
+            {
+                this.id = element
+                    .Elements("id")
+                    .FirstOrDefault().Value;
+
+                this.text = element
+                   .Elements("text")
+                   .FirstOrDefault().Value;
+            }
+
+            return this;
         }
     }
 }

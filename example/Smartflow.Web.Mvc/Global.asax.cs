@@ -1,4 +1,5 @@
-﻿using Smartflow.Web.Mvc.Code;
+﻿using Smartflow.BussinessService.WorkflowService;
+using Smartflow.Web.Mvc.Code;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,19 @@ namespace Smartflow.Web.Mvc
     {
         protected void Application_Start()
         {
+
+            //注册全局的动作 即每跳转一个节点，都会执行动作。
+            WorkflowGlobalServiceProvider.RegisterGlobalService(new PendingAction());
+            WorkflowGlobalServiceProvider.RegisterGlobalService(new RecordAction());
+
+            //注册局部动作 即跳转到特定节点中执行的动作
+            WorkflowGlobalServiceProvider.RegisterPartService(new DefaultAction());
+            WorkflowGlobalServiceProvider.RegisterPartService(new TestAction());
+
+            //自定义协办服务
+            WorkflowGlobalServiceProvider.RegisterGlobalService(new SmartWorkflowCooperation());
+
             AreaRegistration.RegisterAllAreas();
-            WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
         }

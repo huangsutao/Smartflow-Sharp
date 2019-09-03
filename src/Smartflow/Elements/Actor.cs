@@ -9,21 +9,15 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using Smartflow.Dapper;
-using Smartflow.Enums;
-using Newtonsoft.Json;
+using Smartflow;
 using System.Xml.Serialization;
+using System.Xml.Linq;
 
 namespace Smartflow.Elements
 {
-    public class Actor : Element, IRelationShip
+    public class Actor : Element, IRelationship
     {
-        public string RNID
-        {
-            get;
-            set;
-        }
-
-        public WorkflowAction OPERATION
+        public string RelationshipID
         {
             get;
             set;
@@ -31,16 +25,22 @@ namespace Smartflow.Elements
 
         internal override void Persistent()
         {
-            string sql = "INSERT INTO T_ACTOR(NID,IDENTIFICATION,RNID,APPELLATION,INSTANCEID,OPERATION) VALUES(@NID,@IDENTIFICATION,@RNID,@APPELLATION,@INSTANCEID,@OPERATION)";
+            string sql = "INSERT INTO T_ACTOR(NID,ID,RelationshipID,Name,InstanceID) VALUES(@NID,@ID,@RelationshipID,@Name,@InstanceID)";
             DapperFactory.CreateWorkflowConnection().Execute(sql, new
             {
                 NID = Guid.NewGuid().ToString(),
-                IDENTIFICATION = IDENTIFICATION,
-                RNID = RNID,
-                APPELLATION = APPELLATION,
-                INSTANCEID = INSTANCEID,
-                OPERATION = OPERATION
+                ID = ID,
+                RelationshipID = RelationshipID,
+                Name = Name,
+                InstanceID = InstanceID
             });
+        }
+
+        internal override Element Parse(XElement element)
+        {
+            this.name = element.Attribute("name").Value;
+            this.id = element.Attribute("id").Value;
+            return this;
         }
     }
 }

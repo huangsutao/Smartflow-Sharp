@@ -7,68 +7,74 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
 using Smartflow.Dapper;
-using Smartflow.Enums;
-using Newtonsoft.Json;
+using Smartflow;
+
 
 namespace Smartflow.Elements
 {
-    [XmlInclude(typeof(Node))]
-    public class Transition : Element, IRelationShip
+    public class Transition : Element, IRelationship
     {
-        [JsonProperty("layout")]
-        [XmlAttribute("layout")]
-        public virtual string Layout
+        private string destination = string.Empty;
+        private string expression = string.Empty;
+       
+        public string RelationshipID
         {
             get;
             set;
         }
 
-        [JsonIgnore]
-        public string RNID
+        public string Origin
         {
             get;
             set;
         }
-
-        [JsonIgnore]
-        public string ORIGIN
+     
+     
+        public string Destination
         {
-            get;
-            set;
+            get { return destination; }
+            set { destination = value; }
         }
 
-        [JsonProperty("destination")]
-        [XmlAttribute("destination")]
-        public string DESTINATION
+     
+        public string Expression
         {
-            get;
-            set;
-        }
-
-        [JsonProperty("expression")]
-        [XmlAttribute("expression")]
-        public string EXPRESSION
-        {
-            get;
-            set;
+            get { return expression; }
+            set { expression = value; }
         }
 
         internal override void Persistent()
         {
-            string sql = "INSERT INTO T_TRANSITION(NID,RNID,APPELLATION,DESTINATION,ORIGIN,INSTANCEID,EXPRESSION) VALUES(@NID,@RNID,@APPELLATION,@DESTINATION,@ORIGIN,@INSTANCEID,@EXPRESSION)";
+            string sql = "INSERT INTO T_TRANSITION(NID,RelationshipID,Name,Destination,Origin,InstanceID,Expression) VALUES(@NID,@RelationshipID,@Name,@Destination,@Origin,@InstanceID,@Expression)";
             Connection.Execute(sql, new
             {
                 NID = Guid.NewGuid().ToString(),
-                RNID = RNID,
-                APPELLATION = APPELLATION,
-                DESTINATION = DESTINATION,
-                ORIGIN = ORIGIN,
-                INSTANCEID = INSTANCEID,
-                EXPRESSION = EXPRESSION
+                RelationshipID = RelationshipID,
+                Name = Name,
+                Destination = Destination,
+                Origin = Origin,
+                InstanceID = InstanceID,
+                Expression = Expression
             });
+        }
+
+        internal override Element Parse(XElement element)
+        {
+            this.name = element.Attribute("name").Value;
+            this.destination = element.Attribute("destination").Value;
+            if (element.HasElements)
+            {
+                XElement expression = element.Elements("expression").FirstOrDefault();
+                if (expression != null)
+                {
+                    this.expression =expression.Value;
+                }
+            }
+            return this;
         }
     }
 }

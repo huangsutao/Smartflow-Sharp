@@ -12,85 +12,28 @@ using System.Text;
 
 using Smartflow.Dapper;
 using Smartflow.Elements;
-using Smartflow.Enums;
+using Smartflow.Internals;
 
 namespace Smartflow
 {
-    public partial class WorkflowService :Infrastructure, IWorkflow
+    public  class WorkflowService :WorkflowInfrastructure, IWorkflow
     {
-        public string Start(WorkflowStructure workflowStructure)
+        public string Start(string resourceXml)
         {
-            try
-            {
-                Workflow workflow = XmlConfiguration.ParseflowXml<Workflow>(workflowStructure.STRUCTUREXML);
-                List<Element> elements = new List<Element>();
-                elements.Add(workflow.StartNode);
-                elements.AddRange(workflow.ChildNode);
-                elements.AddRange(workflow.ChildDecisionNode);
-                elements.Add(workflow.EndNode);
-
-                string instaceID = CreateWorkflowInstance(workflow.StartNode.IDENTIFICATION, workflowStructure.IDENTIFICATION, workflowStructure.STRUCTUREXML);
-                foreach (Element element in elements)
-                {
-                    element.INSTANCEID = instaceID;
-                    element.Persistent();
-                }
-                return instaceID;
-            }
-            catch (Exception ex)
-            {
-                throw new WorkflowException(ex);
-            }
-        }
-
-        public string StartWorkflow(string resourceXml)
-        {
-            Workflow workflow = XmlConfiguration.ParseflowXml<Workflow>(resourceXml);
-            List<Element> elements = new List<Element>();
-            elements.Add(workflow.StartNode);
-            elements.AddRange(workflow.ChildNode);
-            elements.AddRange(workflow.ChildDecisionNode);
-            elements.Add(workflow.EndNode);
-
-            string instaceID = CreateWorkflowInstance(workflow.StartNode.IDENTIFICATION,"0",resourceXml);
+            Workflow workflow = XMLServiceFactory.Create(resourceXml);
+            IList<Element> elements = workflow.GetElements();
+            string instaceID = CreateWorkflowInstance(workflow.Start.ID,resourceXml);
             foreach (Element element in elements)
             {
-                element.INSTANCEID = instaceID;
+                element.InstanceID = instaceID;
                 element.Persistent();
             }
             return instaceID;
         }
 
-        public void Kill(WorkflowInstance instance)
+        protected string CreateWorkflowInstance(string NID, string resource)
         {
-            if (instance.State == WorkflowInstanceState.Running)
-            {
-                instance.State = WorkflowInstanceState.Kill;
-                instance.Transfer();
-            }
-        }
-
-        public void Terminate(WorkflowInstance instance)
-        {
-            if (instance.State == WorkflowInstanceState.Running)
-            {
-                instance.State = WorkflowInstanceState.Termination;
-                instance.Transfer();
-            }
-        }
-
-        public void Revert(WorkflowInstance instance)
-        {
-            if (instance.State == WorkflowInstanceState.Termination)
-            {
-                instance.State = WorkflowInstanceState.Running;
-                instance.Transfer();
-            }
-        }
-
-        protected string CreateWorkflowInstance(string startNID, string structureID, string structure)
-        {
-            return WorkflowInstance.CreateWorkflowInstance(startNID, structureID, structure);
+            return WorkflowInstance.CreateWorkflowInstance(NID, resource);
         }
     }
 }

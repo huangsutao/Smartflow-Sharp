@@ -16,20 +16,14 @@ namespace Smartflow.Web.Controllers
     {
         private BaseWorkflowService bwfs = BaseWorkflowService.Instance;
         private FileApplyService fileApplyService = new FileApplyService();
+        private WorkflowDesignService designService = new WorkflowDesignService();
 
-        public ActionResult Save(FileApply model)
-        {
-            model.STATUS = 0;
-            fileApplyService.Persistent(model);
-            return RedirectToAction("FileApplyList");
-        }
 
-        public ActionResult Submit(FileApply model)
+        [HttpPost]
+        public JsonResult Save(FileApply model)
         {
-            model.INSTANCEID = bwfs.Start(model.STRUCTUREID);
-            model.STATUS = 1;
             fileApplyService.Persistent(model);
-            return RedirectToAction("FileApplyList");
+            return Json(true);
         }
 
         public ActionResult FileApplyList()
@@ -37,46 +31,53 @@ namespace Smartflow.Web.Controllers
             return View(fileApplyService.Query());
         }
 
-        public void Delete(long id)
+        public JsonResult Delete(long id)
         {
             fileApplyService.Delete(id);
+            return Json(true);
         }
 
         public ActionResult FileApply(string id)
         {
             if (string.IsNullOrEmpty(id))
             {
-                GenerateSecretViewData(string.Empty);
                 GenerateWFViewData(string.Empty);
+                GenerateSecretViewData(string.Empty);
                 return View();
             }
             else
             {
-                FileApply mdl = fileApplyService.Get(long.Parse(id));
+                FileApply mdl = fileApplyService.GetByInstanceID(id);
                 GenerateSecretViewData(mdl.SECRETGRADE);
                 GenerateWFViewData(mdl.STRUCTUREID);
-
-                if (mdl.STATUS == 1)
-                {
-                    var executeNode = bwfs.GetCurrentPrevNode(mdl.INSTANCEID);
-                    var current = bwfs.GetCurrent(mdl.INSTANCEID);
-
-                    ViewBag.ButtonName = current.APPELLATION;
-                    ViewBag.PreviousButtonName = executeNode == null ? String.Empty : executeNode.APPELLATION;
-                    ViewBag.UndoCheck = CommonMethods.CheckUndoButton(mdl.INSTANCEID);
-                    ViewBag.UndoAuth = executeNode == null ? true : CommonMethods.CheckUndoAuth(mdl.INSTANCEID, UserInfo);
-                    ViewBag.JumpAuth = current.APPELLATION == "开始" ? true : CommonMethods.CheckAuth(current.NID, mdl.INSTANCEID, UserInfo);
-                    ViewBag.UserList = new UserService().GetPendingUserList(current.NID, mdl.INSTANCEID);
-                }
                 return View(mdl);
             }
         }
 
+        public void GenerateSecretViewData(string secretGrade)
+        {
+            List<string> secrets = new List<string>() {
+              "非密",
+              "秘密",
+              "机密"
+            };
+
+            List<SelectListItem> list = new List<SelectListItem>();
+            foreach (string secret in secrets)
+            {
+                list.Add(new SelectListItem
+                {
+                    Text = secret,
+                    Value = secret,
+                    Selected = (secret == secretGrade)
+                });
+            }
+            ViewData["SECRET"] = list;
+        }
+
         public void GenerateWFViewData(string WFID)
         {
-            List<WorkflowStructure> workflowXmlList = WorkflowServiceProvider
-                .OfType<IWorkflowDesignService>()
-                .GetWorkflowStructureList();
+            List<WorkflowStructure> workflowXmlList = designService.GetWorkflowStructureList();
 
             List<SelectListItem> fileList = new List<SelectListItem>();
             foreach (WorkflowStructure item in workflowXmlList)
@@ -84,21 +85,6 @@ namespace Smartflow.Web.Controllers
                 fileList.Add(new SelectListItem { Text = item.APPELLATION, Value = item.IDENTIFICATION, Selected = (item.IDENTIFICATION == WFID) });
             }
             ViewData["WFiles"] = fileList;
-        }
-
-        public void GenerateSecretViewData(string secretGrade)
-        {
-            List<string> secrets = new List<string>() { 
-              "非密",
-              "秘密",
-              "机密"
-            };
-            List<SelectListItem> list = new List<SelectListItem>();
-            foreach (string secret in secrets)
-            {
-                list.Add(new SelectListItem { Text = secret, Value = secret, Selected = (secret == secretGrade) });
-            }
-            ViewData["SECRET"] = list;
         }
     }
 }

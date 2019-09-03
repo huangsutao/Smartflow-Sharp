@@ -8,64 +8,71 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using Smartflow.Dapper;
 
 namespace Smartflow
 {
-    public class MailConfiguration : ConfigurationSection
+    public sealed class MailConfiguration
     {
         /// <summary>
         /// 账户名
         /// </summary>
-        [ConfigurationProperty("account", IsRequired = true)]
         public string Account
         {
-            get { return this["account"].ToString(); }
+            get;
+            set;
         }
 
         /// <summary>
         /// 密码（授权码）
         /// </summary>
-        [ConfigurationProperty("password", IsRequired = true)]
         public string Password
         {
-            get { return this["password"].ToString(); }
+            get;
+            set;
         }
 
         /// <summary>
         /// 发送邮件显示的名称
         /// </summary>
-        [ConfigurationProperty("name", IsRequired = true)]
         public string Name
         {
-            get { return this["name"].ToString(); }
+            get;
+            set;
         }
-
 
         /// <summary>
         /// 服务器smtp.163.com
         /// </summary>
-        [ConfigurationProperty("host", IsRequired = true)]
         public string Host
         {
-            get { return this["host"].ToString(); }
+            get;
+            set;
         }
 
         /// <summary>
         /// 端口(25)
         /// </summary>
-        [ConfigurationProperty("port", IsRequired = true)]
         public int Port
         {
-            get { return int.Parse(this["port"].ToString()); }
+            get;
+            set;
         }
 
         /// <summary>
         /// 启用HTTPS
         /// </summary>
-        [ConfigurationProperty("enableSsl", IsRequired = true)]
-        public bool EnableSsl
+        public int EnableSsl
         {
-            get { return bool.Parse(this["enableSsl"].ToString()); }
+            get;
+            set;
+        }
+
+        public static MailConfiguration Configure()
+        {
+            string sql = "SELECT * FROM T_MAIL";
+            return DapperFactory.CreateWorkflowConnection()
+                .Query<MailConfiguration>(sql).FirstOrDefault();
         }
     }
 }

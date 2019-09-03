@@ -8,24 +8,32 @@
 <head>
     <title>业务流程</title>
     <link href="~/Content/layui/css/layui.css" rel="stylesheet" />
-    <style type="text/css">
-        .layui-btn {
-            border-radius: initial;
-        }
-    </style>
     <script src="~/Content/jquery.min.js"></script>
+    <script src="~/Content/design/layui/layui.all.js"></script>
+    <script src="~/Content/common.js"></script>
     <script type="text/javascript">
-        function delApply(id) {
+        function delApply(instanceID) {
             if (window.confirm('删除？')) {
-                $.ajax({
+                util.ajaxPost({
                     url: '@Url.Action("Delete", "FileApply")',
-                    type: 'post',
-                    data: { id: id },
+                    data: { id: instanceID },
                     success: function () {
                         document.location.href = '@Url.Action("FileApplyList", "FileApply")';
                     }
                 });
             }
+        }
+
+        function openWin(url) {
+            parent.util.create({
+                content: url,
+                title: false,
+                width: 960,
+                height: 560,
+                end: function () {
+                    util.refreshPage();
+                }
+            });
         }
     </script>
 </head>
@@ -33,13 +41,12 @@
     <br />
     <div class="layui-container">
         <div class="layui-btn-group">
-            <input type="button" value="增加" class="layui-btn layui-btn-sm" onclick="document.location.href='@Url.Action("FileApply", "FileApply")'" />
+            <input type="button" value="增加" class="layui-btn layui-btn-sm" onclick="openWin('@Url.Action("AuditFrame", "Audit",new { url=Url.Action("FileApply","FileApply") })')" />
         </div>
         <table class="layui-table">
             <thead>
                 <tr>
                     <th style="width:160px;text-align:left;">文件名称</th>
-                    <th style="width:70px;text-align:center;">表单状态</th>
                     <th style="width:70px;text-align:center;">申请密级</th>
                     <th>备注</th>
                     <th style="width:120px;text-align:center;">操作</th>
@@ -50,11 +57,11 @@
                 {
                     <tr>
                         <td style="width:160px;text-align:left;">@mdl.FNAME</td>
-                        <td style="width:70px;text-align:center;">@( (mdl.STATUS == 0) ? "待提交" : (mdl.STATUS == 1) ? "审核中" : "已完成")</td>
                         <td style="width:70px;text-align:center;">@mdl.SECRETGRADE</td>
                         <td style="text-align:left;">@mdl.DESCRIPTION</td>
                         <td style="width:180px;text-align:center;">
-                            <a class="layui-btn layui-btn-primary layui-btn-xs" href="@Url.Action("FileApply", "FileApply", new { id=mdl.IDENTIFICATION })" target="_self">查看</a>
+                            <a class="layui-btn layui-btn-primary layui-btn-xs" href="javascript:parent.util.openProcessImage('@Url.Action("WorkflowImage", "WorkflowDesign", new { instanceID = mdl.INSTANCEID })')" target="_self">查看流程图</a>
+                            <a class="layui-btn layui-btn-primary layui-btn-xs" href="javascript:openWin('@Url.Action("AuditFrame", "Audit",new { url=Url.Action("FileApply","FileApply"),instanceID=mdl.INSTANCEID })')" target="_self">查看</a>
                             <a class="layui-btn layui-btn-danger layui-btn-xs" href="javascript:delApply('@mdl.IDENTIFICATION')">删除</a>
                         </td>
                     </tr>

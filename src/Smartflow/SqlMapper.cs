@@ -150,7 +150,8 @@ namespace Smartflow.Dapper
             )
 #endif
         {
-            this.commandText = commandText;
+
+            this.commandText =commandText;
             this.parameters = parameters;
             this.transaction = transaction;
             this.commandTimeout = commandTimeout;

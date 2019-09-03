@@ -12,14 +12,15 @@ namespace Smartflow.BussinessService.Services
     {
         public void Persistent(FileApply model)
         {
-            if (model.IDENTIFICATION == 0)
-            {
-                Insert(model);
-            }
-            else
-            {
-                Update(model);
-            }
+            Insert(model);
+        }
+
+        public FileApply GetByInstanceID(string instanceID)
+        {
+            return
+                base
+                .Query(e => e.INSTANCEID == instanceID)
+                .FirstOrDefault();
         }
     }
 }

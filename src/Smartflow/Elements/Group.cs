@@ -8,24 +8,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Smartflow.Dapper;
-using Smartflow.Enums;
 using System.Xml.Serialization;
-using Newtonsoft.Json;
+using System.Xml.Linq;
 
 namespace Smartflow.Elements
 {
-    public class Group : Element, IRelationShip
+    public class Group : Element, IRelationship
     {
-        [JsonProperty("id")]
-        [XmlAttribute("identification")]
-        public override string IDENTIFICATION
-        {
-            get;
-            set;
-        }
-
-        [JsonIgnore]
-        public string RNID
+        public string RelationshipID
         {
             get;
             set;
@@ -33,15 +23,22 @@ namespace Smartflow.Elements
 
         internal override void Persistent()
         {
-            string sql = "INSERT INTO T_GROUP(NID,IDENTIFICATION,RNID,APPELLATION,INSTANCEID) VALUES(@NID,@IDENTIFICATION,@RNID,@APPELLATION,@INSTANCEID)";
+            string sql = "INSERT INTO T_GROUP(NID,ID,RelationshipID,Name,InstanceID) VALUES(@NID,@ID,@RelationshipID,@Name,@InstanceID)";
             Connection.Execute(sql, new
             {
                 NID = Guid.NewGuid().ToString(),
-                IDENTIFICATION = IDENTIFICATION,
-                RNID = RNID,
-                APPELLATION = APPELLATION,
-                INSTANCEID = INSTANCEID
+                ID = ID,
+                RelationshipID = RelationshipID,
+                Name = Name,
+                InstanceID = InstanceID
             });
+        }
+
+        internal override Element Parse(XElement element)
+        {
+            this.name = element.Attribute("name").Value;
+            this.id = element.Attribute("id").Value;
+            return this;
         }
     }
 }

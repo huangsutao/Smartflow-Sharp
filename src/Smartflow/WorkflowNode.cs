@@ -1,6 +1,7 @@
 ﻿/********************************************************************
  License: https://github.com/chengderen/Smartflow/blob/master/LICENSE 
  Home page: https://www.smartflow-sharp.com
+ Github : https://github.com/chengderen/Smartflow-Sharp
  ********************************************************************
  */
 using System;
@@ -11,12 +12,23 @@ using System.Text;
 
 using Smartflow.Dapper;
 using Smartflow.Elements;
-using Smartflow.Enums;
+
 
 namespace Smartflow
 {
     public class WorkflowNode : Node
     {
+        /// <summary>
+        /// 监控的过程服务
+        /// </summary>
+        protected IWorkProcessPersistent ProcessService
+        {
+            get
+            {
+                return WorkflowGlobalServiceProvider.Resolve<IWorkProcessPersistent>();
+            }
+        }
+
         protected WorkflowNode()
         {
 
@@ -26,15 +38,15 @@ namespace Smartflow
         {
             foreach (Smartflow.Elements.Transition transition in this.Transitions)
             {
-                ASTNode an = this.GetNode(transition.DESTINATION);
+                ASTNode an = this.GetNode(transition.Destination);
                 Transition decisionTransition = transition;
-                while (an.NodeType == Enums.WorkflowNodeCategeory.Decision)
+                while (an.NodeType == WorkflowNodeCategory.Decision)
                 {
                     WorkflowDecision decision = WorkflowDecision.ConvertToReallyType(an);
                     decisionTransition = decision.GetTransition();
-                    an = this.GetNode(decisionTransition.DESTINATION);
+                    an = this.GetNode(decisionTransition.Destination);
                 }
-                transition.APPELLATION = decisionTransition.APPELLATION;
+                transition.Name = decisionTransition.Name;
             }
             return this.Transitions;
         }
@@ -54,13 +66,17 @@ namespace Smartflow
         {
             WorkflowNode wfNode = new WorkflowNode();
             wfNode.NID = node.NID;
-            wfNode.IDENTIFICATION = node.IDENTIFICATION;
-            wfNode.APPELLATION = node.APPELLATION;
+            wfNode.ID = node.ID;
+            wfNode.Name = node.Name;
             wfNode.NodeType = node.NodeType;
-            wfNode.INSTANCEID = node.INSTANCEID;
+            wfNode.InstanceID = node.InstanceID;
+            wfNode.Increment = node.Increment;
+            wfNode.Cooperation = node.Cooperation;
             wfNode.Transitions = wfNode.QueryWorkflowNode(node.NID);
             wfNode.FromTransition = wfNode.GetHistoryTransition();
             wfNode.Groups = wfNode.GetGroup();
+            wfNode.Actors = wfNode.GetActors();
+            wfNode.Actions = wfNode.GetActions();
             return wfNode;
         }
 
@@ -71,19 +87,28 @@ namespace Smartflow
         public WorkflowNode GetFromNode()
         {
             if (FromTransition == null) return null;
-            ASTNode node = GetNode(FromTransition.ORIGIN);
+            ASTNode node = GetNode(FromTransition.Origin);
             return WorkflowNode.ConvertToReallyType(node);
         }
 
-        public List<Actor> GetActors()
+        protected List<Actor> GetActors()
         {
-            string query = " SELECT * FROM T_ACTOR WHERE RNID=@RNID AND INSTANCEID=@INSTANCEID AND OPERATION=@OPERATION ";
+            string query = " SELECT * FROM T_ACTOR WHERE RelationshipID=@RelationshipID AND InstanceID=@InstanceID ";
             return Connection.Query<Actor>(query, new
             {
-                RNID = NID,
-                INSTANCEID = INSTANCEID,
-                OPERATION = WorkflowAction.Jump
+                RelationshipID = NID,
+                InstanceID = InstanceID
+            }).ToList();
+        }
 
+
+        protected List<Elements.Action> GetActions()
+        {
+            string query = " SELECT * FROM T_ACTION WHERE RelationshipID=@RelationshipID AND InstanceID=@InstanceID ";
+            return Connection.Query<Elements.Action>(query, new
+            {
+                RelationshipID = NID,
+                InstanceID = InstanceID
             }).ToList();
         }
 
@@ -96,24 +121,24 @@ namespace Smartflow
             Transition transition = null;
             try
             {
-                WorkflowProcess process = WorkflowProcess.GetWorkflowProcessInstance(INSTANCEID, NID);
-                if (process != null && NodeType != WorkflowNodeCategeory.Start)
+                WorkflowProcess process = ProcessService.GetRecord(InstanceID,this.ID);
+                if (process != null && NodeType != WorkflowNodeCategory.Start)
                 {
-                    ASTNode n = GetNode(process.ORIGIN);
-                    while (n.NodeType == WorkflowNodeCategeory.Decision)
+                    ASTNode n = GetNode(process.Origin);
+                    while (n.NodeType == WorkflowNodeCategory.Decision)
                     {
-                        process = WorkflowProcess.GetWorkflowProcessInstance(INSTANCEID, n.NID);
-                        n = GetNode(process.ORIGIN);
+                        process = ProcessService.GetRecord(InstanceID, n.ID);
+                        n = GetNode(process.Origin);
 
-                        if (n.NodeType == WorkflowNodeCategeory.Start)
+                        if (n.NodeType == WorkflowNodeCategory.Start)
                             break;
                     }
-                    transition = GetTransition(process.TRANSITIONID);
+                    transition = GetTransition(process.TransitionID);
                 }
             }
             catch (Exception ex)
             {
-                throw new WorkflowException(ex, INSTANCEID);
+                throw ex;
             }
             return transition;
         }
@@ -123,13 +148,13 @@ namespace Smartflow
         /// </summary>
         /// <param name="TRANSITIONID">路线主键</param>
         /// <returns>路线</returns>
-        protected Transition GetTransition(string TRANSITIONID)
+        protected Transition GetTransition(string transitionID)
         {
-            string query = "SELECT * FROM T_TRANSITION WHERE NID=@TRANSITIONID AND INSTANCEID=@INSTANCEID";
+            string query = "SELECT * FROM T_TRANSITION WHERE NID=@TransitionID AND InstanceID=@InstanceID";
             Transition transition = Connection.Query<Transition>(query, new
             {
-                TRANSITIONID = TRANSITIONID,
-                INSTANCEID = INSTANCEID
+                TransitionID = transitionID,
+                InstanceID = InstanceID
 
             }).FirstOrDefault();
 
@@ -138,14 +163,14 @@ namespace Smartflow
 
         protected List<Group> GetGroup()
         {
-            string query = "SELECT * FROM T_GROUP WHERE RNID=@RNID AND INSTANCEID=@INSTANCEID";
+            string query = "SELECT * FROM T_GROUP WHERE RelationshipID=@RelationshipID AND InstanceID=@InstanceID";
             return Connection.Query<Group>(query, new
             {
-                RNID = NID,
-                INSTANCEID = INSTANCEID
-
+                RelationshipID = NID,
+                InstanceID = InstanceID
             }).ToList();
         }
+
 
         /// <summary>
         /// 获取当前执行的跳转路线
@@ -157,13 +182,13 @@ namespace Smartflow
             Transition executeTransition = Transitions
                 .FirstOrDefault(t => t.NID == transitionID);
 
-            ASTNode an = this.GetNode(executeTransition.DESTINATION);
+            ASTNode an = this.GetNode(executeTransition.Destination);
             Transition returnTransition = executeTransition;
-            while (an.NodeType == Enums.WorkflowNodeCategeory.Decision)
+            while (an.NodeType == WorkflowNodeCategory.Decision)
             {
                 WorkflowDecision decision = WorkflowDecision.ConvertToReallyType(an);
                 returnTransition = decision.GetTransition();
-                an = this.GetNode(returnTransition.DESTINATION);
+                an = this.GetNode(returnTransition.Destination);
             }
             return returnTransition;
         }
@@ -176,33 +201,31 @@ namespace Smartflow
         public List<Group> GetNextGroup(string transitionID)
         {
             Transition executeTransition = this.GetExecuteTransition(transitionID);
-            ASTNode selectNode = this.GetNode(executeTransition.DESTINATION);
+            ASTNode selectNode = this.GetNode(executeTransition.Destination);
 
-            string query = "SELECT * FROM T_GROUP WHERE RNID=@RNID AND INSTANCEID=@INSTANCEID";
+            string query = "SELECT * FROM T_GROUP WHERE RelationshipID=@RelationshipID AND InstanceID=@InstanceID";
             return Connection.Query<Group>(query, new
             {
-                RNID = selectNode.NID,
-                INSTANCEID = INSTANCEID
+                RelationshipID = selectNode.NID,
+                InstanceID = InstanceID
 
             }).ToList();
         }
+
         #endregion
 
-        /// <summary>
-        /// 获取节点的审批记录
-        /// </summary>
-        /// <param name="instanceID">流程实例ID</param>
-        /// <returns></returns>
-        public static DataTable GetRecord(string instanceID)
+
+
+        internal void DoIncrement()
         {
-            string sql = ResourceManage.GetString(ResourceManage.SQL_ACTOR_RECORD);
-            using (IDataReader dr = DapperFactory.CreateWorkflowConnection().ExecuteReader(sql,
-                new { INSTANCEID = instanceID }))
+            this.Increment += 1;
+            string sql = "UPDATE T_NODE SET Increment=@Increment WHERE InstanceID=@InstanceID AND  NID=@NID ";
+            Connection.ExecuteScalar<long>(sql, new
             {
-                DataTable dt = new DataTable(Guid.NewGuid().ToString());
-                dt.Load(dr);
-                return dt;
-            }
+                NID = NID,
+                InstanceID = InstanceID,
+                Increment = this.Increment
+            });
         }
     }
 }

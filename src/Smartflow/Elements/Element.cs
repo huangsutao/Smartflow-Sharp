@@ -8,53 +8,49 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using System.Xml.Serialization;
+using Smartflow;
 
-using Smartflow.Enums;
-using Newtonsoft.Json;
 namespace Smartflow.Elements
 {
-
-    /// <summary>
-    /// 为兼容其他数据库，对ID、NAME 名称进行调整，与数据库保留关键字进行区分
-    /// </summary>
-    [Serializable]
-    public abstract class Element : Infrastructure
+    public abstract class Element : WorkflowInfrastructure
     {
-        [XmlAttribute("identification")]
-        public virtual string IDENTIFICATION
+        protected string name = string.Empty;
+        protected string id = string.Empty;
+
+        public string Name
         {
-            get;
-            set;
+            get { return name; }
+            set { name = value; }
         }
 
         /// <summary>
-        /// 节点唯一标识
+        /// 节点标识ID
         /// </summary>
-        [JsonIgnore]
-        [XmlIgnore]
+        public string ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
+        /// <summary>
+        /// 唯一标识
+        /// </summary>
         public string NID
         {
             get;
             set;
         }
 
-        [JsonProperty("name")]
-        [XmlAttribute("appellation")]
-        public virtual string APPELLATION
-        {
-            get;
-            set;
-        }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public virtual string INSTANCEID
+        public string InstanceID
         {
             get;
             set;
         }
 
         internal abstract void Persistent();
+
+        internal abstract Element Parse(XElement element);
     }
 }

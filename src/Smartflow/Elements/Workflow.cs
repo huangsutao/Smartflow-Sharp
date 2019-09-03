@@ -9,24 +9,22 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-
 using Smartflow.Elements;
 
 namespace Smartflow.Elements
 {
-    [XmlInclude(typeof(Start))]
-    [XmlInclude(typeof(End))]
-    [XmlInclude(typeof(List<Node>))]
-    [XmlInclude(typeof(List<Decision>))]
-    [XmlRoot("workflow")]
-    [XmlType("Workflow")]
     public class Workflow
     {
+        public Workflow()
+        {
+            this.Decisions = new List<Decision>();
+            this.Nodes = new List<Node>();
+        }
+
         /// <summary>
         /// 开始节点
         /// </summary>
-        [XmlElement(ElementName = "start")]
-        public Start StartNode
+        public Start Start
         {
             get;
             set;
@@ -35,8 +33,7 @@ namespace Smartflow.Elements
         /// <summary>
         /// 结束节点
         /// </summary>
-        [XmlElement(ElementName = "end")]
-        public End EndNode
+        public End End
         {
             get;
             set;
@@ -45,8 +42,7 @@ namespace Smartflow.Elements
         /// <summary>
         /// 决策节点
         /// </summary>
-        [XmlElement(ElementName = "decision")]
-        public List<Decision> ChildDecisionNode
+        public List<Decision> Decisions
         {
             get;
             set;
@@ -55,11 +51,20 @@ namespace Smartflow.Elements
         /// <summary>
         /// 流程节点
         /// </summary>
-        [XmlElement(ElementName = "node")]
-        public List<Node> ChildNode
+        public List<Node> Nodes
         {
             get;
             set;
+        }
+
+        public IList<Element> GetElements()
+        {
+            List<Element> elements = new List<Element>();
+            elements.Add(this.Start);
+            elements.AddRange(this.Nodes);
+            elements.AddRange(this.Decisions);
+            elements.Add(this.End);
+            return elements;
         }
     }
 }

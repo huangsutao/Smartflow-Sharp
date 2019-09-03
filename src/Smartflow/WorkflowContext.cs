@@ -4,7 +4,7 @@
  ********************************************************************
  */
 using System;
-using Smartflow.Enums;
+
 
 namespace Smartflow
 {
@@ -38,17 +38,6 @@ namespace Smartflow
         {
             get;
             set;
-        }
-
-        public WorkflowAction Operation
-        {
-            get;
-            private set;
-        }
-
-        internal void SetOperation(WorkflowAction operation)
-        {
-            this.Operation = operation;
         }
     }
 }

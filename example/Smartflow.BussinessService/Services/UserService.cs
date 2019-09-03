@@ -16,9 +16,16 @@ namespace Smartflow.BussinessService.Services
             return Connection.Query<User>(executeSql).ToList();
         }
 
+        public List<User> GetUserListByActor(string IDs)
+        {
+            string executeSql = @"SELECT * FROM T_USER WHERE IDENTIFICATION IN (" + IDs + ")";
+            return Connection.Query<User>(executeSql).ToList();
+        }
+
+
         public List<User> GetPendingUserList(string nodeID, string instanceID)
         {
-            string executeSql = @" SELECT * FROM T_USER WHERE IDENTIFICATION IN (SELECT ACTORID FROM T_PENDING WHERE NODEID=@NODEID AND INSTANCEID=@INSTANCEID) ";
+            string executeSql = @" SELECT * FROM T_USER WHERE IDENTIFICATION IN (SELECT ACTORID FROM T_PENDING WHERE NODEID=@NODEID AND InstanceID=@InstanceID) ";
             return Connection.Query<User>(executeSql, new
             {
                 NODEID = nodeID,

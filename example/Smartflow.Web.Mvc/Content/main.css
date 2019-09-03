@@ -1,158 +1,183 @@
-﻿html, body, table, div, img,ul {
-    margin: 0;
-    padding: 0;
-    box-sizing:border-box;
-}
-
-ul{
-    list-style:none;
-}
+﻿@import url('./common.css');
 
 body {
     font-family: "Lucida Grande", Lucida Sans Unicode,Hiragino Sans GB, WenQuanYi Micro Hei, Verdana, Aril, sans-serif;
-    font-size: 14px;
-    color: #000;
 }
 
-
-
-.table{
-    margin: 0 auto;
-    margin-top: 25px;
-    border-collapse: collapse;
+.smartflow_main {
+    height: 100%;
+    overflow: hidden;
 }
 
-.flow-table {
-    /*width: 800px;*/
-}
-
-.flow-table {
-    border-left: solid 1px #eee;
-    border-bottom: solid 1px #eee;
-}
-
-.flow-node {
-    background-color: #e3f2f2;
-    width: 200px;
-    border-top: solid 1px #eee;
-    border-right: solid 1px #eee;
-    height: 50px;
-    text-align: center;
-}
-
-.flow-message {
-    border-top: solid 1px #eee;
-    border-right: solid 1px #eee;
-    vertical-align: top;
-}
-
-
-.check-table {
-    margin: 0 auto;
-    padding: 0;
-    width: 98%;
-    border-collapse: collapse;
-}
-
-.check-head {
-    width: 160px;
-}
-
-.flow-content {
-}
-
-.mainFrame{
-    height:100%;
-    overflow:hidden;
-}
-
-.top {
-    height: 80px;
+.smartflow_head {
+    height: 60px;
     background-color: #259FE5;
-    /*line-height:80px;*/
-}
-.top-header{
-   font-size:20px;
-   font-weight:bold;
-   color:#FFF;
-   vertical-align:middle;
-   display:block;
-   line-height:80px;
-   padding-left:20px;
-   float:left;
 }
 
-.content {
+.smartflow_title {
+    font-size: 20px;
+    color: #FFF;
+    vertical-align: middle;
+    display: block;
+    line-height: 60px;
+    padding-left: 20px;
+    float: left;
+}
+
+
+.smartflow_menu {
+    font-size: 20px;
+    color: #FFF;
+    display: block;
+    padding-right: 20px;
+    margin-top: 15px;
+}
+
+.smartflow_menu_item {
+}
+
+.smartflow_more {
+    padding: 0 5px;
+    background-color: #1b93ce;
+    height: 30px;
+    padding-top: 7px;
+    /*border-radius: 2px 2px;*/
+    position: relative;
+}
+
+    .smartflow_more:hover {
+        background-color: #168bc3;
+    }
+
+.smartflow_menu_item:hover > ul {
+    display: block;
+}
+
+.smartflow_more i {
+    display: block;
+    width: 30px;
+    height: 2px;
+    background: #FFF;
+}
+
+    .smartflow_more i + i {
+        margin-top: 5px;
+    }
+
+.smartflow_drop {
     position: absolute;
-    top: 80px;
+    background-color: #1b93ce;
+    width: 40px;
+    z-index: 9999;
+    font-size: 14px;
+    padding: 0 5px;
+}
+
+.smartflow_drop_item {
+    text-align: center;
+    line-height: 25px;
+    height: 25px;
+    cursor: default;
+    -ms-user-select: none; /*IE10*/
+    -khtml-user-select: none; /*早期浏览器*/
+    user-select: none;
+}
+
+    .smartflow_drop_item + li {
+        border-top: solid 1px #fff;
+    }
+
+.smartflow_menu_item {
+    padding: 0 10px;
+}
+
+.smartflow_content {
+    position: absolute;
+    top: 60px;
     left: 0;
     right: 0;
     bottom: 0;
 }
 
-.left {
+.smartflow_left {
     width: 200px;
     float: left;
     height: 100%;
-    /*background-color: #4BA7DC;*/
-    background-color:#C5E0ED;
+    /*background-color: #C5E0ED;*/
+    /*background-color: #2aa5ec;*/
+    background-color: #259fe5;
 }
 
-.left:after {
-    content: ".";
-    display: block;
-    visibility: hidden;
-    height: 1%;
-    clear: both;
-}
-
-.right {
-height: 100%;
+.smartflow_right {
+    height: 100%;
     margin-left: 200px;
+    position: relative;
 }
 
-
-.menu-item{
-    padding-right:1px;
+.menu_item {
+    background-color: #2194d6;
 }
-.menu-sub-items {
 
+    .menu_item + div {
+        border-top: solid 1px #259FE5;
+    }
+
+.menu_sub_items {
 }
-.menu-sub-items li{
+
+.menu_sub_item {
     height: 40px;
     line-height: 40px;
     text-align: left;
-    padding-left:20px;
-    background-color:#fbfbfb;
-       color:#666;
-}
-.menu-sub-items li+li{
-    margin-top:1px;
-}
-a{
-    text-decoration:none;
-    color:#666;
+    padding-left: 20px;
+    color: #fafafa;
 }
 
-.menu-sub-items a{
-    font-size:14px;
-}
+    .menu_sub_item span {
+        color: #eef5f9;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-.menu li:hover {
-    /*background-color: #2982B5;*/
-    background-color:#A2D5ED;
+    .menu_sub_item:hover {
+        background-color: #A2D5ED;
+    }
 
-}
-
-.menu-title{
+.menu_title {
     color: #fff;
     font-size: 16px;
     text-decoration: none;
-    padding-left:20px;
-    cursor:pointer;
+    padding-left: 20px;
+    cursor: pointer;
     height: 40px;
     line-height: 40px;
-    background-color:#3BA5D7;
-    display:block;
-    
+    background-color: #2aa5ec;
+}
+
+.smartflow_tab {
+    height: 40px;
+    line-height: 40px;
+    background-color: #2fabf3;
+    width: 100%;
+    color: #d3e9f5;
+    font-size: 16px;
+}
+
+.smartflow_tab_item {
+    padding: 0px 10px;
+    cursor: pointer;
+    border-right: solid 1px #2aa3e8;
+}
+
+.smartflow_tab_select {
+    background-color: #2194d6;
+    color: #FFF;
+}
+
+.smartflow_tab_content {
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    right: 0;
+    left: 0;
 }

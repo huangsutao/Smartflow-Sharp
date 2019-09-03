@@ -1,6 +1,5 @@
-﻿
-<!DOCTYPE html>
-<html lang="zh-CN">
+﻿<!DOCTYPE html>
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,119 +7,265 @@
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <meta name="baidu-site-verification" content="SBg5l6RhNK" />
     <meta name="keywords" content="C#工作流,C#工作流引擎,C#工作流平台" />
-    <meta name="description" content="基于C#语言研发的Smartflow-Sharp工作流管理平台，该工作流管理平台的特点是简单易用、方便扩展、支持多种数据库访问、高度可定制化，支持用户按需求做功能的定制开发，节省用户的使用成本。" />
+    <meta name="description" content="通过Smartflow-Sharp 工作流组件，快速构建的企业信息管理系统，是一个不错选择。Smartflow-Sharp工作流组件是一款更加倾向于程序员的快速开发组件，适用于传统行业文件流转、送审等审批场景。" />
     <meta name="author" content="chengderen">
-    <title>Smartflow-Sharp工作流管理平台</title>
-    <link href="./css/bootstrap.min.css" rel="stylesheet" />
-    <!-- Custom styles for this template -->
-    <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
-    <script type="text/javascript" src="./Content/common.js"></script>
+    <title>Smartflow-Sharp 文档</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+    <link rel="stylesheet" type="text/css" href="./css/sheets-of-paper-a4.css" />
+    <link rel="stylesheet" href="./css/zTreeStyle/zTreeStyle.css" type="text/css" />
+    <link rel="stylesheet" href="./css/article.css" type="text/css" />
     <script type="text/javascript" src="https://hm.baidu.com/hm.js?1d12f66f2f6f25504daa528cd96ea7e8"></script>
-    <style>
-        /*.container {width: 980px;}*/
-        .jumbotron{
-            background-color:#fbf7f7;
-        }
-    </style>
 </head>
-<body>
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<body class="document">
+    <nav class="navbar  navbar-default navbar-cover navbar-fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="/">Smartflow-Sharp 工作流管理平台</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation" style="">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarColor01">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">首页</a>
-                    </li>
-                    <li class="nav-item  active">
-                        <a href="./doc.html" class="nav-link">文档</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="javascript:openWin('tool.html', 960, 560);">流程图设计工具</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./donate.html">捐赠</a>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" style="color:#FFF;font-weight:bold;">
-                            技术支持/商务合作：<span>237552006@qq.com</span>
-                        </a>
-                    </li>
-                </ul>
+            <div class="navbar-header">
+                <div class="navbar-brand  navbar-brand-icon"></div>
             </div>
+            <div id="navbar" class="collapse pull-right navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="./index.html">首页</a></li>
+                    <li><a href="./doc.html">文档</a></li>
+                    <li><a href="./donate.html">捐赠</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
         </div>
     </nav>
-    <!-- Begin page content -->
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="jumbotron">
-                    <h3>前言</h3>
-                    <p class="text-justify"> 目前，属于.NET平台下研发的工作流管理平台真是太少，可供选择真心不多，官方我们之前也采用过，没有用好，到处是问题，而且还没有提供在线的流程设计器，使用起来极其不方便。市面上免费开源工作流管理平台又很少，基本都是属于要收取一定的费用。真正免费的又不是很好用，收费的又太高，所以笔者自已闭门造车，打造一款基于.NET平台免费开源工作流管理平台，为开源尽一点自已的绵薄之力。笔者基于.NET平台，研发了Smartflow-Sharp工作流管理平台，Smartflow-Sharp工作流管理平台目前包含工作流引擎、工作流流程设计器，支持流程在线设计。工作流引擎负责提供对流程的解析，并驱动流程的流转，是工作流平台核心部件。流程设计器是基于SVG研发，支持所有主流浏览器，IE浏览器只支持IE9以上的版本。工作流平台研发所采用的技术框架和工具是Vs2013+Dapper+ASP.NET MVC4.0+.NETFX4.0。为了便于后续扩展，支持其他的数据库的访问，笔者经过慎重考虑采用Dapper组件。Dapper组件对原生SQL语句支持比较友好，且支持所有主流数据库系统访问。所以，你不用担心Smartflow-Sharp工作流管理平台对跨库访问能力。目前，默认只支持 MSSQLSERVER数据库，若想支持其他数据库访问，请修改系统中Web.Config数据连接配置项。
-                    </p>
-                    <h3>集成</h3>
-                    <p class="text-justify">
-                        打开项目文件夹，在SQLServer2005中按顺序执行SQL文件夹下SQL脚本，执行完成后会创建flow、bussiness两个数据库。然后，在VS中打开项目解决方案，分别找到example\Smartflow.Web.Mvc\Web.config，src\Smartflow.Web.Design\Web.config 配置文件，修改其访问数据库连接字符串，然后，将这两个项目发布到本地IIS虚拟目录里。部署完成后，直接浏览项目，如果能浏览到登录界面表示部署成功。
-                    参照示例将Smartflow-Sharp工作流管理平台整合到业务系统中，由于Smartflow-Sharp工作流管理平台的高度可定制化特点，既是优点也是缺点，优点就是可以很方便的根据用户的需求做定制化研发，缺点是太过灵活，有些功能需要用户自已开发。集成步骤如下：</p>
-                    <p style="color:red;font-weight:bold;">
-                        1、flow是工作流基础库，直接整体拷贝到你业务系统<br />
-                        2、在flow数据库中打开t_config表，在表中增加业务库的连接字符串<br />
-                        3、bussiness是提供的示例库<br />
-                        4、工作流节点要与角色关联，用户必须提供角色表，工作流是依据角色筛选审批人员<br />
-                        5、调整业务系统和Smartflow.Web.Design项目中Web.config配置文件，如下配置信息<br />
-                        <pre><code>&lt;configsections&gt;
-    &lt;section name="smartflowConfiguration" type="Smartflow.SmartflowConfiguration,Smartflow" /&gt;
-&lt;/configsections&gt;
-&lt;smartflowConfiguration connectionstring="server=127.0.0.1;database=flow;uid=sa;pwd=123456"  providerName="System.Data.SqlClient" /&gt;
-&lt;connectionstrings /&gt;
-    &lt;add name="busConnection" connectionString="server=127.0.0.1;database=bussiness;uid=sa;pwd=123456"  providerName="System.Data.SqlClient"   /&gt;
-&lt;/connectionstrings/&gt;
-</code>
-</pre></p><p style="color:red;font-weight:bold;">
-                        6、邮件服务是可选项，根据需求配置<br />
-<pre><code>&lt;configsections&gt;
-    &lt;section name="mailConfiguration" type="Smartflow.MailConfiguration,Smartflow" /&gt;
-&lt;/configsections&gt;
-&lt;mailConfiguration account="邮件账号（237552006@qq.com）"
-                      password="授权码（非邮箱的登录密码）" 
-                      name="显示名称（smartflow-sharp）"
-                      host="服务(smtp.qq.com)" 
-                      port="端口" 
-                      enableSsl="是否启用HTTPS" /&gt;
-</code>
-</pre>
-                    </p>
-                    <p class="text-justify">
-                        以上就是Smartflow-Sharp工作流管理平台完整的集成过程，工作流管理平台还有些工作需要由用户自已来完成如用户、角色等信息，都需要用户自已提供维护界面。通常在集成过程中需要提供待办、审批记录这些请参照示例，按需集成，在此不详细作介绍。
-                    </p>
-                    <h3>结语</h3>
-                    <p class="text-justify">笔者会对Smartflow-Sharp工作流管理平台，一直维护到底。未来，我会对工作流管理平台增加更多有趣的功能，以便你能将工作流平台更加快速的融入到业务系统中。期望，能打造成符合中国特色工作流管理平台，造福更多企业和开发人员。
-                    入行七年多的时间，一直从事研发工作，主要从事的ERP 管理类型信息系统研发。 七年时间也不短，一直碌碌无为，于是我决定现在要做点什么事情，由于之前接触过工作流研发方面事情，所以我就想做个免费开源工作流管理平台。工作流管理平台的技术含量并不高，但是要想把他做好，也是需要花很大的精力，如果你觉得能帮助到你，欢迎帮忙推荐。</p>
-                </div>
-            </div>
-        </div>
+
+    <div class="left_menu">
+        <div id="tree" class="ztree"></div>
     </div>
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <p class="text-muted text-left">
-                        &copy;2018&nbsp;<a href="/" style="color:#868e96;" target="_self">Smartflow-Sharp</a> Inc. All rights reserved.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </footer>
+
+    <div class="page" contenteditable="false">
+        <h3 id="概述" class="marker_title">概述</h3>
+        <p>
+            目前，属于.NET平台下研发的工作流组件真是太少，可供选择不多，官方的我们之前也采用过，没有用好，到处是坑，而且还没有提供在线的流程设计器，使用起来极其不方便。市面上免费开源工作流管理组件又很少，基本都是属于要收取一定的费用。真正免费的又不是很好用，收费的又太高，所以笔者闭门造轮子，打造一款基于.NET平台免费开源工作流管理组件，为开源尽点绵薄之力，并且后续在时间允许范围内会提供全方位的技术支持，所以你不用担心，无人维护。
+        </p>
+        <h3 id="适用场景" class="marker_title">适用场景</h3>
+        <p>
+            Smartflow-Sharp工作流组件是一款更加倾向于程序员的快速开发组件，通过该组件快速构建企业信息化业务流程管理系统，以适应企业的管理流程的频繁变更，做出快速响应，以满足当前企业快速发展管理的需要。适用于传统行业文件流转、送审等审批使用场景。
+        </p>
+        <h3 id="功能划分" class="marker_title">功能划分</h3>
+        <p>
+            基于.NET平台，研发Smartflow-Sharp工作流组件，该工作流组件包含工作流引擎、工作流流程设计器，支持流程在线设计。工作流引擎负责提供对流程的解析，并驱动流程的流转，是工作流组件核心部件。流程设计器是基于SVG研发，支持所有主流浏览器，IE浏览器只支持IE9以上的版本。为了便于后续扩展，支持其他的数据库的访问，笔者经过慎重考虑采用Dapper组件。Dapper组件对原生SQL语句支持比较友好，且支持所有主流数据库系统访问。目前，默认只支持 MSSQLSERVER数据库，若想使用其他的数据库，后续我会在合适的时间提供相关建库脚本。
+        </p>
+        <h3 id="准备" class="marker_title">准备</h3>
+        <p>
+            为了确保示例的正常运行，我们先需要安装示例所需的运行环境。
+        </p>
+        <p>
+            a)	MSSQLSERVE2008；<br />
+            b)	Asp.net framework4.0 以上的框架（含4.0）；<br />
+            c)	Asp.net MVC4.0；<br />
+            d)	IIS7.5<br />
+            e)	VS2017开发工具。
+        </p>
+    </div>
+    <div class="page" contenteditable="false">
+        <h3 id="启动" class="marker_title">启动</h3>
+        <p>
+            下载工作流组件源码压缩包，然后解压打开项目文件夹，在MSSQLSERVER2008中按顺序执行SQL文件夹下SQL脚本，执行完成后会创建Smartflow、Demo两个数据库。在VS中打开项目解决方案，找到示例项目中的配置文件，调整访问数据库连接字符串，然后在VS开发工具中启动项目，启动完成后，若能浏览到登录界面表示部署成功。
+        </p>
+        <p>
+            <img src="./css/startup.gif" style="width:100%;" />
+        </p>
+        <h3 id="集成" class="marker_title">集成</h3>
+        <p>
+            工作流组件在与业务系统融合过程中，有些必须的信息是需要由业务系统提供支撑如用户、组织机构、角色等基础信息。工作流组件通过开放集成式接口的与这些基础信息进行绑定，从而与业务系统建立关联关系。
+        </p>
+        <p>
+            工作流组件集成到业务系统中，我将其分为数据库、业务流程引擎、流程设计器、审批页面四个部分，逐一阐述四个部分的集成步骤。
+        </p>
+        <h3 id="数据库" class="marker_title">数据库</h3>
+        <p>
+            Smartflow库是工作流组件的基础数据库，流程节点、实例都是存储在这里。在将工作流组件集成到业务系统中，必须将Smartflow库整体拷贝过去。找到flow库中t_config表，然后增加字记录（如下图）。流程分支节点动态条件判定是基于此表的配置。
+        </p>
+        <p>
+            <img src="./css/connectionString.png" style="width:100%;" />
+        </p>
+        <p>
+            我们流程中有些信息是存储到库（Demo）中，并没有将所有的信息设计存储到流程基础库中，所以用户需要注意进行针对性调整。具体涉及到待办信息（t_pending）、审批信息(t_record)、流程结构表(t_structure)统统都是存储在示例库中。
+        </p>
+        <h3 id="业务流程引擎" class="marker_title">业务流程引擎</h3>
+        <p>
+            将Smartflow组件引入到业务系统后，同时需要调整配置工作流基础数据库连接地址，以便于流程引擎将业务流程文件解析存储到数据库。在示例中有演示如何使用的工作流引擎的代码，用户可以参照示例中提供的代码，根据实际业务系统的情况做具体调整。
+        </p>
+        <p>
+            <img src="./css/code.jpg" />
+        </p>
+        <h3 id="流程设计器" class="marker_title">流程设计器</h3>
+        <p>
+            流程设计器是提供定义业务流程的工具，通过图形化组合方式模拟现实中业务流程。在与业务系统集成中需拷贝Content/design、Views/WorkflowDesign、Controllers文件夹中文件。
+        </p>
+        <p>
+            <img src="./css/flow.png" />
+        </p>
+        <h3 id="审批页面" class="marker_title">审批页面</h3>
+        <p>
+            为了方便用户快速与业务系统集成，Smartflow-Sharp工作流组件中提供统一的审批框架页面（Views/Shared/AuditFrame.cshtml），以供用户使用。审批框架页面是以将表单页面嵌入的形式进行集成，用户只需要传递表单的URL，表单中提前定义好相关保存接口，以供审批框架页面调用，在后续的审批动作都是由审批框架页面自动完成。
+        </p>
+        <p>
+            <img src="./css/audit.png" style="width:100%;" />
+        </p>
+    </div>
+    <div class="page" contenteditable="false">
+        <h3 id="流程设计工具" class="marker_title">流程设计工具</h3>
+        <p>
+            在流程设计工具中我们通过定义不同的图形方式，来模拟现实中业务环节，通过连线的方式表示业务环节的走向，最终形成一个完整的业务流程。 目前流程设计工具支持上下左右连线，且支持折线连接。
+        </p>
+        <h3 id="定义元素" class="marker_title">定义元素</h3>
+        <p>
+            <img src="./css/elements.png" />
+        </p>
+        <h3 id="元素属性设置" class="marker_title">元素属性设置</h3>
+        <p>
+            a)	连线：设置业务流程走向名称；<br />
+            b)	普通节点：设置业务环节节点的名称，以及业务环节审批人的信息；支持按组设置节点审批人；<br />
+            c)	分支节点：提供基于自定义条件设定，根据条件动态判定表单流转方向。
+        </p>
+
+        <h3 id="流程引擎" class="marker_title">流程引擎</h3>
+        <p>
+            流程引擎是工作流组件核心部分，本节对流程引擎设计思想以及想法进行介绍，以让你更加了解工作流引擎运行机制。
+        </p>
+
+        <h3 id="服务容器" class="marker_title">服务容器</h3>
+        <p>
+            WorkflowGlobalServiceProvider是整个流程引擎的服务提供者，贯穿整个流程引擎组件。为了使流程引擎中的服务方便维护管理，流程引擎在设计的的时候引入类似服务容器WorkflowGlobalServiceProvider，即流程引擎中所有的服务是通过容器进行管理。
+        </p>
+        <p><img src="./css/WorkflowGlobalServiceProvider.png" style="width:400px;" /></p>
+        <h3 id="自定义动作" class="marker_title">自定义动作</h3>
+        <p>
+            为了满足一些特殊的要求，Smartflow工作流组件开放扩展接口，允许用户在流转的过程中执行一些额外的操作如表单状态更新、待办、审批记录等等操作，都可以通过实现IWorkflowAction接口完成。
+            在向服务容器注册的时候，若注册到全局服务中，即流程中任何节点的跳转都会执行此动作。局部服务，即只在特定节点中进行触发的。
+        </p>
+        <p>
+            <img src="./css/WorkflowActionSettings.png" style="width:400px;" />
+            <img src="./css/workflowactionreg.png" style="width:400px;" />
+        </p>
+        <h3 id="会签" class="marker_title">会签</h3>
+        <p>
+            会签是允许多人同时审批一个节点。工作流组件开放IWorkflowCooperation接口，让用户依据自身的需求，动态限定节点会签人数，默认情况下是不做任何限制。可以参照示例中实现方式，按需调整。
+        </p>
+        <p>
+            <img src="./css/cooperation.png" style="width:400px;" />
+        </p>
+    </div>
+    <div class="page" contenteditable="false">
+        <h3 id="邮件" class="marker_title">邮件</h3>
+        <p>
+            工作流引擎组件提供已经封装好的邮件服务，在使用邮件服务的时候，需要优先配置SMTP账户信息，配置信息在数据库T_MAIL表中进行配置。配置好后，调用方式如下：
+        </p>
+        <p>
+            <img src="./css/mail.png" style="width:400px;" />
+        </p>
+
+        <h3 id="FQA" class="marker_title">FQA问题汇总</h3>
+        <p>
+            1、VS2017 打开解决方案编译不通过
+            <strong style="display:block;text-align:left;">答：请在NuGet的控制台里执行如下命令：<br />update-package -project Smartflow.Web.Mvc -reinstall</strong>
+        </p>
+        <h3 id="未来" class="marker_title">未来</h3>
+        <p>
+            作者会对Smartflow-Sharp工作流组件，一直负责到底。未来，我会对工作流管理组件增加更多实用性的功能，以便你能将工作流组件更加快速的融入到业务系统中。期望，能打造成符合中国特色工作流管理平台，造福更多企业和开发人员。如果你觉得能帮助到你，欢迎帮忙推荐。 <strong style="color:#ff0000">若需要定制开发或项目，也可以与我联系，我很愿意，花点时间来挣取零花钱</strong>。
+        </p>
+        <p>
+            技术支持/商务合作：237552006@qq.com。
+        </p>
+    </div>
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-    <script src="./css/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./css/jquery.ztree.core.min.js"></script>
+    <script type="text/javascript">
+        var setting = {
+            view: {
+                showLine: false,
+                showIcon: false,
+                selectedMulti: false,
+                dblClickExpand: false,
+                addDiyDom: addDiyDom,
+                nameIsHTML: true
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback: {
+                beforeClick: beforeClick,
+                onCollapse: function (treeId, treeNode) {
+                    window.location.hash = '#' + treeNode.name;
+                },
+                onExpand: function (treeId, treeNode) {
+                    window.location.hash = '#' + treeNode.name;
+                },
+                onClick: function (e, t, n) {
+                    var text = n.name;
+                    window.location.hash = '#' + text;
+                }
+            }
+        };
+        var zNodes = [
+            { id: 1, pId: 0, name: "概述", open: true },
+            { id: 11, pId: 1, name: "适用场景" },
+            { id: 2, pId: 0, name: "功能划分", open: true },
+            { id: 21, pId: 2, name: "准备" },
+            { id: 22, pId: 2, name: "启动" },
+            { id: 23, pId: 2, name: "集成", open: true },
+            { id: 231, pId: 23, name: "数据库" },
+            { id: 232, pId: 23, name: "业务流程引擎" },
+            { id: 233, pId: 23, name: "流程设计器" },
+            { id: 234, pId: 23, name: "审批页面" },
+            { id: 24, pId: 2, name: "流程设计工具", open: true },
+            { id: 241, pId: 24, name: "定义元素" },
+            { id: 242, pId: 24, name: "元素属性设置" },
+            { id: 25, pId: 2, name: "流程引擎", open: true },
+            { id: 251, pId: 25, name: "服务容器" },
+            { id: 252, pId: 25, name: "自定义动作" },
+            { id: 253, pId: 25, name: "会签" },
+            { id: 254, pId: 25, name: "邮件" },
+            { id: 3, pId: 0, name: "FQA" },
+            { id: 4, pId: 0, name: "未来" }
+        ];
+
+        function addDiyDom(treeId, treeNode) {
+            var spaceWidth = 5;
+            var switchObj = $("#" + treeNode.tId + "_switch"),
+                icoObj = $("#" + treeNode.tId + "_ico");
+            switchObj.remove();
+            icoObj.before(switchObj);
+
+            if (treeNode.level > 1) {
+                var spaceStr = "<span style='display: inline-block;width:" + (spaceWidth * treeNode.level) + "px'></span>";
+                switchObj.before(spaceStr);
+            }
+        }
+
+        function beforeClick(treeId, treeNode) {
+            if (treeNode.level == 0) {
+                var zTree = $.fn.zTree.getZTreeObj("tree");
+                zTree.expandNode(treeNode);
+                window.location.hash = '#' + treeNode.name;
+                return false;
+            }
+            return true;
+        }
+
+        $(function () {
+            var treeObj = $("#tree");
+            $.fn.zTree.init(treeObj, setting, zNodes);
+            treeObj.hover(function () {
+                if (!treeObj.hasClass("showIcon")) {
+                    treeObj.addClass("showIcon");
+                }
+            }, function () {
+                treeObj.removeClass("showIcon");
+            });
+        });
+    </script>
 </body>
 </html>
